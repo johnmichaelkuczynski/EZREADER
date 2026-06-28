@@ -1,0 +1,107 @@
+
+REPLIT INSTRUCTION PACKET — FINAL VERSION (ENRICHMENT + STYLE + SMART QUERY)
+
+REWRITE ENGINE: FIX STYLE MIMICRY, DENSITY LOSS, AND ADD DUAL ENRICHMENT + SMART SEARCH MODE
+
+====================
+PART 1 — CURRENT FAILURES (WITH CONCRETE EXAMPLES)
+====================
+
+❌ FAILURE 1 — Style Not Mimicked
+
+Target excerpt:
+> Urban’s contention is not that the Church is a force of good, but that the Church is, indeed, a church and that, by virtue of fighting for its own existence, it has come, however paradoxically, to represent freedom from establishment tyranny.
+
+App’s rewrite:
+> Urban does not argue that Scientology is a good institution. Instead, he says it qualifies as a church and that, paradoxically, its resistance to external suppression has made it a symbol of religious freedom.
+
+✔ CORRECT REWRITE:
+> Let C be the claim that Scientology is tyrannical. Let F be the fact that the establishment seeks to destroy it. Let L be the principle: any institution fighting for its existential rights against an overreaching state apparatus exemplifies liberty.
+>
+> Urban accepts C and F. He argues that, regardless of C, the Church satisfies L. Hence, despite being internally repressive, Scientology’s external struggle is, ipso facto, a stand against tyranny.
+
+❌ FAILURE 2 — Key Arguments Oversimplified
+
+Original:
+> Hubbard wasn’t exercising his right to join a religion—he was doing what Moses, Jesus, and Mohammed did.
+
+App’s rewrite:
+> Hubbard did not join a religion, but instead founded a new one in a modern way.
+
+✔ CORRECT REWRITE:
+> Hubbard’s act was not derivative of existing religion. It was structurally equivalent to the founding moves of Moses and Mohammed — but executed in 20th-century idiom. Hence the space-gods.
+
+====================
+PART 2 — CORE BEHAVIOR RULES
+====================
+
+✅ RULE 1: LENGTH ENFORCEMENT
+Rewrite must be 100%–110% of the original length. Auto-resend short output with:
+> “You failed to preserve length. Expand using clarifications and examples.”
+
+✅ RULE 2: TONE AND DENSITY PRESERVATION
+Match user-specified style if given. Otherwise, default to formal academic tone. Do not simplify or rephrase unless explicitly instructed.
+
+✅ RULE 3: EMERGENCY FORMALITY RECOVERY
+If output is breezified or flattened:
+> “You softened the structure. Rebuild using original paragraph logic and full intellectual tone.”
+
+====================
+PART 3 — ENRICHMENT SYSTEM: DUAL MODE + INTELLIGENT SEARCH
+====================
+
+When the user clicks **“Find Relevant Content”**, app must do two things:
+
+🟢 PATH 1: Google Search
+- Use `GOOGLE_CSE_ID` + `GOOGLE_API_KEY`
+- Pull 3–5 results
+- Extract 1–2 paragraphs each
+- Label: “📎 From Web – [site name]”
+- Allow: ➕ Add to Source
+
+🔵 PATH 2: LLM Fallback (Guaranteed)
+- Ask:
+  - OpenAI GPT
+  - Claude (Anthropic)
+  - Perplexity AI
+- Each returns 1–2 short enrichment blurbs
+- Label:
+  - “💬 GPT Suggestion”
+  - “🧠 Claude Suggestion”
+  - “📚 Perplexity Summary”
+- All suggestions are selectable for enrichment
+
+====================
+PART 4 — SMART SEARCH QUERY MODE (USER VS AUTO)
+====================
+
+If the user types in a custom search phrase → Use it.
+
+If the user leaves the search box blank → App must auto-detect topic by:
+
+1. Extracting 3–5 key terms from the Target Document using:
+   - Entity detection
+   - Phrase scoring
+   - GPT summary extraction (if available)
+
+2. Running those terms through Google + LLMs
+
+3. Labelling each search result with:
+   > Auto Search Term: “[term]”
+
+This ensures useful enrichment even if user doesn’t understand the topic.
+
+====================
+PART 5 — FINAL REQUIREMENTS
+====================
+
+✅ Rewrites must:
+- Match original length or exceed it
+- Preserve argument depth and tone
+- Integrate content from user or auto enrichment
+- Match structural and stylistic instructions
+- Retry automatically on failure
+
+====================
+END OF INSTRUCTION SET
+====================

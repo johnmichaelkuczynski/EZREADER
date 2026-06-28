@@ -1,0 +1,46 @@
+/* MOVE CUSTOM INSTRUCTIONS AND REWRITE OPTIONS TO CORRECT POSITION */
+
+/* Move the Custom Instructions and Rewrite Options cards from controls section to input column */
+.controls-section .col-md-8 {
+    position: absolute !important;
+    top: -9999px !important;  /* Hide original location */
+    left: -9999px !important;
+    visibility: hidden !important;
+}
+
+/* Create new container right after Content Source box */
+.content-source-box {
+    position: relative !important;
+}
+
+.content-source-box::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    z-index: 1000;
+}
+
+/* Inject the cards after content source using JavaScript targeting */
+.injected-controls {
+    margin-top: 1.5rem !important;
+    width: 100% !important;
+}
+
+.injected-controls .card {
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Ensure injected cards match content source styling */
+.injected-controls .card-header {
+    background-color: var(--bs-dark) !important;
+    color: white !important;
+}
+
+.injected-controls .card-body {
+    background-color: var(--bs-body-bg) !important;
+}

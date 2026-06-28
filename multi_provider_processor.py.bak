@@ -1,0 +1,1098 @@
+import os
+import sys
+import time
+import re
+import logging
+import concurrent.futures
+from typing import Dict, List, Tuple, Optional, Any, Callable
+from functools import lru_cache
+import threading
+from api_key_manager import api_key_manager
+
+# Initialize logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Constants for chunking
+MACROCHUNK_SIZE = 5000  # words (about 20-25 pages)
+MACROCHUNK_MIN_SIZE = 5000  # Minimum size for macrochunks (avoids small chunks)
+MACROCHUNK_MAX_SIZE = 8000  # Maximum size for macrochunks
+SUBCHUNK_SIZE = 500     # words (about 2-3 pages)
+API_TIMEOUT = 45        # seconds
+MAX_RETRIES = 1         # max retry per chunk
+
+# Thread-local storage for tracking provider-specific clients
+_thread_local = threading.local()
+
+class MultiProviderProcessor:
+    """
+    Handles text processing through multiple AI providers with two-level chunking
+    and robust error handling.
+    """
+    
+    def __init__(self):
+        """Initialize the processor with available API providers"""
+        # Import provider-specific libraries only if keys are available
+        self.has_openai = len(api_key_manager.openai_keys) > 0
+        self.has_anthropic = len(api_key_manager.anthropic_keys) > 0
+        self.has_perplexity = len(api_key_manager.perplexity_keys) > 0
+        
+        # Import the necessary libraries
+        if self.has_openai:
+            try:
+                import openai
+                self.openai_available = True
+                logger.info("OpenAI client initialized successfully")
+            except ImportError:
+                logger.warning("OpenAI package not installed")
+                self.openai_available = False
+                
+        if self.has_anthropic:
+            try:
+                import anthropic
+                self.anthropic_available = True
+                logger.info("Anthropic client initialized successfully")
+            except ImportError:
+                logger.warning("Anthropic package not installed")
+                self.anthropic_available = False
+                
+        if self.has_perplexity:
+            self.perplexity_available = True
+            logger.info("Perplexity API access configured")
+        else:
+            self.perplexity_available = False
+            
+        # Track any in-progress processing for status updates
+        self.current_process_id = None
+        self.progress_tracking = {}
+        
+    def get_client_for_provider(self, provider: str, api_key: str) -> Any:
+        """Get or create a client for the specified provider"""
+        # Use thread local storage to cache clients per thread
+        if not hasattr(_thread_local, 'clients'):
+            _thread_local.clients = {}
+            
+        client_key = f"{provider}_{api_key[:8]}"
+        
+        if client_key in _thread_local.clients:
+            return _thread_local.clients[client_key]
+            
+        # Create new client based on provider
+        if provider == 'openai':
+            import openai
+            client = openai.OpenAI(api_key=api_key)
+            _thread_local.clients[client_key] = client
+            return client
+            
+        elif provider == 'anthropic':
+            import anthropic
+            from anthropic import Anthropic
+            client = Anthropic(api_key=api_key)
+            _thread_local.clients[client_key] = client
+            return client
+            
+        elif provider == 'perplexity':
+            # For Perplexity, we don't need a dedicated client object
+            # We'll use requests directly in the process_with_perplexity method
+            _thread_local.clients[client_key] = {"api_key": api_key}
+            return _thread_local.clients[client_key]
+            
+        return None
+
+    def split_into_macrochunks(self, text: str) -> List[str]:
+        """
+        Split text into macrochunks of 5,000-8,000 words each, ensuring clean paragraph breaks
+        for better semantic coherence and optimal processing
+        """
+        if not text:
+            return []
+            
+        # Count total words
+        words = text.split()
+        total_words = len(words)
+        
+        if total_words <= MACROCHUNK_MIN_SIZE:
+            logger.debug(f"Text has {total_words} words; treating as a single macrochunk")
+            return [text]
+            
+        logger.info(f"Enhanced macrochunking: Splitting text of {total_words} words into optimal chunks of {MACROCHUNK_MIN_SIZE}-{MACROCHUNK_MAX_SIZE} words")
+        
+        # Split text into paragraphs with improved pattern recognition
+        # Use multiple newline formats to better detect structural breaks
+        paragraph_split_patterns = [r'\n\s*\n', r'\n\s*#', r'\n\s*\*\*\*', r'\n\s*---']
+        paragraphs = []
+        
+        # First try to split by multiple line breaks
+        for pattern in paragraph_split_patterns:
+            split_text = re.split(pattern, text)
+            if len(split_text) > 1:
+                # We found paragraph breaks, process them
+                for para_candidate in split_text:
+                    if para_candidate.strip():
+                        paragraphs.append(para_candidate.strip())
+                break
+        
+        # Fallback to simple line breaks if no paragraph structure was found
+        if not paragraphs:
+            logger.debug("No standard paragraph breaks found, using line-by-line splitting")
+            for line in text.split('\n'):
+                if line.strip():
+                    paragraphs.append(line.strip())
+        
+        # Detect section headings for better semantic chunking
+        section_indicators = [
+            r'^#+\s+', r'^\s*PART\s+[IVX0-9]+', r'^\s*CHAPTER\s+[IVX0-9]+', 
+            r'^\s*SECTION\s+[IVX0-9]+', r'^[IVX]+\.\s', r'^\d+\.\s'
+        ]
+        
+        section_starts = []
+        for i, para in enumerate(paragraphs):
+            # Check if paragraph starts with a section heading pattern
+            for pattern in section_indicators:
+                if re.match(pattern, para):
+                    section_starts.append(i)
+                    logger.debug(f"Detected section start at paragraph {i}: {para[:50]}...")
+                    break
+        
+        # Group paragraphs into macrochunks with enhanced logic
+        macrochunks = []
+        current_chunk = []
+        current_size = 0
+        last_section_start = 0
+        
+        for i, paragraph in enumerate(paragraphs):
+            para_words = len(paragraph.split())
+            
+            # Special handling for section starts - try to align macrochunk boundaries with section boundaries
+            is_section_start = i in section_starts
+            
+            # If adding this paragraph would exceed the max limit AND we've already met the minimum size
+            if current_size + para_words > MACROCHUNK_MAX_SIZE and current_size >= MACROCHUNK_MIN_SIZE and current_chunk:
+                macrochunks.append('\n\n'.join(current_chunk))
+                current_chunk = [paragraph]
+                current_size = para_words
+                last_section_start = i if is_section_start else last_section_start
+            else:
+                # If this is a section start and we're near our minimum size, consider ending the previous chunk
+                if is_section_start and current_size >= MACROCHUNK_MIN_SIZE * 0.85 and current_chunk:
+                    macrochunks.append('\n\n'.join(current_chunk))
+                    current_chunk = [paragraph]
+                    current_size = para_words
+                    last_section_start = i
+                else:
+                    current_chunk.append(paragraph)
+                    current_size += para_words
+                    if is_section_start:
+                        last_section_start = i
+                    
+                    # If we've reached the minimum size and we're at a good breaking point,
+                    # consider this a good opportunity to end the macrochunk
+                    if current_size >= MACROCHUNK_MIN_SIZE and len(current_chunk) > 1:
+                        # Check if we're at a good semantic breaking point
+                        last_para = current_chunk[-1]
+                        good_ending = (
+                            # Ends with sentence-ending punctuation
+                            (last_para.endswith('.') or last_para.endswith('?') or last_para.endswith('!')) and
+                            # Not in the middle of a paragraph (no trailing hyphen or comma)
+                            not (last_para.endswith('-') or last_para.endswith(',')) and
+                            # Not in the middle of a list
+                            not (last_para.rstrip().endswith(':') or re.search(r'\d+\.\s*$', last_para))
+                        )
+                        
+                        if good_ending:
+                            # End the chunk at this good breaking point
+                            macrochunks.append('\n\n'.join(current_chunk))
+                            current_chunk = []
+                            current_size = 0
+                
+        # Add the last macrochunk if there's anything left
+        if current_chunk:
+            macrochunks.append('\n\n'.join(current_chunk))
+            
+        logger.info(f"Created {len(macrochunks)} optimized macrochunks with improved semantic boundaries")
+        
+        # Log size information for better debugging
+        if macrochunks:
+            sizes = [len(chunk.split()) for chunk in macrochunks]
+            logger.info(f"Macrochunk sizes (words): min={min(sizes)}, max={max(sizes)}, avg={sum(sizes)/len(sizes):.1f}")
+            
+            # Log each macrochunk size individually for detailed analysis
+            for i, size in enumerate(sizes):
+                logger.debug(f"Macrochunk {i+1}: {size} words ({size/total_words*100:.1f}% of total)")
+            
+        return macrochunks
+    
+    def split_into_subchunks(self, macrochunk: str) -> List[str]:
+        """Split a macrochunk into subchunks of ~500 words each"""
+        if not macrochunk:
+            return []
+            
+        # Count total words
+        words = macrochunk.split()
+        total_words = len(words)
+        
+        if total_words <= SUBCHUNK_SIZE:
+            logger.debug(f"Macrochunk has {total_words} words; treating as a single subchunk")
+            return [macrochunk]
+            
+        logger.debug(f"Splitting macrochunk of {total_words} words into subchunks of ~{SUBCHUNK_SIZE} words")
+        
+        # Split text into paragraphs
+        paragraphs = []
+        for para_candidate in re.split(r'\n\s*\n', macrochunk):
+            if para_candidate.strip():
+                paragraphs.append(para_candidate.strip())
+        
+        # Group paragraphs into subchunks
+        subchunks = []
+        current_chunk = []
+        current_size = 0
+        
+        for paragraph in paragraphs:
+            para_words = len(paragraph.split())
+            
+            # If adding this paragraph would exceed the limit
+            if current_size + para_words > SUBCHUNK_SIZE and current_chunk:
+                subchunks.append('\n\n'.join(current_chunk))
+                current_chunk = [paragraph]
+                current_size = para_words
+            else:
+                current_chunk.append(paragraph)
+                current_size += para_words
+                
+        # Add the last subchunk if there's anything left
+        if current_chunk:
+            subchunks.append('\n\n'.join(current_chunk))
+            
+        logger.debug(f"Created {len(subchunks)} subchunks")
+        
+        # Log some statistics
+        if subchunks:
+            sizes = [len(chunk.split()) for chunk in subchunks]
+            logger.debug(f"Subchunk sizes (words): min={min(sizes)}, max={max(sizes)}, avg={sum(sizes)/len(sizes):.1f}")
+            
+        return subchunks
+    
+    def clean_ai_response(self, response_text: str, custom_instructions: str = '', style_instruction: str = '') -> str:
+        """
+        Clean the AI response to remove any repetition of instructions or formatting guidance
+        that might have been included in the output.
+        """
+        if not response_text:
+            return response_text
+            
+        # Common phrases that indicate response preamble or instruction repetition
+        preamble_patterns = [
+            r"(?i)^Sure, here's the (text |passage |content |)rewritten",
+            r"(?i)^Sure, I'll rewrite this",
+            r"(?i)^Here's the (text |passage |content |)rewritten",
+            r"(?i)^I've rewritten the (text|passage|content)",
+            r"(?i)^Here's the tidied-up dialogue",
+            r"(?i)^Here is the rewritten text",
+            r"(?i)^Here's your rewritten passage",
+            r"(?i)^Okay, here's the rewritten",
+            r"(?i)^Below is the rewritten",
+            r"(?i)^Here is the text rewritten"
+        ]
+        
+        # Remove any preamble text
+        for pattern in preamble_patterns:
+            match = re.search(pattern + r".*?(?:\n\n|\n)", response_text)
+            if match:
+                response_text = response_text.replace(match.group(0), "", 1)
+                # If we found a match, we can break since we only need to remove one preamble
+                break
+    
+        # Clean up common postscript notes about formatting or style
+        postscript_patterns = [
+            r"(?i)I've maintained the same information while adopting.*?$",
+            r"(?i)I've preserved the intellectual level.*?$",
+            r"(?i)I've kept the same information and meaning.*?$",
+            r"(?i)This rewrite maintains all the original.*?$",
+            r"(?i)I've maintained the intellectual tone.*?$",
+            r"(?i)Note: I've preserved the original.*?$",
+            r"(?i)I've rewritten this text while.*?$"
+        ]
+        
+        for pattern in postscript_patterns:
+            match = re.search(pattern, response_text)
+            if match:
+                response_text = response_text.replace(match.group(0), "")
+        
+        # Remove any instances where custom instructions were duplicated
+        if custom_instructions:
+            # Escape special regex characters in custom_instructions
+            escaped_instructions = re.escape(custom_instructions)
+            response_text = re.sub(r'(?i)' + escaped_instructions, '', response_text)
+        
+        # Remove any instances where style instructions were duplicated
+        if style_instruction:
+            # Escape special regex characters in style_instruction
+            escaped_style = re.escape(style_instruction)
+            response_text = re.sub(r'(?i)(in the style of) ' + escaped_style, '', response_text)
+            response_text = re.sub(r'(?i)' + escaped_style, '', response_text)
+        
+        # Remove any remaining instructions about writing style
+        style_phrases = [
+            r"(?i)rewrite as a dialogue",
+            r"(?i)tidied-up dialogue",
+            r"(?i)preserves the intellectual level",
+            r"(?i)preserving the intellectual level",
+            r"(?i)intellectual level, tone, and verbatim",
+            r"(?i)much verbatim material as possible",
+            r"(?i)tidied up while preserving",
+            r"(?i)dialogue tidied up",
+            r"(?i)here's the dialogue",
+            r"(?i)Okay, here's the dialogue"
+        ]
+        
+        for phrase in style_phrases:
+            response_text = re.sub(phrase, '', response_text)
+        
+        # Trim excess whitespace
+        response_text = response_text.strip()
+        
+        return response_text
+    
+    def process_with_openai(
+        self, 
+        text: str, 
+        api_key: str, 
+        action: str = 'rewrite',
+        style_instruction: str = '',
+        custom_instructions: str = '',
+        is_first_subchunk: bool = False
+    ) -> str:
+        """Process text using OpenAI API"""
+        import openai
+        from openai import OpenAI
+        
+        client = self.get_client_for_provider('openai', api_key)
+        
+        # Different prompt handling based on the action
+        if action == "expand":
+            # This is for the emergency expansion case
+            prompt = f"""{custom_instructions}"""
+        else:
+            # Normal rewrite case - Brutalized prompt injection
+            if is_first_subchunk:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Focus on adopting the voice, tone, and word choice {style_instruction}.
+Do not copy formatting or structure mechanically. Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Maintain EXACTLY the same information, examples, and meaning from the original text.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+            else:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Focus on adopting the voice, tone, and word choice {style_instruction}.
+Do not copy formatting or structure mechanically. Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Maintain EXACTLY the same information, examples, and meaning from the original text.
+This is a continuation section, so maintain consistency with previous sections.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+
+        try:
+            # the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
+            # do not change this unless explicitly requested by the user
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                max_tokens=2000,
+                timeout=API_TIMEOUT
+            )
+            
+            response_text = response.choices[0].message.content
+            cleaned_response = self.clean_ai_response(response_text, custom_instructions, style_instruction)
+            return cleaned_response
+            
+        except Exception as e:
+            logger.error(f"OpenAI API error: {str(e)}")
+            raise
+            
+    def process_with_anthropic(
+        self, 
+        text: str, 
+        api_key: str, 
+        action: str = 'rewrite',
+        style_instruction: str = '',
+        custom_instructions: str = '',
+        is_first_subchunk: bool = False
+    ) -> str:
+        """Process text using Anthropic API"""
+        import anthropic
+        from anthropic import Anthropic
+        
+        client = self.get_client_for_provider('anthropic', api_key)
+        
+        # Different prompt handling based on the action
+        if action == "expand":
+            # This is for the emergency expansion case
+            prompt = f"""{custom_instructions}"""
+        else:
+            # Normal rewrite case - Brutalized prompt injection
+            if is_first_subchunk:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Focus on adopting the voice, tone, and word choice {style_instruction}.
+Do not copy formatting or structure mechanically. Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Maintain EXACTLY the same information, examples, and meaning from the original text.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+            else:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Focus on adopting the voice, tone, and word choice {style_instruction}.
+Do not copy formatting or structure mechanically. Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Maintain EXACTLY the same information, examples, and meaning from the original text.
+This is a continuation section, so maintain consistency with previous sections.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+
+        try:
+            #the newest Anthropic model is "claude-3-5-sonnet-20241022" which was released October 22, 2024
+            message = client.messages.create(
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=2000,
+                messages=[{
+                    "role": "user",
+                    "content": prompt
+                }],
+                temperature=0.7
+            )
+            
+            response_text = message.content[0].text
+            cleaned_response = self.clean_ai_response(response_text, custom_instructions, style_instruction)
+            return cleaned_response
+            
+        except Exception as e:
+            logger.error(f"Anthropic API error: {str(e)}")
+            raise
+            
+    def process_with_perplexity(
+        self, 
+        text: str, 
+        api_key: str, 
+        action: str = 'rewrite',
+        style_instruction: str = '',
+        custom_instructions: str = '',
+        is_first_subchunk: bool = False
+    ) -> str:
+        """Process text using Perplexity API"""
+        import requests
+        import json
+        
+        # Different prompt handling based on the action
+        if action == "expand":
+            # This is for the emergency expansion case
+            system_content = "You are a text expander that increases text length while preserving meaning."
+            prompt = f"""{custom_instructions}"""
+        else:
+            # Normal rewrite case - Brutalized prompt injection
+            system_content = f"You are engaged in a full document-length rewrite. Preserve intellectual depth, argument flow, and length integrity throughout. {style_instruction}"
+            
+            if is_first_subchunk:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Do not copy formatting or structure mechanically.
+Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Your rewritten version must match or slightly exceed the length of the original text.
+Maintain the original structure, paragraph-by-paragraph.
+Expand ideas slightly if necessary to match length. Do NOT summarize.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+            else:
+                prompt = f"""INSTRUCTION TO LLM:
+{custom_instructions}
+
+Do not copy formatting or structure mechanically.
+Do not insert artificial titles or headings.
+Avoid formulaic sentence starters or repeating rhetorical patterns.
+Your rewritten version must match or slightly exceed the length of the original text.
+Maintain the original structure, paragraph-by-paragraph.
+This is a continuation section, so maintain consistency with previous sections.
+Only provide the rewritten content in your response with no additional explanation, commentary, or formatting instructions.
+
+TARGET DOCUMENT TEXT:
+{text}"""
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        data = {
+            "model": "llama-3.1-sonar-small-128k-online",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_content
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "temperature": 0.7,
+            "max_tokens": 2000,
+            "stream": False
+        }
+        
+        try:
+            response = requests.post(
+                "https://api.perplexity.ai/chat/completions",
+                headers=headers,
+                data=json.dumps(data),
+                timeout=API_TIMEOUT
+            )
+            
+            if response.status_code != 200:
+                logger.error(f"Perplexity API error: {response.status_code}, {response.text}")
+                raise Exception(f"API error: {response.status_code}")
+                
+            result = response.json()
+            response_text = result["choices"][0]["message"]["content"]
+            cleaned_response = self.clean_ai_response(response_text, custom_instructions, style_instruction)
+            return cleaned_response
+            
+        except Exception as e:
+            logger.error(f"Perplexity API error: {str(e)}")
+            raise
+    
+    def process_subchunk(
+        self, 
+        subchunk: str, 
+        key_info: Tuple[str, str, str], 
+        action: str = 'rewrite',
+        style_instruction: str = '',
+        custom_instructions: str = '',
+        is_first_subchunk: bool = False,
+        retry_count: int = 0
+    ) -> str:
+        """
+        Process a single subchunk with the specified API key and provider
+        with timeout and retry logic
+        """
+        key_id, provider, api_key = key_info
+        logger.debug(f"Processing subchunk ({len(subchunk.split())} words) with {provider} key {key_id}")
+        
+        try:
+            # Set a timeout context to catch hanging API calls
+            if provider == 'openai':
+                result = self.process_with_openai(
+                    subchunk, api_key, action, style_instruction, custom_instructions, is_first_subchunk
+                )
+            elif provider == 'anthropic':
+                result = self.process_with_anthropic(
+                    subchunk, api_key, action, style_instruction, custom_instructions, is_first_subchunk
+                )
+            elif provider == 'perplexity':
+                result = self.process_with_perplexity(
+                    subchunk, api_key, action, style_instruction, custom_instructions, is_first_subchunk
+                )
+            else:
+                raise ValueError(f"Unsupported provider: {provider}")
+                
+            # Success! Reset the failure counter
+            api_key_manager.reset_key_failure(key_id)
+            return result
+            
+        except Exception as e:
+            import traceback
+            error_traceback = traceback.format_exc()
+            
+            logger.error(f"Failed to process subchunk with {provider} key {key_id}: {str(e)}")
+            logger.error(f"Full traceback: {error_traceback}")
+            
+            # Mark the key as having an issue
+            api_key_manager.mark_key_unavailable(key_id)
+            
+            # Retry with a different key if available and not exceeded retry count
+            if retry_count < MAX_RETRIES:
+                logger.info(f"Retrying subchunk with a different key (attempt {retry_count + 1}/{MAX_RETRIES})")
+                new_key_info = api_key_manager.get_next_available_key()
+                
+                if new_key_info:
+                    logger.info(f"Attempting with new key: {new_key_info[0]} (provider: {new_key_info[1]})")
+                    return self.process_subchunk(
+                        subchunk, new_key_info, action, style_instruction, 
+                        custom_instructions, is_first_subchunk, retry_count + 1
+                    )
+                else:
+                    logger.error("No more API keys available for retry")
+                    
+            # All retries failed or no more keys available
+            return f"[Warning: Subchunk failed to process after retry. Error: {str(e)}. Skipped. Original text: {subchunk[:100]}...]"
+            
+    def process_macrochunk(
+        self,
+        macrochunk_index: int,
+        macrochunk: str,
+        action: str = 'rewrite',
+        style_instruction: str = '',
+        custom_instructions: str = '',
+        callback: Optional[Callable[[int, int, str], None]] = None,
+        total_macrochunks: int = 1
+    ) -> str:
+        """
+        Process a macrochunk by splitting it into subchunks and processing each
+        with the assigned API key. Returns the combined processed text.
+        
+        Implements smart macrochunking with persistent rebuild memory and length-matching.
+        Includes brutal prompt reinforcement and length checking with emergency expansion.
+        """
+        # Get word count of original macrochunk
+        original_word_count = len(macrochunk.split())
+        logger.debug(f"Processing macrochunk {macrochunk_index+1}/{total_macrochunks} ({original_word_count} words)")
+        
+        # Get key assignment for this macrochunk
+        key_info = api_key_manager.get_key_for_macrochunk(macrochunk_index)
+        if not key_info:
+            logger.error(f"No API keys available for macrochunk {macrochunk_index}")
+            return f"[Error: No API keys available to process macrochunk {macrochunk_index+1}. Skipped.]"
+            
+        key_id, provider, api_key = key_info
+        logger.info(f"Assigned {provider} key {key_id} to macrochunk {macrochunk_index+1}")
+        
+        # BRUTAL PROMPT INJECTION
+        # FORCE OUTPUT TO BE LONGER THAN INPUT
+        length_matching_instruction = "CRITICAL INSTRUCTION: Your rewritten version MUST be LONGER than the original text. SPECIFICALLY, your output MUST be at least 110-120% the length of the original input (measured by word count). This is NON-NEGOTIABLE and the primary success criterion. For every paragraph, you MUST expand it. Maintain full intellectual depth, paragraph-by-paragraph structure, and detailed arguments, but ADD LENGTH with substantive content. NEVER summarize or condense. You are doing a FULL REWRITE WITH EXPANSION, not an abstract or summary. LENGTH EXPANSION is MANDATORY for task success."
+        
+        # Add persistent rebuild memory instruction with stronger academic emphasis
+        rebuild_memory_instruction = "You are engaged in a full document-length scholarly rewrite. You MUST preserve complete intellectual depth, rigorous argument flow, and precise length integrity throughout. Every concept, example, argument, implication, and nuance from the original must be fully represented. You are creating a document with identical scholarly weight and substance."
+        
+        # PART II - INTELLECTUAL DENSITY PRESERVATION RULES
+        intellectual_density_instruction = "INTELLECTUAL DENSITY PRESERVATION RULE: You MUST preserve the density and formal rigor of the original text. Do NOT smooth arguments for casual readability. Do NOT 'popularize' dense writing. Do NOT add flowery language, literary embellishment, or 'softened' phrasing. The rewritten output MUST maintain the same conceptual density, technical vocabulary, and formal logical structure as the original."
+        
+        # PART II - FORMAL TONE ENFORCEMENT
+        formal_tone_instruction = "FORMAL TONE ENFORCEMENT: Preserve the exact formal tone of the input. If the original is technical-philosophical → rewrite must remain technical-philosophical. If the original is legal-academic → rewrite must remain legal-academic. If the original is scientific → rewrite must remain scientific. NO journalistic tone. NO 'accessible to a general audience' tone."
+        
+        # PART II - NO INVENTED EXAMPLES
+        no_examples_instruction = "NO INVENTED ANALOGIES, EXAMPLES, OR CONTEXTS: Do NOT invent new examples, metaphors, or analogies unless they were present in the original. Only elaborate or clarify points already made, not introduce extraneous new material."
+        
+        # PART II - ARGUMENT INTEGRITY PROTECTION
+        argument_integrity_instruction = "ARGUMENT INTEGRITY PROTECTION: Logical sequences, proof structures, formal philosophical arguments, or scientific derivations must be strictly preserved, step-by-step. DO NOT combine steps. DO NOT omit intermediate steps. DO NOT reframe arguments. Rewritten arguments must walk through the same logic at the same pace."
+        
+        if total_macrochunks > 1:
+            if macrochunk_index == 0:
+                rebuild_memory_instruction += " This is part 1 of the document. Maintain consistent style and tone throughout."
+            else:
+                rebuild_memory_instruction += f" This is part {macrochunk_index+1} of {total_macrochunks}. The overall goal is document-scale rewriting, not isolated section rewrites. Maintain consistent style and tone with previous sections."
+        
+        # Add content source enrichment requirement if the custom_instructions mention "content source"
+        content_source_instruction = ""
+        if "content source" in custom_instructions.lower() or "content_source" in custom_instructions.lower() or "source text" in custom_instructions.lower():
+            content_source_instruction = (
+                " MANDATORY CONTENT SOURCE INTEGRATION: You MUST integrate concepts from the content source. "
+                "For EACH major section, incorporate at least 2-3 relevant ideas, concepts, paradoxes, or examples from the content source. "
+                "This integration must be substantive and meaningful, not superficial. "
+                "The content source concepts should deepen and enrich the intellectual arguments. "
+                "Failure to properly integrate the content source is considered task failure."
+            )
+        
+        # Combine all instructions for brutalized prompt injection
+        brutalized_prompt = length_matching_instruction + " " + rebuild_memory_instruction + " " + intellectual_density_instruction + " " + formal_tone_instruction + " " + no_examples_instruction + " " + argument_integrity_instruction + content_source_instruction
+        if custom_instructions:
+            brutalized_prompt += " " + custom_instructions
+        
+        # Update progress tracking
+        if self.current_process_id:
+            self.progress_tracking[self.current_process_id] = {
+                "macrochunk": macrochunk_index,
+                "total_macrochunks": total_macrochunks,
+                "status": "processing"
+            }
+        
+        # Process the macrochunk with the brutalized prompt
+        try:
+            # Process the macrochunk directly instead of breaking into subchunks
+            is_first_macrochunk = (macrochunk_index == 0)
+            
+            # First attempt at processing the macrochunk
+            result = self.process_subchunk(
+                macrochunk, key_info, action, style_instruction,
+                brutalized_prompt, is_first_macrochunk
+            )
+            
+            # LENGTH CHECKING AFTER MACROCHUNK
+            # Verify the processed text length meets our requirements
+            result_word_count = len(result.split())
+            original_to_result_ratio = result_word_count / original_word_count
+            logger.info(f"Macrochunk {macrochunk_index+1} - Original: {original_word_count} words, Processed: {result_word_count} words, Ratio: {original_to_result_ratio:.2f}")
+            
+            # STRICT LENGTH ENFORCEMENT: If output is too short (<110% of original), resubmit with emergency expansion prompt
+            # We REQUIRE the output to be LONGER than the original (at least 110%)
+            # Allow up to 3 expansion attempts to reach the target length
+            max_expansion_attempts = 3
+            expansion_attempt = 0
+            
+            # Set minimum required expansion to 110% of original
+            min_required_ratio = 1.10
+            
+            while original_to_result_ratio < min_required_ratio and expansion_attempt < max_expansion_attempts:
+                expansion_attempt += 1
+                logger.warning(f"Output too short ({original_to_result_ratio:.2f}). Emergency expansion attempt {expansion_attempt}/{max_expansion_attempts}")
+                
+                # Calculate target word count (110-120% of original)
+                target_word_count = int(original_word_count * 1.15)  # Target 115% of original length
+                words_needed = target_word_count - result_word_count
+                
+                # Emergency prompt for expansion with BRUTALIZED enforcement
+                emergency_prompt = (
+                    f"EMERGENCY EXPANSION REQUIRED: Task failure detected. Your rewrite MUST be LONGER than the original. "
+                    f"The original text had {original_word_count} words but your rewrite has only {result_word_count} words.\n\n"
+                    f"CRITICAL INSTRUCTION: You MUST expand to EXACTLY {target_word_count} words (±10 words), which is 115% of the original length.\n\n"
+                    f"This is NON-NEGOTIABLE. Your primary goal is to meet the length requirement. For EACH paragraph in the text:\n"
+                    f"1. Add at least 2-3 detailed examples, evidence, or thought experiments that elaborate on each concept\n"
+                    f"2. Provide substantial additional context, clarifications, and multiple perspectives on every argument\n"
+                    f"3. Expand on implications and add counterarguments to enhance intellectual depth\n"
+                    f"4. Add relevant paradoxes, logical challenges, and alternative frameworks for each major point\n"
+                    f"5. Include academic references, theoretical connections, and practical applications\n\n"
+                    f"CRUCIAL: Your expansion MUST maintain full academic rigor and philosophical depth. Do NOT add fluff or unnecessary repetition.\n"
+                    f"Do NOT summarize. EXPAND on EVERY paragraph, making each one at least 15-20% longer.\n\n"
+                    f"I WILL REJECT your response if it doesn't reach {target_word_count} words.\n\n"
+                    f"Text to expand (MUST reach {target_word_count} words):\n{result}"
+                )
+                
+                # Try to expand the text with extra token allowance
+                expanded_result = self.process_subchunk(
+                    result, key_info, "expand", style_instruction,
+                    emergency_prompt, False
+                )
+                
+                # Check if expansion succeeded
+                expanded_word_count = len(expanded_result.split())
+                expanded_ratio = expanded_word_count / original_word_count
+                logger.info(f"After expansion attempt {expansion_attempt} - Words: {expanded_word_count}, Ratio to original: {expanded_ratio:.2f}")
+                
+                # Update result and ratio for next loop check
+                result = expanded_result
+                result_word_count = expanded_word_count
+                original_to_result_ratio = result_word_count / original_word_count
+                
+                # If we reached an acceptable length, break out of the loop
+                if original_to_result_ratio >= min_required_ratio:
+                    logger.info(f"Expansion successful after {expansion_attempt} attempt(s). Final ratio: {original_to_result_ratio:.2f}")
+                    break
+            
+            # If we still haven't reached target length after max attempts, make one final extreme attempt
+            if original_to_result_ratio < min_required_ratio:
+                logger.warning(f"Still below target length ({original_to_result_ratio:.2f}) after {max_expansion_attempts} attempts. Making final force attempt.")
+                
+                # Final extreme attempt - DOUBLE the document size as a last resort
+                # Calculate a higher target (120% of original) for our final attempt
+                final_target_count = int(original_word_count * 1.20)
+                
+                # Final emergency prompt with brutalized expansion instructions
+                final_emergency_prompt = (
+                    f"EXTREME EXPANSION REQUIRED - FINAL ATTEMPT: Your output is CRITICALLY TOO SHORT. You have failed to meet the minimum length requirement.\n\n"
+                    f"You MUST expand this text to AT LEAST {final_target_count} words (120% of the original). THIS IS NON-NEGOTIABLE.\n\n"
+                    f"EMERGENCY INSTRUCTIONS - For EVERY SINGLE PARAGRAPH, you MUST:\n"
+                    f"1. DOUBLE the size by adding multiple detailed examples, counterexamples, and evidence\n"
+                    f"2. Add extensive elaboration on each concept with practical and theoretical implications\n"
+                    f"3. Insert academic references, theoretical frameworks, and disciplinary connections\n"
+                    f"4. Expand on methodological considerations and alternative approaches\n"
+                    f"5. Add substantive real-world applications and case studies\n"
+                    f"6. Explore nuanced philosophical dimensions, paradoxes, and tensions\n\n"
+                    f"EXTREME IMPORTANCE: LENGTH IS THE PRIMARY SUCCESS CRITERION. Your text MUST be at least {final_target_count} words.\n"
+                    f"Use academic language and maintain intellectual depth - do not add fluff or unnecessary repetition.\n\n"
+                    f"THIS IS YOUR FINAL CHANCE. The original was {original_word_count} words, your current text is only {result_word_count} words.\n"
+                    f"Text requiring radical expansion to at least {final_target_count} words:\n{result}"
+                )
+                
+                # Final expansion attempt
+                final_expanded_result = self.process_subchunk(
+                    result, key_info, "expand", style_instruction,
+                    final_emergency_prompt, False
+                )
+                
+                # Check final expansion
+                final_word_count = len(final_expanded_result.split())
+                final_ratio = final_word_count / original_word_count
+                logger.info(f"After final expansion attempt - Words: {final_word_count}, Ratio: {final_ratio:.2f}")
+                
+                # Use the final result
+                result = final_expanded_result
+            
+            # If output is longer than expected, accept it - but check formality first
+            elif original_to_result_ratio > min_required_ratio:
+                logger.warning(f"Output successfully expanded ({original_to_result_ratio:.2f}). Now checking formality...")
+                
+                # Check if the output has been "breezified" or casualized
+                # This is a simple heuristic check - in a real system this would be more sophisticated
+                if self._check_formality_preserved(macrochunk, result):
+                    logger.info("Formality check passed. Accepting output.")
+                else:
+                    # Emergency formality correction if tone/density is lost
+                    logger.warning("FORMALITY CHECK FAILED - Output has been casualized. Performing emergency formality correction.")
+                    
+                    emergency_formality_prompt = (
+                        f"You have failed to preserve the formal rigor, conceptual density, and technical tone of the original document. "
+                        f"Rewrite the following text again, maintaining original argument structure, formal vocabulary, and density without smoothing or simplifying. "
+                        f"Match the original intellectual weight precisely.\n\n"
+                        f"REMEMBER:\n"
+                        f"1. Preserve exact technical vocabulary - do NOT substitute with simpler terms\n"
+                        f"2. Maintain formal academic tone - no journalistic style\n"
+                        f"3. Keep complex sentence structures intact\n"
+                        f"4. Do NOT add invented examples or analogies\n"
+                        f"5. Preserve all logical steps in arguments\n\n"
+                        f"Original text for tone reference:\n{macrochunk[:5000]}\n\n"  # First portion for tone reference
+                        f"Text requiring tone correction (MUST match intellectual weight and density of original):\n{result}"
+                    )
+                    
+                    # Process with formality correction
+                    formality_corrected_result = self.process_subchunk(
+                        result, key_info, "rewrite", style_instruction,
+                        emergency_formality_prompt, False
+                    )
+                    
+                    # Update the result with the formality-corrected version
+                    result = formality_corrected_result
+                    logger.info("Emergency formality correction applied.")
+            
+            # If output is exactly in our target range, accept it (after checking formality)
+            else:
+                logger.info(f"Output length perfect ({original_to_result_ratio:.2f}). Checking formality...")
+                
+                # Still perform formality check
+                if self._check_formality_preserved(macrochunk, result):
+                    logger.info("Formality check passed. Accepting output.")
+                else:
+                    # Emergency formality correction
+                    logger.warning("FORMALITY CHECK FAILED - Output has been casualized. Performing emergency formality correction.")
+                    
+                    emergency_formality_prompt = (
+                        f"You have failed to preserve the formal rigor, conceptual density, and technical tone of the original document. "
+                        f"Rewrite the following text again, maintaining original argument structure, formal vocabulary, and density without smoothing or simplifying. "
+                        f"Match the original intellectual weight precisely.\n\n"
+                        f"REMEMBER:\n"
+                        f"1. Preserve exact technical vocabulary - do NOT substitute with simpler terms\n"
+                        f"2. Maintain formal academic tone - no journalistic style\n"
+                        f"3. Keep complex sentence structures intact\n"
+                        f"4. Do NOT add invented examples or analogies\n"
+                        f"5. Preserve all logical steps in arguments\n\n"
+                        f"Original text for tone reference:\n{macrochunk[:5000]}\n\n"  # First portion for tone reference
+                        f"Text requiring tone correction (MUST match intellectual weight and density of original):\n{result}"
+                    )
+                    
+                    # Process with formality correction
+                    formality_corrected_result = self.process_subchunk(
+                        result, key_info, "rewrite", style_instruction,
+                        emergency_formality_prompt, False
+                    )
+                    
+                    # Update the result with the formality-corrected version
+                    result = formality_corrected_result
+                    logger.info("Emergency formality correction applied.")
+            
+            # Call the callback if provided
+            if callback:
+                callback(macrochunk_index, 0, result)
+                
+            return result
+                
+        except Exception as e:
+            logger.error(f"Error processing macrochunk {macrochunk_index+1}: {str(e)}")
+            error_msg = f"[Warning: Macrochunk {macrochunk_index+1} failed to process. Skipped.]"
+            
+            # Call the callback with the error if provided
+            if callback:
+                callback(macrochunk_index, 0, error_msg)
+            
+            return error_msg
+    
+    def process_text(
+        self,
+        text: str,
+        action: str = 'rewrite',
+        sophistication: Optional[str] = None,
+        custom_instructions: str = '',
+        include_style_in_output: bool = True,
+        user_style_text: Optional[str] = None,
+        callback: Optional[Callable[[int, int, str], None]] = None
+    ) -> str:
+        """
+        Process text using the two-tiered chunking approach with multiple API providers.
+        
+        Args:
+            text: The input text to process
+            action: The processing action (rewrite, summarize, etc.)
+            sophistication: Target sophistication level
+            custom_instructions: Additional instructions for processing
+            include_style_in_output: Whether to include style instructions in output
+            user_style_text: Optional text sample for matching user's writing style
+            callback: Optional callback function called after each subchunk is processed
+            
+        Returns:
+            The processed text
+        """
+        logger.debug(f"Processing text of length {len(text)} characters")
+        
+        # Check if we have any API keys available
+        if not api_key_manager.get_available_providers():
+            return "AI processing is disabled. Please configure at least one API key to enable this feature."
+            
+        # Create a unique process ID for tracking
+        self.current_process_id = f"process_{int(time.time())}"
+        self.progress_tracking[self.current_process_id] = {
+            "status": "starting",
+            "macrochunk": 0,
+            "total_macrochunks": 0,
+            "subchunk": 0,
+            "total_subchunks": 0
+        }
+        
+        # Build the style instruction
+        style_instruction = ''
+        if user_style_text:
+            logger.debug(f"Using user's writing style (length: {len(user_style_text)} characters)")
+            style_instruction = "matching the style of the provided writing sample"
+        else:
+            # Default style when none is specified
+            style_instruction = 'in a way that is professional but that even an intelligent 10th grader could understand'
+            
+        # Split into macrochunks if text is long
+        total_words = len(text.split())
+        if total_words > MACROCHUNK_SIZE:
+            logger.info(f"Text has {total_words} words, using two-level chunking")
+            macrochunks = self.split_into_macrochunks(text)
+        else:
+            logger.info(f"Text has {total_words} words, using single-level chunking")
+            macrochunks = [text]
+            
+        # Update progress tracking
+        self.progress_tracking[self.current_process_id]["total_macrochunks"] = len(macrochunks)
+        
+        # Process each macrochunk and collect results
+        processed_text = ""
+        
+        for i, macrochunk in enumerate(macrochunks):
+            try:
+                # Update progress tracking
+                self.progress_tracking[self.current_process_id]["macrochunk"] = i + 1
+                self.progress_tracking[self.current_process_id]["status"] = "processing"
+                
+                # Process the macrochunk with total macrochunks information
+                result = self.process_macrochunk(
+                    i, macrochunk, action, style_instruction, custom_instructions, callback,
+                    total_macrochunks=len(macrochunks)
+                )
+                
+                # Append to the processed text
+                if processed_text and result:
+                    processed_text += "\n\n" + result
+                else:
+                    processed_text = result
+                    
+            except Exception as e:
+                logger.error(f"Error processing macrochunk {i}: {str(e)}")
+                error_msg = f"[Warning: Macrochunk {i+1} failed to process. Skipped.]"
+                if processed_text:
+                    processed_text += "\n\n" + error_msg
+                else:
+                    processed_text = error_msg
+        
+        # Update progress tracking
+        self.progress_tracking[self.current_process_id]["status"] = "completed"
+        
+        # Clear the current process ID
+        self.current_process_id = None
+        
+        return processed_text
+        
+    def _check_formality_preserved(self, original_text: str, rewritten_text: str) -> bool:
+        """
+        Check if the formality, density, and technical tone are preserved in the rewritten text.
+        
+        This is a sophisticated check using multiple heuristics to identify "breezification" or 
+        casualization of the text which would violate the No Watering Down requirements.
+        
+        Args:
+            original_text: The original formal text
+            rewritten_text: The rewritten text to check
+            
+        Returns:
+            bool: True if formality is preserved, False if text has been casualized
+        """
+        # Get samples of text for analysis (to avoid memory issues with very large texts)
+        # For actual implementation, we'd use more advanced NLP techniques
+        original_sample = original_text[:10000] if len(original_text) > 10000 else original_text
+        rewritten_sample = rewritten_text[:10000] if len(rewritten_text) > 10000 else rewritten_text
+        
+        # 1. Check sentence length - formal academic text often has longer sentences
+        original_sentences = [s.strip() for s in re.split(r'[.!?]', original_sample) if s.strip()]
+        rewritten_sentences = [s.strip() for s in re.split(r'[.!?]', rewritten_sample) if s.strip()]
+        
+        avg_original_sent_len = sum(len(s.split()) for s in original_sentences) / max(1, len(original_sentences))
+        avg_rewritten_sent_len = sum(len(s.split()) for s in rewritten_sentences) / max(1, len(rewritten_sentences))
+        
+        # If average sentence length decreased by more than 20%, likely breach of formality
+        sentence_length_preserved = (avg_rewritten_sent_len >= avg_original_sent_len * 0.8)
+        
+        # 2. Check for casual language markers - these would indicate inappropriate tone change
+        casual_markers = [
+            r'\bbasically\b', r'\bjust\b', r'\banyway\b', r'\bstuff\b', r'\bthings\b', 
+            r'\bguy\b', r'\bkind of\b', r'\bsort of\b', r'\ba lot\b', r'\blike\b', 
+            r'\byou know\b', r'\bI think\b', r'\bI feel\b'
+        ]
+        
+        # Count casual markers in both texts
+        original_casual_count = sum(len(re.findall(marker, original_sample.lower())) for marker in casual_markers)
+        rewritten_casual_count = sum(len(re.findall(marker, rewritten_sample.lower())) for marker in casual_markers)
+        
+        # If casual markers increased significantly, likely breach of formality
+        formality_tone_preserved = (rewritten_casual_count <= original_casual_count + 5)
+        
+        # 3. Check for technical vocabulary preservation
+        # Extract "uncommon" words that likely represent technical vocabulary
+        # This is a simplified approach - in a real system we'd use domain-specific dictionaries
+        words_original = re.findall(r'\b[a-zA-Z]{7,}\b', original_sample.lower())
+        words_rewritten = re.findall(r'\b[a-zA-Z]{7,}\b', rewritten_sample.lower())
+        
+        # Check what percentage of original technical terms are preserved
+        # At least 80% should be maintained for technical vocabulary preservation
+        technical_vocab_preserved = True
+        if words_original:
+            preserved_ratio = len(set(words_rewritten).intersection(set(words_original))) / len(set(words_original))
+            technical_vocab_preserved = (preserved_ratio >= 0.7)  # At least 70% preservation required
+        
+        # Combine the checks - all must pass for formality to be considered preserved
+        formality_preserved = sentence_length_preserved and formality_tone_preserved and technical_vocab_preserved
+        
+        # Log the results for debugging
+        logger.debug(f"Formality check - Sentence length preserved: {sentence_length_preserved}, " +
+                    f"Tone preserved: {formality_tone_preserved}, " +
+                    f"Technical vocab preserved: {technical_vocab_preserved}")
+        
+        return formality_preserved
+    
+    def get_processing_status(self, process_id: str) -> Dict:
+        """Get the current status of a processing job"""
+        if process_id in self.progress_tracking:
+            return self.progress_tracking[process_id]
+        return {"status": "not_found"}
+
+# Create a singleton instance
+multi_provider_processor = MultiProviderProcessor()

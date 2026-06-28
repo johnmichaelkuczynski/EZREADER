@@ -1,0 +1,27 @@
+Translation Chunking Protocol: Reliable Handling of Long Documents
+
+We are implementing a system for translating very large documents—up to 500,000 words—without error or data loss. 
+This requires a methodical approach that divides the input into manageable sections and ensures the integrity of output at every stage.
+
+This protocol includes:
+
+1. Chunking: Break down the input into ~500-word units.
+2. Translation: Process each chunk individually.
+3. Retry Logic: If a chunk translation fails, retry until successful.
+4. Reassembly: Reconstruct the full document in correct order after all translations are complete.
+5. Validation: Check that the output length is consistent with the original.
+
+Additional Requirements:
+
+- If a translation failure occurs (e.g., due to invalid responses), retry the chunk until it succeeds.
+- If the output is truncated, use fallback logic to identify and recover missing segments.
+- Return an error message only if all retry attempts fail for a given chunk.
+- Log errors clearly (e.g., “API key missing” or “server unavailable”), and surface these issues during development.
+
+Review Checklist:
+
+- [ ] Breaks long inputs into distinct translation units.
+- [ ] Translates each unit in sequence.
+- [ ] Retries failed units using built-in fallback.
+- [ ] Reassembles units accurately into full output.
+- [ ] Provides developer-usable error messages when necessary.

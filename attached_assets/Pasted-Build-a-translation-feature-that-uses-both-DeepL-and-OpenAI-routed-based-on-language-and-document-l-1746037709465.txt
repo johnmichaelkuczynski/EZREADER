@@ -1,0 +1,75 @@
+Build a translation feature that uses both DeepL and OpenAI, routed based on language and document length.
+
+🔹 1. TRANSLATION MODE OPTIONS
+Let the user:
+
+Select a target language (dropdown)
+
+Select a document length mode:
+
+Short Translation (≤ 2,000 words)
+
+Full-Length Translation (up to 500,000 words)
+
+Based on these, the app chooses the translation engine.
+
+🔹 2. ENGINE ROUTING LOGIC
+
+Language	Short (≤2,000 words)	Long (>2,000 words)
+DeepL-supported (e.g., FR, ES, DE, IT)	✅ DeepL (preferred) or OpenAI (fallback)	✅ DeepL only
+Not supported by DeepL (e.g., HE, HI, YI, etc.)	✅ OpenAI	❌ Show error or warning: “Full-length translation not supported in this language.”
+✅ Create a lookup table inside the app:
+
+js
+Copy
+Edit
+const deepLSupported = ['fr', 'es', 'de', 'it', 'nl', 'pt', 'pl', 'ru', 'ja', 'zh', 'tr', 'ro', 'bg', 'cs', 'hu'];
+If user selects a language not in deepLSupported:
+
+Only OpenAI is available
+
+Block “full-length” mode and explain why
+
+🔹 3. API HANDLING
+🔸 DeepL Mode
+Chunk the document if needed (~5,000 characters per chunk)
+
+Translate each chunk individually
+
+Recombine translated output
+
+Use correct target language code for DeepL ('ES', 'DE', etc.)
+
+🔸 OpenAI Mode
+Use GPT-4 or GPT-3.5 with this prompt:
+
+“Translate the following academic text to [LANGUAGE]. Preserve tone, formal structure, paragraph breaks. Do not summarize or simplify.”
+
+Chunk text by ~3,000 tokens per request
+
+Recombine output cleanly
+
+🔹 4. WARNINGS AND UI MESSAGES
+If user selects a long document and a language not supported by DeepL:
+
+Show:
+
+“Sorry, full-length translation in this language is not supported. Please use short mode or select a different language.”
+
+If translation fails mid-process (timeout or token issue):
+
+Show:
+
+“Translation engine failed to complete. Try reducing the length or selecting a supported language.”
+
+🔹 5. FUTURE-PROOFING (OPTIONAL)
+Store which engine was used in metadata ("engine": "deepl" or "openai")
+
+Label the output clearly:
+
+“Translated using [DeepL/OpenAI] – accuracy may vary based on language support.”
+
+📌 DELIVERABLE TITLE:
+"Multi-Engine Translation System: DeepL for Long Translations, OpenAI for Broad Language Support with Routing, Length Handling, and Fallbacks"
+
+✅ This gives your users maximum coverage and control, while ensuring realism and safety for long jobs.

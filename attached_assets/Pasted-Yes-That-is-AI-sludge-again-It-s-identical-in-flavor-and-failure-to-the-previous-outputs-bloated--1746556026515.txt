@@ -1,0 +1,74 @@
+Yes. That is AI sludge again. It’s identical in flavor and failure to the previous outputs: bloated, inflated, dumbed-down, verbose, and structurally indistinguishable from GPT’s default “educational essay” voice.
+
+🚨 Bottom Line:
+Your app is still not doing a true style transfer.
+
+Even with the emergency override, even with direct, correct prompting, the LLM is ignoring the style sample and defaulting to its own internal template for “what a philosophy article should sound like.”
+
+🧠 Why This Is Still Happening
+This is not Replit’s fault anymore. It’s the model—most likely GPT-4-turbo or Claude.
+
+These models are biased to ignore user-provided style unless:
+
+The style sample is long, loud, and obvious
+
+The system prompt is repeated with control overrides
+
+You use temperature/penalty tweaking and prefix injection
+
+In short: you’re passing the right info, but the model is refusing to obey unless it’s brutally, explicitly overruled.
+
+✅ HARD FIX (THIS WILL WORK)
+You now need to add forced imitation priming inside the prompt.
+
+Here’s how:
+
+🔧 SYSTEM MESSAGE (revised)
+vbnet
+Copy
+Edit
+You are a stylistic mimic engine.
+
+Your task is to **imitate** the user's writing style, exactly and exclusively. Your only goal is to rewrite a target text in that style.
+
+Important:
+- DO NOT use your own defaults.
+- DO NOT summarize or simplify.
+- DO NOT preserve the voice of the target.
+- DO NOT generalize or pad.
+
+Only use the following writing sample as your style model. You will IMITATE it exactly.
+
+After seeing it, you will be given another passage to rewrite in that style. You may restructure it or change its presentation—but ONLY if that helps you stay closer to the user’s style.
+
+You must sound indistinguishable from the writing sample. Any output that deviates from this tone is a failure.
+
+Now study this writing sample:
+🧱 USER MESSAGE
+vbnet
+Copy
+Edit
+---BEGIN STYLE SAMPLE---
+[paste user-uploaded text, raw]
+---END STYLE SAMPLE---
+
+Now rewrite the following passage in the above style:
+
+---BEGIN TARGET TEXT---
+[paste target text]
+---END TARGET TEXT---
+
+Rewrite it completely in the style of the sample above.
+Change sentence structure, vocabulary, density, tone, rhythm, and presentation. Prioritize fidelity to style over fidelity to content. If necessary, radically rework the form to stay true to the style.
+🧪 Want to see it actually work?
+If you send me:
+
+Your exact prompt
+
+The style sample
+
+The target text
+
+I'll return a correctly rewritten output that proves this method works.
+
+Want that test run?

@@ -1,0 +1,131 @@
+### Problem 1: Evaluate the limit
+\[ \lim_{x \to 0} \frac{\sin(5x)}{x} \]
+
+**Solution:**
+
+Using the standard limit \(\lim_{u \to 0} \frac{\sin(u)}{u} = 1\), we can rewrite the expression:
+
+\[
+\lim_{x \to 0} \frac{\sin(5x)}{x} = \lim_{x \to 0} \frac{\sin(5x)}{5x} \cdot 5 = 5 \cdot \lim_{x \to 0} \frac{\sin(5x)}{5x} = 5 \cdot 1 = 5
+\]
+
+**Final Answer:** 5
+
+---
+
+### Problem 2: Find all solutions in the complex plane to the equation
+\[ z^5 = 32i \]
+
+**Solution:**
+
+First, express \(32i\) in polar form. The modulus is \(|32i| = 32\), and the argument is \(\frac{\pi}{2}\) (since \(32i\) lies on the positive imaginary axis).
+
+Thus, \(32i = 32(\cos \frac{\pi}{2} + i \sin \frac{\pi}{2})\).
+
+To find the fifth roots, use the formula for the roots of a complex number:
+\[ z_k = \sqrt[5]{32} \left( \cos \left( \frac{\pi}{2} + 2k\pi \right) + i \sin \left( \frac{\pi}{2} + 2k\pi \right) \right) \]
+where \(k = 0, 1, 2, 3, 4\).
+
+Calculate \(\sqrt[5]{32} = 2\). The roots are:
+\[ z_k = 2 \left( \cos \left( \frac{\pi}{10} + \frac{2k\pi}{5} \right) + i \sin \left( \frac{\pi}{10} + \frac{2k\pi}{5} \right) \right) \]
+
+For \(k = 0, 1, 2, 3, 4\), the solutions are:
+1. \(z_0 = 2 \left( \cos \frac{\pi}{10} + i \sin \frac{\pi}{10} \right)\)
+2. \(z_1 = 2 \left( \cos \frac{5\pi}{10} + i \sin \frac{5\pi}{10} \right)\)
+3. \(z_2 = 2 \left( \cos \frac{9\pi}{10} + i \sin \frac{9\pi}{10} \right)\)
+4. \(z_3 = 2 \left( \cos \frac{13\pi}{10} + i \sin \frac{13\pi}{10} \right)\)
+5. \(z_4 = 2 \left( \cos \frac{17\pi}{10} + i \sin \frac{17\pi}{10} \right)\)
+
+**Final Answer:** \(z_k = 2 \left( \cos \left( \frac{\pi}{10} + \frac{2k\pi}{5} \right) + i \sin \left( \frac{\pi}{10} + \frac{2k\pi}{5} \right) \right)\) for \(k = 0, 1, 2, 3, 4\)
+
+---
+
+### Problem 3: Compute the line integral of the vector field \( \mathbf{F}(x, y) = (x^2 + y)\mathbf{i} + (x - y^2)\mathbf{j} \) along the curve \( C \), which is the unit circle oriented counterclockwise.
+
+**Solution:**
+
+The unit circle can be parameterized by \( \mathbf{r}(t) = (\cos t, \sin t) \) for \( t \in [0, 2\pi] \).
+
+The line integral is given by:
+\[ \oint_C \mathbf{F} \cdot d\mathbf{r} = \int_0^{2\pi} \mathbf{F}(\cos t, \sin t) \cdot \mathbf{r}'(t) \, dt \]
+
+Calculate \(\mathbf{r}'(t) = (-\sin t, \cos t)\).
+
+Substitute into \(\mathbf{F}\):
+\[ \mathbf{F}(\cos t, \sin t) = (\cos^2 t + \sin t, \cos t - \sin^2 t) \]
+
+Calculate the dot product:
+\[ \mathbf{F}(\cos t, \sin t) \cdot \mathbf{r}'(t) = (\cos^2 t + \sin t)(-\sin t) + (\cos t - \sin^2 t)\cos t \]
+
+Simplify:
+\[ = -\cos^2 t \sin t - \sin^2 t + \cos^2 t \cos t - \sin^2 t \cos t \]
+
+Combine terms:
+\[ = -\sin t(\cos^2 t + \sin t) + \cos t(\cos^2 t - \sin^2 t) \]
+
+Using \(\cos^2 t - \sin^2 t = \cos 2t\), the integral simplifies to:
+\[ \int_0^{2\pi} -\sin t \cos^2 t - \sin^3 t + \cos t \cos 2t \, dt \]
+
+This integral evaluates to zero due to symmetry and periodicity over the interval \([0, 2\pi]\).
+
+**Final Answer:** 0
+
+---
+
+### Problem 4: Determine whether the series \(\sum_{n=1}^{\infty} \frac{3n+1}{2n^2+n}\) converges or diverges.
+
+**Solution:**
+
+Consider the series \(\sum_{n=1}^{\infty} \frac{3n+1}{2n^2+n}\).
+
+As \(n \to \infty\), the dominant terms in the numerator and denominator are \(3n\) and \(2n^2\), respectively. Thus, the series behaves like \(\frac{3n}{2n^2} = \frac{3}{2n}\).
+
+The series \(\sum_{n=1}^{\infty} \frac{1}{n}\) is the harmonic series, which diverges.
+
+Using the Limit Comparison Test with \(b_n = \frac{1}{n}\):
+\[ \lim_{n \to \infty} \frac{a_n}{b_n} = \lim_{n \to \infty} \frac{\frac{3n+1}{2n^2+n}}{\frac{1}{n}} = \lim_{n \to \infty} \frac{3n^2 + n}{2n^2 + n} = \frac{3}{2} \]
+
+Since \(\frac{3}{2}\) is a positive finite number, the series \(\sum_{n=1}^{\infty} \frac{3n+1}{2n^2+n}\) diverges by the Limit Comparison Test.
+
+**Final Answer:** Diverges
+
+---
+
+### Problem 5: Use Newton's Method with an initial approximation of \(x_0 = 1\) to find a root of \(f(x) = x^3 - 2x + 1\). Perform three iterations.
+
+**Solution:**
+
+Newton's Method formula:
+\[ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \]
+
+First, find \(f'(x) = 3x^2 - 2\).
+
+**Iteration 1:**
+- \(x_0 = 1\)
+- \(f(x_0) = 1^3 - 2 \cdot 1 + 1 = 0\)
+- \(f'(x_0) = 3 \cdot 1^2 - 2 = 1\)
+
+\[ x_1 = 1 - \frac{0}{1} = 1 \]
+
+**Iteration 2:**
+- \(x_1 = 1\)
+- \(f(x_1) = 0\)
+- \(f'(x_1) = 1\)
+
+\[ x_2 = 1 - \frac{0}{1} = 1 \]
+
+**Iteration 3:**
+- \(x_2 = 1\)
+- \(f(x_2) = 0\)
+- \(f'(x_2) = 1\)
+
+\[ x_3 = 1 - \frac{0}{1} = 1 \]
+
+Since \(f(x_0) = 0\), \(x_0 = 1\) is already a root, and further iterations do not change the result.
+
+**Final Answer:** The root is \(x = 1\)
+
+---
+
+### Problem 6: Find the general solution to the differential equation
+\[ y'' + 4y' + 4y = e^{-2

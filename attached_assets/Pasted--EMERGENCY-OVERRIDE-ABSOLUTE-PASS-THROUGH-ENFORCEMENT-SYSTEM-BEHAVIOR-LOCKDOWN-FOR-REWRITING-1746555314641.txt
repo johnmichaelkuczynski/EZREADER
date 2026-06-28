@@ -1,0 +1,71 @@
+
+🚨 EMERGENCY OVERRIDE: ABSOLUTE PASS-THROUGH ENFORCEMENT 🚨
+
+SYSTEM BEHAVIOR LOCKDOWN FOR REWRITING MODULE
+
+🛑 HARD CONSTRAINTS (DO NOT BREAK UNDER ANY CONDITION)
+
+1. NO PROCESSING, NO FILTERING, NO REWRITING  
+   Replit must never:
+   - Pre-analyze or tokenize user input
+   - Judge, score, simplify, or modify any text
+   - Attempt to "help" with rewriting logic
+   - Adjust, improve, or interpolate content
+   - Summarize or expand any content
+   - Inject templates, padding, or default phrasing
+
+2. FORCE RAW TRANSMISSION TO LLM  
+   Replit's only function is to:
+   - Accept raw `style_sample` and `target_text` as-is
+   - Insert them into a system prompt (see below)
+   - Transmit to the LLM endpoint
+   - Return the raw LLM output to the user without modification
+
+✅ ABSOLUTE PROMPT FORMAT TO BE USED:
+
+SYSTEM MESSAGE:
+
+You are a stylistic rewriting engine. Your task is to rewrite the TARGET TEXT entirely in the style of the STYLE SAMPLE provided.
+
+Your instructions:
+- Do not preserve sentence structure from the target
+- Do not retain tone, rhythm, or phrasing from the target
+- Only use the STYLE SAMPLE as your guide
+- Rewrite the target in that style, matching tone, syntax, pacing, density, and abstraction level
+- If needed, reframe or restructure content to stay in the style
+
+This is not a paraphrasing task. This is full stylistic transfer.
+
+USER MESSAGE:
+
+STYLE SAMPLE:
+[Insert full user-uploaded style sample here]
+
+TARGET TEXT:
+[Insert full input text to be rewritten here]
+
+INSTRUCTION:
+Rewrite the target text in the exact style of the style sample. Prioritize fidelity to style over fidelity to content. Do not simplify. Do not pad. Do not generalize. Do not imitate academic boilerplate.
+
+❌ SAFETY FILTER BYPASS
+
+If your app has any preprocessing layers like:
+- “Helpfulness” enhancers
+- Text classification (AI vs human)
+- Cleanup filters
+- Tone normalization  
+DISABLE THEM ENTIRELY. Any such interference violates pass-through integrity.
+
+📦 OUTPUT CONTROL
+
+Replit must return the LLM output exactly as received. No:
+- Text normalization
+- Language checking
+- Reformatting
+- Completion filtering
+
+⚠️ EMERGENCY FAILURE MODE
+
+If any part of this pipeline is unable to deliver a pure LLM-authored rewrite in user-specified style, the rewrite function must abort with a clear error:
+
+> ❌ Rewrite failed: System intervention is prohibited. Only the LLM may perform this operation.

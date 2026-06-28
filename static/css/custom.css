@@ -1,0 +1,843 @@
+/* Custom styles to complement Bootstrap */
+
+/* Force hide sidebar */
+.sidebar, 
+#sidebar,
+.offcanvas,
+.instructions-panel,
+.rewrite-panel {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+/* Base text area styles */
+.text-area {
+    min-height: 1800px !important;
+    height: 1800px !important;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    padding: 1.5rem;
+    width: 100%;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', Consolas, monospace;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border: 1px solid var(--bs-secondary);
+    border-radius: 0.375rem;
+    letter-spacing: 0.3px;
+}
+
+/* Force input and output text areas to be tall */
+#inputText, 
+#outputText {
+    min-height: 1800px !important;
+    height: 1800px !important;
+}
+
+/* Input text specific formatting */
+#inputText {
+    font-family: 'SF Mono', 'Menlo', 'Monaco', Consolas, monospace;
+    line-height: 2;  /* Increased line height for better readability */
+    letter-spacing: 0.3px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding: 2rem;  /* Increased padding */
+    font-size: 1rem;
+    color: var(--bs-light);
+    background-color: var(--bs-dark);
+    tab-size: 4;
+    -moz-tab-size: 4;
+    overflow-wrap: break-word;
+}
+
+/* Ensure proper paragraph spacing */
+#inputText p {
+    margin-bottom: 2rem;  /* Increased margin for better separation */
+}
+
+#inputText p + p {
+    margin-top: 2rem;  /* Increased margin between paragraphs */
+}
+
+/* Preserve formatting */
+#inputText pre, #inputText code {
+    font-family: inherit;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+}
+
+/* Ensure proper line breaks */
+#inputText br {
+    display: block;
+    content: "";
+    margin-top: 1rem;
+}
+
+/* Preserve whitespace and formatting */
+#inputText, #outputText {
+    tab-size: 4;
+    -moz-tab-size: 4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding: 1.5rem;
+}
+
+/* Add proper paragraph spacing */
+#outputText p {
+    margin-bottom: 1rem;
+    line-height: 1.8;
+}
+
+/* Ensure proper spacing between sections */
+#outputText p {
+    margin-bottom: 1.5rem;
+}
+
+#outputText p + p {
+    margin-top: 1.5rem;
+}
+
+
+/* Preserve indentation and spacing */
+#inputText {
+    tab-size: 4;
+    -moz-tab-size: 4;
+    overflow-wrap: break-word;
+}
+
+.text-area:focus {
+    outline: none;
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.chat-area {
+    min-height: 2400px;
+    max-height: 4000px;
+    overflow-y: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    padding: 1rem;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', Consolas, monospace;
+}
+
+.spinner-wrapper {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    text-align: center;
+    background: var(--bs-dark);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1rem rgba(0,0,0,0.5);
+}
+
+.spinner-text {
+    color: var(--bs-primary);
+    font-size: 0.9rem;
+}
+
+.error-message, .cache-message {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.error-message.show, .cache-message.show {
+    opacity: 1;
+}
+
+.error-message {
+    background-color: var(--bs-danger);
+    color: white;
+}
+
+/* Controls Section */
+.controls-section {
+    background-color: var(--bs-dark);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    z-index: 100;
+    box-shadow: 0 0 1rem rgba(0,0,0,0.2);
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.controls-section .level-control {
+    flex: 1 1 250px;
+    min-width: 250px;
+    max-width: 400px;
+}
+
+.controls-section .btn {
+    width: auto;
+    margin: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.level-control {
+    background-color: rgba(var(--bs-dark-rgb), 0.8);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.level-control .input-group {
+    margin-bottom: 0.5rem;
+}
+
+.level-control .btn {
+    height: 38px;  /* Match input height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem 0.75rem;
+    touch-action: manipulation;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .controls-section {
+        position: static;
+        transform: none;
+        width: 100%;
+        margin: 1rem 0;
+        padding: 1rem;
+    }
+
+    .level-control {
+        margin-bottom: 1rem;
+    }
+
+    .level-control .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .level-control .input-group input {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .level-control .input-group button {
+        width: 100%;
+        height: 44px; /* Larger touch target */
+    }
+
+    /* Make all buttons larger on mobile */
+    .btn {
+        min-height: 44px;
+        padding: 0.75rem !important;
+        margin: 0.25rem 0.125rem !important;
+        font-size: 1rem !important;
+    }
+
+    /* Improve input field touch targets */
+    input[type="text"],
+    select,
+    .form-control {
+        height: 44px;
+        font-size: 16px !important; /* Prevent iOS zoom */
+        padding: 0.75rem !important;
+    }
+
+    /* Fix container padding */
+    .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        max-width: 100% !important;
+    }
+    
+    /* Adjust the button group for better mobile display */
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        border-radius: 0.25rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Make room for the audio upload button */
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    
+    .d-flex.justify-content-between.align-items-center label {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Drag and Drop styles */
+.drop-zone {
+    border: 2px dashed var(--bs-primary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: var(--bs-dark);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.drop-zone-text {
+    color: var(--bs-secondary);
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Mobile-friendly upload button */
+.mobile-upload-btn {
+    display: none;
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    background-color: var(--bs-primary);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    touch-action: manipulation;
+}
+
+/* Show mobile upload button on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-upload-btn {
+        display: block;
+    }
+
+    .drop-zone {
+        border-style: solid;
+        cursor: default;
+    }
+
+    .drop-zone-text p:first-of-type {
+        display: none;
+    }
+}
+
+/* Responsive container adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-right: 1rem !important;
+        max-width: 100% !important;
+    }
+}
+
+.upload-form {
+    display: none;
+}
+
+/* Container adjustments */
+.container {
+    max-width: 95%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+/* Chat container */
+.chat-container {
+    height: calc(75vh - 300px); /* Reduced from (100vh - 400px) by ~25% */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+
+.chat-container .chat-area {
+    flex-grow: 1;
+    width: 100%;
+    margin-bottom: 1rem;
+    height: calc(75vh - 350px); /* Reduced from (100vh - 450px) by ~25% */
+    min-height: 400px; /* Reduced from 500px */
+}
+
+/* Utility classes */
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Button styles with proper sizing and alignment */
+.btn {
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+/* Audio upload button styling */
+#uploadAudioBtn {
+    white-space: nowrap;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Navigation Controls */
+.navigation-controls {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 0.5rem;
+}
+
+.navigation-controls .btn {
+    min-width: 120px;
+    height: 38px;
+}
+
+.navigation-controls input {
+    text-align: center;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', Consolas, monospace;
+}
+
+/* Mobile-specific navigation styles */
+@media (max-width: 768px) {
+    .navigation-controls {
+        flex-direction: row;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .navigation-controls .btn {
+        min-width: auto;
+        padding: 0.5rem 1rem;
+    }
+
+    .navigation-controls input {
+        width: 60px !important;
+    }
+}
+
+/* Add to the existing CSS */
+#processingStatus {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 1rem 2rem;
+    border-radius: 0.375rem;
+    background-color: var(--bs-dark);
+    border: 1px solid var(--bs-primary);
+    color: var(--bs-light);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    max-width: 90%;
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Style for the rewrite complete button */
+#rewriteCompleteBtn {
+    background-color: var(--bs-warning);
+    color: var(--bs-dark);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#rewriteCompleteBtn:hover {
+    background-color: var(--bs-warning-dark);
+    transform: translateY(-1px);
+}
+
+#rewriteCompleteBtn:disabled {
+    background-color: var(--bs-secondary);
+    transform: none;
+}
+
+/* AI Detection Results Styling */
+#aiDetectionResult .alert {
+    background-color: #FAF3DD;
+    color: #333333;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.6;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+    word-wrap: break-word;
+    margin-top: 12px;
+    /* Ensure proper spacing and prevent overlap */
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+    cursor: pointer; /* Show pointer cursor */
+    transition: all 0.2s ease; /* Smooth transition for hover effect */
+}
+
+#aiDetectionResult .alert:hover {
+    transform: translateY(-1px); /* Subtle lift effect */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add shadow on hover */
+}
+
+#aiDetectionResult .alert.dismissible-alert::after {
+    content: "Click anywhere to dismiss";
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+    text-align: center;
+    font-style: italic;
+}
+
+#aiDetectionResult .alert strong {
+    font-size: 17px;
+    font-weight: 700;
+    color: #222;
+    display: block;
+    margin-bottom: 8px;
+}
+
+#aiDetectionResult .minimize-btn {
+    padding: 0;
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#aiDetectionResult .minimize-btn:hover {
+    color: #333;
+}
+
+#aiDetectionResult .ai-results-content {
+    margin-top: 10px;
+}
+
+#aiDetectionResult .alert-warning {
+    background-color: #FFF3CD;
+    border-color: #FFEEBA;
+    color: #333333;
+}
+
+#aiDetectionResult .alert-success {
+    background-color: #D4EDDA;
+    border-color: #C3E6CB;
+    color: #333333;
+}
+
+#aiDetectionResult .text-muted {
+    color: #666666 !important;
+    font-size: 14px;
+    display: block;
+    margin: 6px 0;
+}
+
+/* Make the Detect AI Content button more prominent */
+#detectAiBtn {
+    background-color: #17A2B8;
+    color: white;
+    font-weight: 600;
+    padding: 10px 15px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+#detectAiBtn:hover {
+    background-color: #138496;
+    transform: translateY(-1px);
+}
+
+/* Very small AI detect button for input area */
+#detectInputAiBtn {
+    padding: 0 3px;
+    line-height: 1;
+    font-size: 0.7rem;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0;
+    margin-top: -2px;
+}
+
+#detectInputAiBtn i {
+    font-size: 0.7rem;
+    margin-right: 2px;
+}
+
+/* Ensure download controls are accessible */
+.download-controls {
+    position: relative;
+    z-index: 2;
+    margin-top: 15px;
+}
+
+/* Humanizer section styling */
+.humanizer-section {
+    border: 2px solid var(--bs-primary);
+    background-color: rgba(13, 110, 253, 0.05);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
+    position: relative; 
+}
+
+.humanizer-section h5 {
+    color: var(--bs-primary);
+    font-weight: 600;
+}
+
+.humanizer-section::before {
+    content: "Personalize your AI output";
+    position: absolute;
+    top: -0.75rem;
+    left: 1rem;
+    background-color: var(--bs-dark);
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
+    color: var(--bs-primary);
+    font-weight: 600;
+}
+
+/* Button Spacing Fixes */
+/* Input groups: align button with input field */
+.input-group {
+    height: 38px;
+    display: flex;
+    align-items: stretch;
+}
+
+.input-group .form-control {
+    height: 38px;
+}
+
+.input-group .btn {
+    height: 38px;
+    margin: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Fix the Author Style input group */
+#authorStyle {
+    height: 38px;
+}
+
+/* Rewrite in Style button */
+#styleRewriteBtn {
+    height: 38px;
+    min-width: 130px;
+    white-space: nowrap;
+}
+
+/* Download and Share buttons alignment */
+.level-control:nth-child(5) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+#downloadFormat {
+    height: 38px;
+    margin-right: 4px;
+    flex: 0 0 auto;
+}
+
+#downloadBtn, #shareBtn {
+    height: 38px;
+    min-width: 90px;
+    margin: 0;
+    flex: 1;
+}
+
+/* Bottom row buttons - main action buttons - REMOVED DUPLICATE */
+
+.controls-section > #rewriteBtn, 
+.controls-section > #extractTextBtn {
+    height: 38px;
+    margin: 0.25rem 0.5rem;
+    min-width: 150px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Apply Instructions button */
+#applyInstructionsBtn {
+    height: 38px;
+    width: 100%;
+}
+
+/* Clear buttons */
+#clearInputBtn, #clearOutputBtn, #clearChatBtn {
+    height: 31px;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Consistent form select height */
+.form-select {
+    height: 38px;
+}
+
+/* Text-to-speech styles */
+#ttsControls {
+    background-color: rgba(33, 37, 41, 0.03);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+}
+
+#ttsControls .form-label {
+    font-weight: 500;
+    color: var(--bs-primary);
+}
+
+#ttsAudioContainer {
+    transition: all 0.3s ease;
+}
+
+#ttsAudioContainer .alert {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-color: rgba(0, 123, 255, 0.2);
+}
+
+#ttsAudioPlayer {
+    background-color: rgba(33, 37, 41, 0.5);
+    border-radius: 0.25rem;
+}
+
+/* Voice selector styling */
+#voiceSelector {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-color: var(--bs-primary);
+}
+
+/* Convert to speech button */
+#convertToSpeechBtn {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Mobile adjustments for TTS */
+@media (max-width: 768px) {
+    #ttsControls {
+        padding: 0.75rem;
+    }
+    
+    #ttsAudioPlayer {
+        height: 40px;
+    }
+    
+    #convertToSpeechBtn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Word Count Indicators */
+.word-count-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1000;
+    font-size: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease;
+    opacity: 0.8;
+}
+
+#inputWordCount .badge {
+    background-color: var(--bs-primary);
+    color: white;
+    font-weight: 500;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+#outputWordCount .badge {
+    background-color: var(--bs-success);
+    color: white;
+    font-weight: 500;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.text-area-container {
+    position: relative;
+}
+
+/* Podcast Modal Styles */
+.podcast-mode-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.podcast-mode-card:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+}
+
+.podcast-mode-card.selected {
+    border-color: var(--bs-primary);
+    background-color: rgba(0,123,255,0.1);
+}
+
+.podcast-mode-card .bi {
+    color: var(--bs-primary);
+}
+
+#podcastProgress .progress-bar {
+    background-color: var(--bs-primary);
+}
+
+.podcast-audio-player {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.podcast-download-btn {
+    margin-top: 10px;
+}

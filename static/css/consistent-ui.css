@@ -1,0 +1,157 @@
+/* Consistent UI Elements - Updated May 2025 */
+
+/* Download Format Selector */
+#downloadFormatSelector {
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border: 1px solid #dee2e6;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card-based design improvements */
+.card-header.bg-dark {
+    background-color: #2c3e50 !important;
+    color: white;
+    border-bottom: none;
+}
+
+.card-header.bg-dark .card-title {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.card {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card .text-primary {
+    color: #3498db !important;
+}
+
+/* Border bottom separation */
+.border-bottom {
+    border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+/* Alert styling */
+.alert-secondary {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+/* Grid layout for buttons */
+.d-grid .btn {
+    display: block;
+    width: 100%;
+}
+
+/* Input group improvements */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+/* Badge styling */
+.badge.bg-success {
+    background-color: #28a745 !important;
+    font-weight: 400;
+}
+.form-control, 
+.form-select, 
+.btn,
+.input-group {
+    min-height: 45px;
+}
+
+/* ===== RIGHT COLUMN STYLING ===== */
+/* Button consistency for right column */
+.col-md-4 .btn,
+.col-md-4 .form-select {
+    width: 100%;
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Ensure cards have consistent width in right column */
+.col-md-4 .card {
+    width: 100%;
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Ensure form elements in right column are consistently aligned */
+.col-md-4 .card-body {
+    padding: 15px;
+}
+
+/* ===== LEFT COLUMN STYLING ===== */
+/* Button consistency for left column */
+.col-md-8 .btn {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Special handling for buttons in input groups */
+.input-group .btn {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Special button containers */
+.level-control {
+    width: 100%;
+    margin-bottom: 1.25rem !important;
+}
+
+/* Ensure all buttons in a column have the same width */
+.col-md-8 .level-control .btn,
+.col-md-8 .btn-primary,
+.col-md-8 .btn-secondary,
+.col-md-8 .btn-warning {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Fixed width for each column */
+.col-md-8, .col-md-4 {
+    box-sizing: border-box;
+}
+
+/* Make sure all button text is properly aligned */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Override for input group button styling */
+.input-group .btn {
+    width: auto !important;
+}

@@ -1,0 +1,38 @@
+Add the following functionality to the app to focus on the "EZ-reader" feature:
+
+Ensure Existing File Upload and Text Extraction Work as Is:
+
+Do not alter the current file upload functionality or text extraction system, as they are working well.
+The app will still allow users to upload a file once, which is extracted for text, and the text will be processed in chunks without re-uploading each time.
+Focus on "EZ-reader" Page-by-Page Translation:
+
+The app should primarily focus on helping the user translate the text in a way that is more suitable for them.
+The core functionality of the app will now revolve around breaking the extracted text into one-page chunks and allowing the user to translate one chunk at a time.
+When the user uploads or selects a document, the app will load the first page (or a small, manageable chunk of the text, about one or two pages) from the extracted text.
+Text Display and Interaction:
+
+The left box will display the first chunk of text from the uploaded document (extracted and divided into one-page chunks).
+The user will interact with the text in the left box by translating it into more understandable language (simplifying or adjusting the complexity of the language as needed).
+After the user has translated the current page, the app will allow them to move to the next page by clicking a "Next Page" button or using a scroll mechanism.
+Pagination of Extracted Text:
+
+The app should handle pagination by showing only one page of text at a time.
+When the user is ready for the next page, the app will fetch and display the next chunk (next page or two pages) from the previously uploaded text, without the user needing to re-upload the document.
+State Management for Pagination:
+
+The app should track which page the user is on using session management or local storage. This will ensure the user doesn't lose their place and can continue working on the document.
+Only the current page of text should be loaded into memory at any given time, to prevent the app from crashing due to Replit's limitations.
+Text Translation Process:
+
+Users will be able to translate (simplify or elevate) each chunk of text in the left box.
+The translation process will take place page-by-page. When the user finishes translating one page, they will be able to move on to the next one.
+The user should be able to adjust the level of complexity for each chunk of text based on their needs (e.g., making the text simpler or more complex).
+User Interface Considerations:
+
+Ensure that the left box only displays the current chunk of text (one page at a time).
+Add buttons or scrolling mechanisms that allow the user to navigate from one page to the next. For example, a "Next Page" button should appear once the user has finished translating the current page.
+Ensure that the app continues to work smoothly and incrementally loads the next page of text without requiring the user to upload the document again.
+Memory and Performance Management:
+
+Keep memory usage low by only loading one page (or a small chunk) of text at a time.
+Ensure that the system gracefully handles the text extraction and display of one page at a time, without attempting to load the entire document into memory at once.

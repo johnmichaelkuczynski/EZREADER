@@ -1,0 +1,86 @@
+<!-- Two-Box Translation Modal -->
+<div class="modal fade" id="twoBoxTranslationModal" tabindex="-1" aria-labelledby="twoBoxTranslationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="twoBoxTranslationModalLabel">Two-Box Translation</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="sourceLanguageSelect" class="form-label">Source Language:</label>
+                        <select class="form-select" id="sourceLanguageSelect">
+                            <option value="auto" selected>Auto-detect</option>
+                            <option value="en">English</option>
+                            <option value="es">Spanish (Español)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                            <option value="it">Italian (Italiano)</option>
+                            <option value="pt">Portuguese (Português)</option>
+                            <option value="nl">Dutch (Nederlands)</option>
+                            <option value="ru">Russian (Русский)</option>
+                            <option value="zh">Chinese (中文)</option>
+                            <option value="ja">Japanese (日本語)</option>
+                            <option value="ko">Korean (한국어)</option>
+                            <option value="ar">Arabic (العربية)</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="tr">Turkish (Türkçe)</option>
+                            <option value="vi">Vietnamese (Tiếng Việt)</option>
+                            <option value="th">Thai (ไทย)</option>
+                            <option value="id">Indonesian (Bahasa Indonesia)</option>
+                            <option value="pl">Polish (Polski)</option>
+                            <option value="sv">Swedish (Svenska)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="targetLanguageSelect" class="form-label">Target Language:</label>
+                        <select class="form-select" id="targetLanguageSelect">
+                            <option value="en" selected>English</option>
+                            <option value="es">Spanish (Español)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                            <option value="it">Italian (Italiano)</option>
+                            <option value="pt">Portuguese (Português)</option>
+                            <option value="nl">Dutch (Nederlands)</option>
+                            <option value="ru">Russian (Русский)</option>
+                            <option value="zh">Chinese (中文)</option>
+                            <option value="ja">Japanese (日本語)</option>
+                            <option value="ko">Korean (한국어)</option>
+                            <option value="ar">Arabic (العربية)</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="tr">Turkish (Türkçe)</option>
+                            <option value="vi">Vietnamese (Tiếng Việt)</option>
+                            <option value="th">Thai (ไทย)</option>
+                            <option value="id">Indonesian (Bahasa Indonesia)</option>
+                            <option value="pl">Polish (Polski)</option>
+                            <option value="sv">Swedish (Svenska)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="aiProviderSelect" class="form-label">AI Provider:</label>
+                    <select class="form-select" id="aiProviderSelect">
+                        <option value="auto" selected>Auto (Best for language pair)</option>
+                        <option value="openai">OpenAI (GPT-4o)</option>
+                        <option value="anthropic">Anthropic (Claude 3.5)</option>
+                        <option value="perplexity">Perplexity (Llama 3.1)</option>
+                    </select>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill"></i> This direct translation supports very large documents with automatic splitting and reassembly for best quality.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="twoBoxTranslateButton">
+                    <i class="bi bi-translate"></i> Translate Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

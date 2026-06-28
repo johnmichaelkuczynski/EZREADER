@@ -1,0 +1,59 @@
+EMERGENCY: PDF upload is being read as TEXT (corrupts binary → junk). Fix by handling PDFs as Buffers with multer and extracting text with pdf-parse. Do exactly this.
+
+Shell (project root)
+npm i multer pdf-parse
+
+server/index.ts — parser setup (replace any global app.use(express.text()) and any raw/body string parsers for /). Keep ONLY json/urlencoded; file uploads use multer.
+import express from "express";
+import cors from "cors";
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+// DO NOT add express.text() anywhere.
+
+server/routes/pdf.ts — create this new route
+import { Router } from "express";
+import multer from "multer";
+import pdfParse from "pdf-parse";
+
+const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
+
+router.post("/extract", upload.single("file"), async (req, res) => {
+try {
+if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+if (req.file.mimetype !== "application/pdf") {
+return res.status(400).json({ error: "Only PDFs are allowed" });
+}
+const data = await pdfParse(req.file.buffer);
+// data.text = plain text from a digital (non-scanned) PDF
+res.json({ text: data.text || "" });
+} catch (e:any) {
+res.status(500).json({ error: e.message || "PDF parse failure" });
+}
+});
+
+export default router;
+
+server/index.ts — register the route (after the parsers)
+import pdfRouter from "./routes/pdf";
+app.use("/api/pdf", pdfRouter);
+
+client code (where the upload is sent) — ensure FormData, not JSON, and do not set Content-Type manually.
+const fd = new FormData();
+fd.append("file", file); // file from <input type="file">
+const resp = await fetch("/api/pdf/extract", { method: "POST", body: fd });
+const { text } = await resp.json();
+
+Remove/disable any code that:
+
+Reads the PDF with fs.readFile(path, "utf8") or new TextDecoder(). Always use the raw Buffer.
+
+Sends PDFs via JSON.stringify or base64 without decoding back to Buffer.
+
+Uses app.use(express.text()) globally. That is what turns the PDF into junk.
+
+Optional (for scanned PDFs only): create a TODO route later that runs OCR. Until then, return a clear message if text === "" so UI can prompt “This looks like a scanned PDF; OCR required.”
+
+That’s it. This guarantees PDFs are treated as binary, parsed with pdf-parse, and no more junk characters.

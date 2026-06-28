@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "w-1r4uNwZKQ_rSntuA6aF"
+uri = "file://CLASSIC_EZ_READER_BLUEPRINT.md"
+type = "text"
+title = "CLASSIC EZ READER — Complete Application Blueprint"

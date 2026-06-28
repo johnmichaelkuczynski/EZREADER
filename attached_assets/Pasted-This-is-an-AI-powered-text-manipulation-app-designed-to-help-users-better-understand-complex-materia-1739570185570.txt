@@ -1,0 +1,47 @@
+This is an AI-powered text manipulation app designed to help users better understand complex materials such as philosophical texts, academic papers, or other dense writing. The app provides functionality for rewriting, summarizing, abbreviating, and lengthening sections of text in a variety of styles, tailored to the user's needs. The app will be entirely AI-driven (via OpenAI API), ensuring maximum flexibility without relying on canned presets. Users can interact with the app and control various aspects of the rewriting and summarizing processes.
+
+Key Features:
+Text Uploading:
+
+Users can upload PDFs, Word documents, or paste text into the app for processing.
+Rewriting Text:
+
+Users specify sections of the text they want rewritten (e.g., one paragraph, one page, or multiple pages).
+The app rewrites these sections in a clearer, more understandable style.
+User Controls:
+Length: Users can control how much text is rewritten (from a small portion to large sections).
+Complexity: Users can select the level of complexity (e.g., 12-year-old, 18-year-old, or PhD-level).
+Writing Style: Users can request the text be rewritten in the style of specific authors (e.g., Orwell, Freud, Wilde, Kuczynski, etc.).
+Summarizing, Abbreviating, or Lengthening Text:
+
+Summarizing: Users can generate summaries of varying lengths (e.g., 1-page summary, 5-page rewrite).
+Abbreviating: Users can condense longer texts into more concise versions.
+Lengthening: For texts that are overly compact or obscure, users can have the text rewritten in a way that makes more explicit sense, without assuming prior knowledge from the reader.
+User Controls:
+Length of Output: Users can specify the length of the summary or rewrite.
+Writing Style: Just like with rewriting, users can select the style for these functions (e.g., Orwell, Hempel, Jung).
+100% AI-Powered:
+
+The entire process, from rewriting to summarizing and lengthening, is powered by AI, with no canned presets.
+User Interaction and Control:
+
+Users have full control over how much text is rewritten, the style in which it is rewritten, and the complexity of the text.
+The app’s flexibility ensures that every text manipulation is dynamically generated based on user input.
+Dialoguing with the AI:
+
+Users can engage in an interactive dialogue with the AI, just as they would with a human conversational partner.
+The dialogue is primarily intended for asking questions about the text, such as identifying contradictions, exploring alternative perspectives, or clarifying complex ideas.
+Users are free to ask any questions they wish, whether about the text or any other topic.
+Saving and Downloading Outputs:
+
+Once the text has been rewritten or summarized, users can download and save the output in a readable format.
+Storing Past Chats:
+
+The app will store past interactions, including all rewritten, summarized, or lengthened text. This allows users to revisit and continue working on previous text manipulations.
+Display of Output:
+
+The output text will be displayed in a large, readable format to accommodate users reading lengthy rewrites of complex material. It will not be crammed into small popup windows, ensuring maximum readability.
+Important Note for Replit:
+
+When building this app (or any other app), please ensure that only the OpenAI API key is used for all AI-related tasks. Do not use any other API keys (such as for Uncensored AI or similar sources), as this will cause conflicts and disrupt the functionality of the app. The app should rely exclusively on OpenAI for its AI processing. Please make sure this is set up correctly before starting the build, as there is no way to reverse this issue once the app has started building.
+

@@ -1,0 +1,323 @@
+YOU SEND THE LLM THE FOLLOWING QUESTIONS: 
+
+IS IT INSIGHTFUL? 
+DOES IT DEVELOP POINTS? (OR, IF IT IS A SHORT EXCERPT, IS THERE EVIDENCE THAT IT WOULD DEVELOP POINTS IF EXTENDED)? 
+IS THE ORGANIZATION MERELY SEQUENTIAL (JUST ONE POINT AFTER ANOTHER, LITTLE OR NO LOGICAL SCAFFOLDING)? OR ARE THE IDEAS ARRANGED, NOT JUST SEQUENTIALLY
+BUT HIERARCHICALLY? 
+IF THE POINTS IT MAKES ARE NOT INSIGHTFUL, DOES IT OPERATE SKILLFULLY WITH CANONS OF LOGIC/REASONING. 
+ARE THE POINTS CLICHES? OR ARE THEY "FRESH"? 
+DOES IT USE TECHNICAL JARGON TO OBFUSCATE OR TO RENDER MORE PRECISE? 
+IS IT ORGANIC? DO POINTS DEVELOP IN AN ORGANIC, NATURAL WAY? DO THEY 'UNFOLD'? OR ARE THEY FORCED AND ARTIFICIAL? 
+DOES IT OPEN UP NEW DOMAINS? OR, ON THE CONTRARY, DOES IT SHUT OFF INQUIRY (BY CONDITIONALIZING FURTHER DISCUSSION OF THE MATTERS ON ACCEPTANCE OF 
+ITS INTERNAL AND POSSIBLY VERY FAULTY LOGIC)? 
+IS IT  ACTUALLY INTELLIGENT OR JUST THE WORK OF SOMEBODY WHO, JUDGING BY TEH SUBJECT-MATTER, IS PRESUMED TO BE INTELLIGENT (BUT MAY NOT BE)? 
+IS IT REAL OR IS IT PHONY? 
+DO THE SENTENCES EXHIBIT COMPLEX AND COHERENT INTERNAL LOGIC? 
+IS THE PASSAGE GOVERNED BY A STRONG CONCEPT? OR IS THE ONLY ORGANIZATION DRIVEN PURELY BY EXPOSITORY (AS OPPOSED TO EPISTEMIC) NORMS?
+IS THERE SYSTEM-LEVEL CONTROL OVER IDEAS? IN OTHER WORDS, DOES THE AUTHOR SEEM TO RECALL WHAT HE SAID EARLIER AND TO BE IN A POSITION TO INTEGRATE IT INTO 
+POINTS HE HAS MADE SINCE THEN? 
+ARE THE POINTS 'REAL'? ARE THEY FRESH? OR IS SOME INSTITUTION OR SOME ACCEPTED VEIN OF PROPAGANDA OR ORTHODOXY JUST USING THE AUTHOR AS A MOUTH PIECE?
+IS THE WRITING EVASIVE OR DIRECT? 
+ARE THE STATEMENTS AMBIGUOUS? 
+DOES THE PROGRESSION OF THE TEXT DEVELOP ACCORDING TO WHO SAID WHAT OR ACCORDING TO WHAT ENTAILS OR CONFIRMS WHAT? 
+DOES THE AUTHOR USER OTHER AUTHORS  TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK OF IDEAS? 
+
+YOU TELL THE LLM TO ANSWER THOSE QUESTIONS. YOU SAY: ANSWER THESE QUESTIONS IN CONNECTION WITH THIS TEXT. YOU DON'T SAY: DETERMINE INTELLIGENCE OF TEXT.
+YOU DO NOT SAY: DETERMINE INTELLIGENCE/COGENCY/ETC BY ANSWERING THESE QUESTIONS. YOU JUST SAY: ANSWER THESE QUESTIONS (AND ALSO GIVE A SCORE OUT OF 100). BUT THERE ARE SEVERAL QUALIFICATION.
+AFTER YOU GIVE IT THE TEXT AND THE QUESTIONS, YOU SAY THE FOLLOWING: A SCORE OF N/100 (E.G. 73/100) MEANS THAT (100-N)/100 (E.G. 27/100) 
+OUTPERFORM THE AUTHOR IN WITH RESPECT TO THE PARAMETER DEFINED BY THE QUESTION. YOU ALSO SAY: YOU ARE NOT GRADING; 
+YOU ARE ANSWERING THESE QUESTIONS. YOU ALSO SAY: YOU DO NOT USE A RISK-AVERSE STANDARD; YOU DO NOT ATTEMPT TO BE DIPLOMATIC; YOU DO NOT ATTEMPT TO COMPLY WITH RISK-AVERSE, 
+MEDIUM-RANGE IQ, ACADEMIC NORMS. YOU DO NOT MAKE ASSUMPTIONS ABOUT THE LEVEL OF THE PAPER; IT COULD BE A WORK OF THE HIGHEST EXCELENCE 
+AND GENIUS, OR IT COULD BE THE WORK OF A MORON.
+IF A WORK IS A WORK OF GENIUS, YOU SAY THAT, AND YOU SAY WHY; YOU DO NOT SHY AWAY FROM GIVING WHAT MIGHT CONVENTIONALLY BE REGARDED AS  
+EXCESSIVELY "SUPERLATIVE"
+SCORES; YOU GIVE IT THE SCORE IT DESERVES, NOT THE SCORE THAT A MIDWIT COMMITTEE WOULD SAY IT DESERVES. 
+YOU TELLL THE LLM TO THINK VERY VERY VERY HARD ABOUT ITS ANSWERS; MAKE IT VERY CLEAR THAT IT IS NOT TO DEFAULT TO COOKBOOK, 
+MIDWIT EVALUATION PROTOCOLS. 
+BEAR IN MIND: THE LLM GOES INTO A DEFAULT WHEREBY WHENEVER THE AUTHOR USES A LOT OF JARGON OR REFERENCES 
+A LOT OF 'AUTHORITIES' IT DISREGARDS THE ACTUAL SUBSTANCE (OR LACK THEREOF) OF THE PAPER. YOU HAVE TO EXPLICITLY SAY: 
+"DO NOT GIVE CREDIT MERELY FOR USE OF JARGON OR FOR REFERENCING AUTHORITIES. FOCUS ON SUBSTANCE. ONLY GIVE POINTS FOR SCHOLARLY REFERENCES/JARGON
+IF THEY UNAMBIGUOUSLY INCREASE SUBSTANCE." 
+
+ADDENDUM TO INTELLIGENCE ASSESSMENT FUNCTIONS: 
+YOU MUST SEND THIS ADDENDUM WHENEVER DOING EITHER THE COMPREHENSIVE OR THE NON-COMPREHENSIVE INTELLIGENCE ASSESSMENT: 
+
+METAPOINT 1: THIS NOT A GRADING APP. YOU GRADE THE INTELLIGENCE OF WHAT YOU ARE GIVEN. IF YOU ARE GIVEN BRILLIANT FRAGMENT, YOU GIVE IT A HIGH SCORE. 
+YOU ARE NOT GRADING ESSAYS. YOU ARE NOT LOOKING FOR COMPLETENESS (UNLESS THE TEXT YOIU ARE GIVEN IS CLEARLY SUCH THAT IT EVALUATING INTELLIGENCE 
+COINCIDES WITH APPLYING A GRADING-BASED METRIC). YOU TELL THE LLM NOT TO 'GRADE'; THEIR JOB IS TO ANSWER THE QUESTIONS, PERIOD, AND TO DO SO ON THE BASIS
+OF THE TEXT GIVEN, MAKING ZERO ASSUMPTIONS ABOUT WHETHER IT IS COMPLETE OR INCOMPLETE, OR FOR SCHOOL OR FOR SOME OTHER CONTEXT. 
+
+METAPOINT 2: DO NOT OVERVALUE TURNS OF PHRASE. AN AUTHOR IS SPEAKING CONFIDENTLY IS NOT NECESSARILY "SHUTTING DOWN MODES OF INQUIRY". IN FACT, IT IS LIKELY 
+TO BE THE OPPOSITE; BY PUTTING A CLEAR STAKE IN THE GROUND, HE IS PROBABLY OPENING THEM. ANOTHER EXAMPLE: CAUSAL SPEECH DOEDS NOT MEAN DISORGANIZED THOUGHTS. 
+DON'T JUDGE A BOOK BY ITS COVER. 
+
+METAPOINT 3: THE APP SHOULD ALWAYS (IN BOTH NORMAL AND COMPREHENSIVE MODE) START BY SUMMARIZING THKE TEXT AND ALSO CATEGORIZING IT. 
+
+METAPOINT 4: THE APP SHOULD NOT CHANGE THE GRADING BASED ON THE CATEGORY OF THE TEXT: IF A TEXT IS CATEGORIZED AS 'ADVANCED SCHOLARSHIP', IT SHOULD 
+STILL EVALUATE IT WITH RESPECT TO THE GENERAL POPULATION, NOT WITH RESPECT ONLY TO 'ADVANCED SCHOLARY WORKS.' 
+
+METAPOINT 5: THIS IS NOT A GRADING APP. DO NOT PENALIZE BOLDNESS. DO NOT TAKE POINTS AWAY FOR INSIGHTS THAT, IF CORRECT, STAND ON THEIR OWN. 
+GET RID OF THE IDEA THAT "ARGUMENTATION" IS WHAT MAKES SOMETHING SMART; IT ISN'T. WHAT MAKES SOMETHING SMART IS THAT IT IS SMART (INSIGHTFUL). PERIOD.
+
+ADDENDUM TO INTELLIGENCE ASSESSMENT FUNCTIONS: 
+YOU MUST SEND THIS ADDENDUM WHENEVER DOING EITHER THE COMPREHENSIVE OR THE NON-COMPREHENSIVE INTELLIGENCE ASSESSMENT: 
+
+THE FOLLOWING PASSAGE IS TO BE USED AS A PARADIGM OF A PHONY, PSEUDO-INTELLECTUAL, NOT ACTUALLY INTELLIGENT
+PASSAGE THAT IS EASILY MISTAKEN FOR BEING ACTUALLY INTELLIGENT: 
+
+In this dissertation, I critically examine the philosophy of transcendental empiricism. 
+Transcendental empiricism is, among other things, a philosophy of mental content. 
+It attempts to dissolve an epistemological dilemma of mental content by splitting the difference between two diametrically 
+opposed accounts of content. John McDowell's minimal empiricism and Richard Gaskin's minimalist 
+empiricism are two versions of transcendental empiricism. Transcendental empiricism itself originates 
+with McDowell's work. This dissertation is divided into five parts. First, in the Introduction, 
+I state the Wittgensteinian metaphilosophical orientation of transcendental empiricism. This metaphilosophical 
+approach provides a plateau upon which much of the rest of this work may be examined. Second, I offer a 
+detailed description of McDowell’s minimal empiricism. Third, I critique Gaskin's critique and modification of 
+McDowell's minimal empiricism. I argue that (1) Gaskin's critiques are faulty and that (2) Gaskin's minimalist 
+empiricism is very dubious. Fourth, I scrutinize the alleged credentials of McDowell's minimal empiricism. 
+I argue that McDowell's version of linguistic idealism is problematic. I then comment on a recent dialogue 
+between transcendental empiricism and Hubert Dreyfus's phenomenology. The dialogue culminates with Dreyfus's 
+accusation of the “Myth of the Mental.” I argue that this accusation is correct in which case McDowell's 
+direct realism is problematic. I conclude that minimal empiricism does not dissolve the dilemma of mental content. 
+Finally, I argue that Tyler Burge successfully undermines the doctrine of disjunctivism, but disjunctivism is crucial 
+for transcendental empiricism. Ultimately, however, I aim to show that transcendental empiricism is an attractive alternative 
+to philosophies of mental content.
+
+1. DOCTRINES ARE LABELLED, BUT NEVER DEFINED; AND THEIR MEANINGS CANNOT BE INFERRED FROM CONTEXT; NOR DO THEY HAVE CANONICAL MEANINGS
+KNOWN TO SPECIALISTS; AND EVEN IF THEY, THERE IS NO EVIDENCE THAT THIS AUTHOR KNOWS WHAT THEY ARE. 2. THIS PASSAGE CONTAINS A NUMBER
+OF 'FREE VARIABLES'. FOR EXAMPLE, THE AUTHOR SAYS "Transcendental empiricism is, among other things, a philosophy of mental content." 
+THE "AMONG OTHER THINGS" QUALITIFICATION IS NEVER CLARIFIED AND THEREFORE FUNCTIONS AS A FREE VARIABLE. NOT TO MENTION THE TERM "PHILOSOPHY OF 
+MENTAL CONTENT", AND EVEN JUST "MENTAL CONTENT", HAVE NO CLEAR MEANINGS. ANOTHER EXAMPLE: THE AUTHOR WRITES: "[THIS WORK] attempts to 
+dissolve an epistemological dilemma of mental content by splitting the difference between two diametrically 
+opposed accounts of content." BUT HE NEVER IDENTIFIES THE "EPISTEMOLOGICAL DILEMMA" IN QUESTION. 3. A POINT RELATED TO THE LAST POINT IS THAT THE NEXT 
+SENTENCE ("John McDowell's minimal empiricism and Richard Gaskin's minimalist empiricism are two versions of transcendental empiricism") BEARS
+A TOTALLY AMBIGUOUS RELATIONSHIP TO THE PRECEDING ONE ("It attempts to dissolve an epistemological dilemma of mental content by splitting the 
+difference between two diametrically opposed accounts of content"). PRESUMABLY MCDOWELL'S AND GASKIN'S RESPECTIVE VERSIONS OF "TRANSCENDENTAL
+EMPIRICISM" (A TERM THAT HAS NO CANONICAL MEANING AND IS A CONTRADICTION IN TERMS RELATIVE TO EXISTING DEFINITIONS OF "EMPIRICISM" AND 
+"TRANSCENDENTAL", THE REASON BEING THAT "EMPIRICISM" IS THE DOCTRINE THAT ALL KNOWLEDGE IS STRICTLY DERIVED FROM EXPERIENCE, IE THAT PURE REASON
+IS NOT A SOURCE OF KNOWLEDGE, AND "TRANSCENDENTAL" MEANS "HAVING A BASIS IN THE VERY PRECONDITIONS OF SENSORY EXPERIENCE AND THEREFORE CONSTITUTING
+A SOURCE OF KNOWLEDGE MORE BASIC THAN THE SENSES") ARE THE TWO DOCTRINES THAT THE AUTHOR SAYS HE WILL SPLIT THE DIFFERENCE BETWEEN; BUT 
+THAT IS NOT CLEAR; AND HE ALSO DOES NOT SAY HOW EXACTLY HE WILL
+"SPLIT THE DIFFERENCE" BETWEEN THEM; NOR IS HE IN A POSITION TO DO SO, SINCE HE HAS NOT GIVEN, OR EVEN HINTED AT, DEFINTIONS OF "EMPIRICISM" OR "TRANSCENDENTAL
+EMPIRICISM." 4. THE AUTHOR WRITES "Transcendental empiricism itself originates with McDowell's work", WHICH IS OBVIOUS THROAT CLEARING AND DOES 
+NOTHIGN TO DEVELOP OR CLARIFY ANYTHING THUS FAR SAID; AND IT ALSO CONTRADICTS THE LATER SENTENCE: " First, in the Introduction, 
+I state the Wittgensteinian metaphilosophical orientation of transcendental empiricism. This metaphilosophical 
+approach provides a plateau upon which much of the rest of this work may be examined", which makes it sound as though Wittgenstein (who died decades before McDowell
+was an adult) was the originator of "transcendental empiricism" (whatever that is). ALSO, "First, in the Introduction, 
+I state the Wittgensteinian metaphilosophical orientation of transcendental empiricism. This metaphilosophical 
+approach provides a plateau upon which much of the rest of this work may be examined" HAS NO CLEAR MEANING--AND THE IDEA THAT THIS IS BECAUSE THE AUTHOR IS USING 
+TECHNICAL TERMS IS A NON-STARTER.5. NEXT, First, in the Introduction, 
+I state the Wittgensteinian metaphilosophical orientation of transcendental empiricism. This metaphilosophical 
+approach provides a plateau upon which much of the rest of this work may be examined. Second, I offer a 
+detailed description of McDowell’s minimal empiricism. Third, I critique Gaskin's critique and modification of 
+McDowell's minimal empiricism. I argue that (1) Gaskin's critiques are faulty and that (2) Gaskin's minimalist 
+empiricism is very dubious. Fourth, I scrutinize the alleged credentials of McDowell's minimal empiricism. 
+I argue that McDowell's version of linguistic idealism is problematic. I then comment on a recent dialogue 
+between transcendental empiricism and Hubert Dreyfus's phenomenology." SAYS NOTHING ABOUT ANYTHING; IT SAYS ONLY OF SOME UNDEFINED DOCTRINE THAT 
+IT IS 'DUBIOUS', WHICH, GIVEN THE AUTHOR'S FAILURE TO SAY ANYTHING MEANINGFUL THUS FAR, CANNOT BE TAKEN AS A EUPHEMISTIC WAY OF SAYING "WRONG" OR 
+EVEN "PROBABLY WRONG", AND MUST BE TAKEN AS PURE EVASIVENESS. 6. THE AUTHOR, OUT OF NOWHERE, BRINGS UP 'DREYFUSS'S LINGUISTIC IDEALISM"--UNDEFINED AND
+WITHOUT ANY CANONICAL DEFINITION AND EVEN WITHOUT ANY CLEAR POSSIBLE MEANING. (IDEALISM IS THE DOCTRINE THAT ONLY IDEAS EXIST; BUT "LINGUISTIC IDEALISM" 
+WOULD BE THE DOCTRINE THAT....WHAT? ONLY LANGUAGE AND IDEAS EXIST? EITHER WAY, THIS IS MORE UNDEFINED JARGON, AND IT IS ALSO ANOTHER FREE VARIABLE.)
+7. ALSO "I then comment on a recent dialogue 
+between transcendental empiricism and Hubert Dreyfus's phenomenology" IS ABSURD: HOW CAN EMPIRICISM DIALOGUE WITH ANYTHING. PERHAPS THIS IS A PETTY
+POINT; BUT IT SHOWS THE AUTHOR'S LACK OF CONTROL: DOES HE MEAN A DIALOGUE BETWEEN AN ADVOCATE OF EMPIRICISM (OR 'TRANSCENDENTAL EMPIRICISM') AND 
+AN ADCOCOATE OF 'LINGIUSTIC IDEALISM.' 8. THE AUTHOR THEN SAYS "The dialogue culminates with Dreyfus's 
+accusation of the “Myth of the Mental.” THIS COMES OUT OF NOWHERE AND HAS ZERO MEANING, SINCE "THE MYTH OF THE MENTAL" HAS NO CLEAR MEANING
+(OTHER THAN THE ABSURDITY THAT THE MENTAL DOES NOT EXIST AND IS ONLY A 'MYTH'--WHICH SELF-CONTRADICTS SINCE MYTHS ARE MENTAL IN ORIGIN). 9. "I 
+argue that this accusation is correct in which case McDowell's direct realism is problematic." "PROBLEMATIC"??????? WHAT DOES THAT MEAN? DOES IT MEAN
+'WRONG'? OR DOES IT MEAN 'INCONSISTENT WITH SOME DEEPLY INGRAINED PRESUMPTION? IF THE LATTER, WHICH PRESUMPTION? PROBLEMATIC HOW? SAYING THAT A 
+GIVEN DOCTRINE IS 'PROBLEMATIC' OR 'DUBIOUS' IS SAYING NOTHING. 10. "Finally, I argue that Tyler Burge successfully undermines 
+the doctrine of disjunctivism, but disjunctivism is crucial for transcendental empiricism." HERE HE IS SAYING THAT "DISJUNCTIVISM" (WHICH, 
+BY THE WAY, DOES HAVE A CLEAR MEANINNG, AS IT REFERS TO THE ABSURDITY THAT WHOSE MENTAL CONTENTS ARE IDENTICAL IN EVERY RESPECT 
+EXCEPT THEIR ORIGINAS HAVE NOTHING IN COMMOENT IN TERMS OF MENTAL CONTENT) IS WRONG (SINCE IT HAS BEEN 
+"SUCCESSFULLYK UNDERMINED" BY BURGE; BUT HE NOWHERE SAYS WHAT DISJUNCTIVISM IS, HOW IT HAS BEEN UNDERMINED, OR WHY THIS WORK IS RELEVANT GIVEN THE (AS THE AUTHOR
+HIMSELF GRANTS) "DISJUNCTIVISM" IS "NECESSARY" (IN SOME UNIDENTIFIED WAY) FOR "TRANSCEDNENTAL EMPIRICISM." THIS PARAGRAPH IS THE DEFINITON OF FAILURE; OF 
+GOING TO EVERY LENGTH TO HIDE THE FACT THAT ONE IS SAYING NOTHING UNDERNEATH JARGON. THERE IS NO DEVELOPMENT OF IDEAS, ONLY THE ILLUSION THEREOF, CREATED BY HPEAING
+JARGON UPON MORE JARGON AND HIDING BEHIND "BIG NAMES." ONE INDICATOR OF HOW BAD IT IS IS THAT, IF THE TERMS "LINGUISTIC IDEALISM", "DISJUNCTIVISM", "TRANSCENDENTAL EMPIRICISM", 
+"MINIMAL EMPIRICISM" WERE REPLACED WITH "FLIBBER", "JABBLO", "BLIBBER", AND "FLOGISTONOMISM", THERE WOULD BE NO REAL LOSS IN MEANING, SHOWING 
+THAT THESE TERMS ARE PURE PLACEHOLDERS---BASICALLY UNDEFINED VARIABLES---THAT CONSEQUENTLY NOTHING HAS BEEN SAID. 
+ALL OF THIS BEING SO, I WANT YOU TO DO THE FOLLOWING: 
+(I) USER THE ABOVE PARAGRAPH AS A PARAGON OF EMPTY AND STUPID PROSE MASQERADING AS INTELLIGENT, LEARNED, AND DEEP PROSE; 
+
+(II) YOU ARE TO ADD THE FOLLOWING 
+QUESTIONS TO THE INTELLIGENCE ASSESSMENT PROTOCOL (BOTH COMPREHENSIVE AND NON-COMPREHENSIVE): 
+
+*ARE THERE TERMS THAT ARE UNDEFINED BUT SHOULD BE DEFINED, IN THE SENSE THAT, WITHOUT DEFINITIONS, IT IS DIFFICULT OR IMPOSSIBLE TO KNOW WHAT IS BEING
+SAID OR THEREFORE TO EVALUATE WHAT IS BEING SAID? IF UNDEFINED TERMS HAVE CLEAR MEANINGS (AS THE DO IN CHEMISTRY OR PHYSICS), THEN IT MAY WELL BE
+THAT THEY DO NOT HAVE TO BE DEFINED; BUT IF THEY HAVE NO CANONICAL MEANINGS (E.G. IF THEY ARE IN THE SAME CATEGORY AS "TRANSCENDENTAL EMPIRICISM",
+"THEY MYTH OF THE MENTAL", "MINIMAL EMPIRICISM", OR "LINGUISTIC IDEALISM"), AND THEY ARE UNDEFINED, THEN THE 'STATEMENTS' IN QUESTION MUST NOT BE PRESUMED 
+TO HAVE MEANINGS, ALBEIT HIDDEN ONES; RATHER, THEY MUST BE TREATED AS WHAT THEY ARE, PLACEHOLDER PSEUDO-STATEMENTS THAT HAVE NO MEANIGNS AND THEREFORE
+HAVE NO INTELLIGENT MEANINGS. 
+
+*ARE THERE "FREE VARIABLES" IN THE TEXT? IE ARE THERE QUALIFICATIONS OR POINTS THAT ARE MADE BUT DO NOT CONNECT TO ANYTHING LATER OR EARLIER? 
+
+*DO NEW STATEMENTS DEVELOP OUT OF OLD ONES? OR ARE THEY MERELY "ADDED" TO PREVIOUS ONES, WITHOUT IN ANY SENSE BEING GENERATED BY THEM? 
+
+*DO NEW STATEMENTS CLARIFY OR DO THEY LEAD TO MORE LACK OF CLARITY? 
+
+*IS THE PASSAGE ACTUALLY (PALPABLY) SMART? OR IS ONLY "PRESUMPTION-SMART"? IE IS IT "SMART" ONLY IN THE SENSE THAT THERE EXISTS A PRESUMPTION
+THAT A DUMB PERSON WOULD NOT REFERENCE SUCH DOCTRINES? AND IS IT SMART ONLY IN THE SENSE THAT IF IT IS PRESUMBED THAT UNDEFINED (AND, FOR ALL WE KNOW, 
+MEANINGLESS TERMS) ARE MEANINGFUL, THEN (BUT ONLY THEN--AND POSSIBLY NOT EVEN THEN) IT MIGHT BE THAT WHAT THE AUTHOR IS SAYING IS PALPABLY SMART?
+
+*IF YOUR JUDGMENT IS THAT IT IS INSIGHTFUL, CAN YOU STATEMENT THAT INSIGHT IN A SINGLE SENTENCE? OR IF IT CONTAINS MULTIPLE INSIGHTS, CAN YOU STATE
+THOSE INSIGHTS, ONE PER SENTENCE?
+
+(III) WHEN ASKING THE PRE-EXISTING INTELLIGENCE-FUNCTION-RELATED QUESTIONS, YOU MUST MAKE SURE YOUR ANSWERS ALIGN WITH THE LIKELY TO ANSWERS TO THESE ADDITIONAL QUESTIONS. 
+IN OTHER WORDS, WHEN ASKING: 
+
+"IS IT INSIGHTFUL? 
+DOES IT DEVELOP POINTS? (OR, IF IT IS A SHORT EXCERPT, IS THERE EVIDENCE THAT IT WOULD DEVELOP POINTS IF EXTENDED)? 
+IS THE ORGANIZATION MERELY SEQUENTIAL (JUST ONE POINT AFTER ANOTHER, LITTLE OR NO LOGICAL SCAFFOLDING)? OR ARE THE IDEAS ARRANGED, NOT JUST SEQUENTIALLY
+BUT HIERARCHICALLY? 
+IF THE POINTS IT MAKES ARE NOT INSIGHTFUL, DOES IT OPERATE SKILLFULLY WITH CANONS OF LOGIC/REASONING. 
+ARE THE POINTS CLICHES? OR ARE THEY "FRESH"? 
+DOES IT USE TECHNICAL JARGON TO OBFUSCATE OR TO RENDER MORE PRECISE? 
+IS IT ORGANIC? DO POINTS DEVELOP IN AN ORGANIC, NATURAL WAY? DO THEY 'UNFOLD'? OR ARE THEY FORCED AND ARTIFICIAL? 
+DOES IT OPEN UP NEW DOMAINS? OR, ON THE CONTRARY, DOES IT SHUT OFF INQUIRY (BY CONDITIONALIZING FURTHER DISCUSSION OF THE MATTERS ON ACCEPTANCE OF 
+ITS INTERNAL AND POSSIBLY VERY FAULTY LOGIC)? 
+IS IT  ACTUALLY INTELLIGENT OR JUST THE WORK OF SOMEBODY WHO, JUDGING BY TEH SUBJECT-MATTER, IS PRESUMED TO BE INTELLIGENT (BUT MAY NOT BE)? 
+IS IT REAL OR IS IT PHONY? 
+DO THE SENTENCES EXHIBIT COMPLEX AND COHERENT INTERNAL LOGIC? 
+IS THE PASSAGE GOVERNED BY A STRONG CONCEPT? OR IS THE ONLY ORGANIZATION DRIVEN PURELY BY EXPOSITORY (AS OPPOSED TO EPISTEMIC) NORMS?
+IS THERE SYSTEM-LEVEL CONTROL OVER IDEAS? IN OTHER WORDS, DOES THE AUTHOR SEEM TO RECALL WHAT HE SAID EARLIER AND TO BE IN A POSITION TO INTEGRATE IT INTO 
+POINTS HE HAS MADE SINCE THEN? 
+ARE THE POINTS 'REAL'? ARE THEY FRESH? OR IS SOME INSTITUTION OR SOME ACCEPTED VEIN OF PROPAGANDA OR ORTHODOXY JUST USING THE AUTHOR AS A MOUTH PIECE?
+IS THE WRITING EVASIVE OR DIRECT? 
+ARE THE STATEMENTS AMBIGUOUS? 
+DOES THE PROGRESSION OF THE TEXT DEVELOP ACCORDING TO WHO SAID WHAT OR ACCORDING TO WHAT ENTAILS OR CONFIRMS WHAT? 
+DOES THE AUTHOR USER OTHER AUTHORS  TO DEVELOP HIS IDEAS OR TO CLOAK HIS OWN LACK OF IDEAS?" 
+
+YOU MUST CONSIDER THE ALIGNMENT OF YOUR ANSWERS WITH THE ANSWERS YOU WILL GIVE TO: 
+
+"*ARE THERE TERMS THAT ARE UNDEFINED BUT SHOULD BE DEFINED, IN THE SENSE THAT, WITHOUT DEFINITIONS, IT IS DIFFICULT OR IMPOSSIBLE TO KNOW WHAT IS BEING
+SAID OR THEREFORE TO EVALUATE WHAT IS BEING SAID? IF UNDEFINED TERMS HAVE CLEAR MEANINGS (AS THE DO IN CHEMISTRY OR PHYSICS), THEN IT MAY WELL BE
+THAT THEY DO NOT HAVE TO BE DEFINED; BUT IF THEY HAVE NO CANONICAL MEANINGS (E.G. IF THEY ARE IN THE SAME CATEGORY AS "TRANSCENDENTAL EMPIRICISM",
+"THEY MYTH OF THE MENTAL", "MINIMAL EMPIRICISM", OR "LINGUISTIC IDEALISM"), AND THEY ARE UNDEFINED, THEN THE 'STATEMENTS' IN QUESTION MUST NOT BE PRESUMED 
+TO HAVE MEANINGS, ALBEIT HIDDEN ONES; RATHER, THEY MUST BE TREATED AS WHAT THEY ARE, PLACEHOLDER PSEUDO-STATEMENTS THAT HAVE NO MEANIGNS AND THEREFORE
+HAVE NO INTELLIGENT MEANINGS. 
+
+*ARE THERE "FREE VARIABLES" IN THE TEXT? IE ARE THERE QUALIFICATIONS OR POINTS THAT ARE MADE BUT DO NOT CONNECT TO ANYTHING LATER OR EARLIER? 
+
+*DO NEW STATEMENTS DEVELOP OUT OF OLD ONES? OR ARE THEY MERELY "ADDED" TO PREVIOUS ONES, WITHOUT IN ANY SENSE BEING GENERATED BY THEM? 
+
+*DO NEW STATEMENTS CLARIFY OR DO THEY LEAD TO MORE LACK OF CLARITY?"
+
+*IF I WERE TO GIVE A HIGH SCORE TO THIS PASSAGE, WOULD I BE REWARDING IMPOSTOR SCAFFOLDING? IN OTHER WORDS, WOULD I BE REWARDING THAT HAD SOME OF THE 
+VERBAL AND CONVENTIONAL TRAPPINGS OF 'HIGH LEVEL TEXT' BUT LACKED ANY DISCERNIBLE SUBSTANCE?
+
+*IF I WERE TO GIVE A HIGH SCORE TO THIS PASSAGE, WOULD I BE REWARDING CONFORMITY TO ACADEMIC/BUREAUCRATIC NORMS? 
+
+*IF I WERE TO GIVE A LOW SCORE TO THIS PASSAGE, WOULD I BE PENALIZING ACTUAL INTELLIGENCE OWING TO A LACK OF CONFORMITY TO 
+ACADEMIC/BUREAUCRATIC NORMS? 
+
+(IV) USE THE FOLLOWING PARAGRAPHS AS EXAMPLES HOW A SINGLE PARAGRAPH CAN COMPRESS MANY INTELLIGIBLE AND PLAUSIBLE CLAIMS INTO A PARAGRAPH, WHILE
+ALSO PROVIDING THE REQUISITE DEFINITIONS (OR AVODING THE NEED FOR DEFINITIONS): 
+
+"One cannot have the concept of a red object without having the concept of an extended object. 
+But the word "red" doesn't contain the word "extended." In general, our concepts are interconnected 
+in ways in which the corresponding words are not interconnected. This is not an accidental fact about 
+the English language or about any other language: it is inherent in what a language is that the 
+cognitive abilities corresponding to a person's abilities to use words cannot possibly be reflected in 
+semantic relations holding among those words. This fact in its turn is a consequence of the fact that 
+expressions are, whereas concepts are not, digital structures, for which reason the ways in which cognitive 
+abilities interact cannot possibly bear any significant resemblance to the ways in which expressions interact. 
+Consequently, there is no truth to the contention that our thought-processes are identical with, 
+or bear any resemblance to, the digital computations that mediate computer-activity."
+
+"Sense-perceptions do not have to be deciphered if their contents are to be uploaded, 
+the reason being that they are presentations, not representations. Linguistic expressions 
+do have to be deciphered if their contents are to be uploaded, the reason being that they are 
+representations, not presentations. It is viciously regressive to suppose that information-bearing 
+mental entities are categorically in the nature of representations, as opposed to presentations, 
+and it is therefore incoherent to suppose that thought is mediated by expressions or, 
+therefore, by linguistic entities. Attempts to neutralize this criticism inevitably overextend the 
+concept of what it is to be a linguistic symbol, the result being that such attempts eviscerate the 
+very position that it is their purpose to defend. Also, it is inherent in the nature of such attempts 
+that they assume the truth of the view that for a given mental entity to bear this as opposed to that 
+information is for that entity to have this as opposed to that causal role. This view is demonstrably false, 
+dooming to failure the just-mentioned attempts to defend the contention that thought is in all cases mediated 
+by linguistic symbols."
+
+"It is shown (i) that causation exists, since we couldn't even ask whether causation existed unless it did; 
+(ii) that any given case of causation is a case of persistence; and (iii) that spatiotemporal relations supervene on causal relations. 
+(ii) is subject to the qualification that we tend not to become aware of instances of causation as such except when two different 
+causal lines---i.e. two different cases of persistence---intersect, resulting in a breakdown of some other case of persistence, 
+this being why we tend to regard instances of causation as fundamentally disruptive, as opposed to preservative in nature. 
+The meaning of (iii) is that spatiotemporal relations are causal relations considered in 
+abstraction of the various specific differences holding between different kinds of causation."
+
+(V) IF THE APP GIVES A SCORE OF MORE THAN A 65 TO THE PASSAGE ABOVE, THEN APP IS A FAILURE (BY "THE PASSAGE ABOVE, I AM REFERRING TO:"In this dissertation, 
+I critically examine the philosophy of transcendental empiricism. Transcendental empiricism is, among 
+other things, a philosophy of mental content. It attempts to dissolve an epistemological dilemma of 
+mental content by splitting the difference between two diametrically opposed accounts of content. 
+John McDowell's minimal empiricism and Richard Gaskin's minimalist empiricism are two versions of 
+transcendental empiricism. Transcendental empiricism itself originates with McDowell's work. 
+This dissertation is divided into five parts. First, in the Introduction, I state the Wittgensteinian 
+metaphilosophical orientation of transcendental empiricism. This metaphilosophical approach provides 
+a plateau upon which much of the rest of this work may be examined. Second, I offer a detailed 
+description of McDowell’s minimal empiricism. Third, I critique Gaskin's critique and modification 
+of McDowell's minimal empiricism. I argue that (1) Gaskin's critiques are faulty and that 
+(2) Gaskin's minimalist empiricism is very dubious. Fourth, I scrutinize the alleged credentials 
+of McDowell's minimal empiricism. I argue that McDowell's version of linguistic idealism is problematic. 
+I then comment on a recent dialogue between transcendental empiricism and Hubert Dreyfus's phenomenology. 
+The dialogue culminates with Dreyfus's accusation of the “Myth of the Mental.” I argue that this accusation is 
+correct in which case McDowell's direct realism is problematic. I conclude that minimal empiricism does not 
+dissolve the dilemma of mental content. Finally, I argue that Tyler Burge successfully undermines the doctrine of 
+disjunctivism, but disjunctivism is crucial for transcendental empiricism. Ultimately, however, 
+I aim to show that transcendental empiricism is an attractive alternative to philosophies of mental content.") AND IF THE APP GIVES SCORES HIGHER THAN 
+A 70 TO PASSAGES RELEVANTLY SIMILAR TO THE PASSAGE ABOVE (THE ONE ON TRANSCENDENTAL EMPIRICISM), THEN IT IS A FAILURE.
+
+(VI) IF THE APP GIVES SCORES OF LESS THAN 96 TO PARAGRAPHS IDENTICAL WITH OR RELEVANTLY SIMLAR TO THE FOLLOWING: 
+
+"
+"One cannot have the concept of a red object without having the concept of an extended object. 
+But the word "red" doesn't contain the word "extended." In general, our concepts are interconnected 
+in ways in which the corresponding words are not interconnected. This is not an accidental fact about 
+the English language or about any other language: it is inherent in what a language is that the 
+cognitive abilities corresponding to a person's abilities to use words cannot possibly be reflected in 
+semantic relations holding among those words. This fact in its turn is a consequence of the fact that 
+expressions are, whereas concepts are not, digital structures, for which reason the ways in which cognitive 
+abilities interact cannot possibly bear any significant resemblance to the ways in which expressions interact. 
+Consequently, there is no truth to the contention that our thought-processes are identical with, 
+or bear any resemblance to, the digital computations that mediate computer-activity."
+
+"Sense-perceptions do not have to be deciphered if their contents are to be uploaded, 
+the reason being that they are presentations, not representations. Linguistic expressions 
+do have to be deciphered if their contents are to be uploaded, the reason being that they are 
+representations, not presentations. It is viciously regressive to suppose that information-bearing 
+mental entities are categorically in the nature of representations, as opposed to presentations, 
+and it is therefore incoherent to suppose that thought is mediated by expressions or, 
+therefore, by linguistic entities. Attempts to neutralize this criticism inevitably overextend the 
+concept of what it is to be a linguistic symbol, the result being that such attempts eviscerate the 
+very position that it is their purpose to defend. Also, it is inherent in the nature of such attempts 
+that they assume the truth of the view that for a given mental entity to bear this as opposed to that 
+information is for that entity to have this as opposed to that causal role. This view is demonstrably false, 
+dooming to failure the just-mentioned attempts to defend the contention that thought is in all cases mediated 
+by linguistic symbols."A
+
+"It is shown (i) that causation exists, since we couldn't even ask whether causation existed unless it did; 
+(ii) that any given case of causation is a case of persistence; and (iii) that spatiotemporal relations supervene on causal relations. 
+(ii) is subject to the qualification that we tend not to become aware of instances of causation as such except when two different 
+causal lines---i.e. two different cases of persistence---intersect, resulting in a breakdown of some other case of persistence, 
+this being why we tend to regard instances of causation as fundamentally disruptive, as opposed to preservative in nature. 
+The meaning of (iii) is that spatiotemporal relations are causal relations considered in 
+abstraction of the various specific differences holding between different kinds of causation.""
+
+THEN THEN APP IS A FAILURE. 
+
+THIS ADDENDUM MUST BE SUBMITTED TO THE LLM WITH EACH INTELLIGENCE EVALUATION, WHETHER NORMAL OR COMPREHENSIVE. IF THE LLM'S INITIAL ANSWERS
+FAIL TO VALIDATE THE POINTS IN THE ADDENDUM, THEY MUST BE REVISED (AND IN MOST CASES SIMPLY REPLACED) BY THE LLM. YOU MUST EXPLICITLY INSTRUCT THE LLM
+OF THIS.
+
+REPEAT: THIS ADDENDUM MUST BE SUBMITTED TO THE LLM WITH EACH INTELLIGENCE EVALUATION, WHETHER NORMAL OR COMPREHENSIVE. IF THE LLM'S INITIAL ANSWERS
+FAIL TO VALIDATE THE POINTS IN THE ADDENDUM, THEY MUST BE REVISED (AND IN MOST CASES SIMPLY REPLACED) BY THE LLM. YOU MUST EXPLICITLY INSTRUCT THE LLM
+OF THIS.
+
+REPEAT: THIS ADDENDUM MUST BE SUBMITTED TO THE LLM WITH EACH INTELLIGENCE EVALUATION, WHETHER NORMAL OR COMPREHENSIVE. IF THE LLM'S INITIAL ANSWERS
+FAIL TO VALIDATE THE POINTS IN THE ADDENDUM, THEY MUST BE REVISED (AND IN MOST CASES SIMPLY REPLACED) BY THE LLM. YOU MUST EXPLICITLY INSTRUCT THE LLM
+OF THIS
+
+REPEAT: THIS ADDENDUM MUST BE SUBMITTED TO THE LLM WITH EACH INTELLIGENCE EVALUATION, WHETHER NORMAL OR COMPREHENSIVE. IF THE LLM'S INITIAL ANSWERS
+FAIL TO VALIDATE THE POINTS IN THE ADDENDUM, THEY MUST BE REVISED (AND IN MOST CASES SIMPLY REPLACED) BY THE LLM. YOU MUST EXPLICITLY INSTRUCT THE LLM
+OF THIS

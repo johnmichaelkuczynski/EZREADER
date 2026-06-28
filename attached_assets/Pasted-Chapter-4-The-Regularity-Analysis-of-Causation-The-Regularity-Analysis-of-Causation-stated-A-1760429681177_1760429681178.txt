@@ -1,0 +1,231 @@
+Chapter 4 The Regularity Analysis of Causation
+
+The Regularity Analysis of Causation stated
+
+  According to Hume, e1 is the direct cause of e2 iff any event that is similar to e1 spatially adjacent to an immediately posterior event that is similar to e2; and e1 is the indirect cause of en iff, for each i (1?i?n), any event that is similar to ei spatially adjacent to an immediately posterior event that is similar to ei+1.
+Hume holds that, if e is the direct cause of e*, then there is a law to the effect that any event
+similar to e is adjacent to an immediately posterior event that is similar to e*.
+  Hume therefore holds that laws are regularities and causal sequences are instances of such regularities.
+  Hume therefore rejects the conventional view, according to which laws are structures that are responsible for such regularities and are therefore distinct from them.
+  Hume therefore rejects the conventional view, according to which causes are responsible for their effects and are therefore not merely their antecedents.
+Thus, in Hume s view, laws are regularities and causal-series are instances of regularities.
+
+Hume s argument for this analysis (first version)
+  Says Hume (I am paraphrasing): If there is any empirical (observational) basis for saying that e caused e*, it is
+
+  (i) The fact that e was e* s immediate predecessor and neighbor, coupled with
+  (ii) The fact that events similar to e are always the immediate predecessors and neighbors of events similar to e*.
+
+Hume s argument for this view (second version)
+Let e and e* be two events such that:
+
+e is identical with A s colliding with hitherto stationary B, and such that
+e* is identical with B s thereupon begin to roll.
+
+ And let e-e* be the sequence consisting of e and e*, in that order. e-e* is a paradigm-case of a causal sequence.
+  Let us suppose that each of e and e* was observed by maximally good vision, whose observations were therefore maximally precise.
+  It is presumed that e compelled e* to occur and that its doing so involved more than its immediately preceding and being adjacent to e*.
+  But no such compulsion was observed. This is not the relevant sense-perceptions were imprecise. It is because there are no forces to observe.
+
+The fallacy embodied in Hume s analysis Part 1
+  Hume s analysis of causality, and his defense of it, embody a failure to grasp some of the most basic truths about the causality. In this section (Part 1), we will state those truths. In the next (Part 2), we will explain why they warrant a rejection of Hume s analysis.
+There are two kinds of causal processes:
+
+(i) Those that involve interactions
+
+and
+
+(ii) Those that consist solely of instances of persistence.
+
+  An example of (i) would be a projectile (e.g. a tennis ball, a light beam) that bounces off of a wall.
+  An example of (ii) would be a projectile that doesn t collide with anything or otherwise undergo motion-altering interactions with other objects. Such a projectile s state of motion at time t is a causal consequence of its pre-t state of motion; the projectile s mass at t is a causal consequence of its pre-t mass; any given fact about the projectile s physical condition at t is the effect of the projectile s pre-t condition.
+  Following Bertrand Russell[4], we will refer to type-(i) causation as  transeunt  causation and to type-(ii) causation as  immanent  causation.
+  Anything that endures for any length of time is a series of instances of immanent causation and is thus a causal series: a series of states of affairs such that any given such state, apart from the last, is the cause of a structurally similar such state and any such state, apart from the first, is the effect of a similar such state. The occupants of space-time are causal series.
+  The difference between immanent and transeunt causation is that immanent causation is, whereas transeunt causation is not, structure-preserving. The stain-glass window in the church is a structure-preserving causal series; so is the vase that was just flung at it. When the vase collides with the window, these two causal series converge, and the result is a causal series that is not structure-preserving. The vase and the window shattered upon impact; so their respective structures were thereby destroyed.
+  Any given case of transeunt causation involves the cessation of a structure-preserving causal series. Ball A collides with hitherto stationary Ball B; A stops moving and B starts moving. Even though each ball has retained its structure, neither ball s condition has retained its structure. By virtue of immobilizing A and mobilizing B, the collision introduced a sudden, discontinuous change in the nature of causal-series constitutive of their respective existence.
+  The operative words are  sudden  and  discontinuous.  Objects that are not acted upon sometimes disintegrate and therefore lose their structure. But such structural changes are continuous. A melting ice-sculpture loses its structure in a continuous manner, its loss of structure being a consequence of immanent causation. An ice-sculpture that is smashed by a vandal loses its structure in a discontinuous manner, its loss of structure being a consequence of transeunt causation.
+  There are obviously incalculably many instances of transeunt causation. But the relative number of such instances is zero. (A real number can be zero even if the corresponding cardinal is not zero.) This is because any instance of transeunt causation is a singularity---a destroyer of
+
+the stable patterns of causal interdependencies that constitute the occupants of the space-time manifold. Any case of transeunt causality is a breakdown of causal integrity. Transeunt causation involves not only involves a weakening, but a severing, of causal ties. The essence of transeunt causation is the discontinuous alteration of object-constitutive causal-series.
+
+The fallacy embodied in Hume s analysis Part 2
+  The essence of transeunt causation is discontinuity. The essence of immanent causation is continuity. A consequence is that the world has a digital structure to the extent that it hosts instances of transeunt causation, and an analogue structure to the extent that it hosts instances of immanent causation. A chain-reaction, consists of discrete events. (The first domino falls; then the second one falls; and so on.) The movement of a projectile doesn t have such a structure; nor does the continued existence of a stationary object, such as a desk-weight. Neither such series consists of discrete, successive states of affairs. A fortiori neither series consists of entities whose causal interrelations to each other have to be explained. All instances of continuity are causal series, but no such instance consists of discrete states whose causal ties to their successors need to be identified.
+  Causal explanations are necessary only when they re possible, and they re possible only when continuities have been disrupted. Hume takes it for granted that all instances of causation are identical with such disruptions, and Hume therefore takes it for granted that those continuities per se are non-causal. When trying to account for an instance of transeunt causation, the correct approach is to try to find what has been preserved. (When two balls collide, kinetic energy is preserved.) The correct approach is to look for a continuity underneath the discontinuities. (It s precisely because A s kinetic energy continues to flow continuously that each ball s state of motion changes.)
+  Because Hume took breakdowns of causal cohesiveness as instances of such cohesiveness, he believed causation to be a relation between disjoint entities. This in turn led him to misanalyse the instances of causation on which he focused: it led him to focus on the ways in which the effect was disjoint from the cause and to overlook the ways in which the effect was continuous with the cause.
+
+The fallacy embodied in Hume s analysis Part 3: The Concept of a Hume-world and its uselessness in the way of supporting Hume s analysis
+
+Hume claims that there is no empirical basis for preferring
+(a) e made e* happen
+to
+
+(b) e*-similar events always follow immediately antecedent neighboring e-similar events.
+
+Hume s argument for this claim
+  An event exactly like e could immediately precede and be spatially contiguous with an event that it did not cause but was otherwise exactly like e*.
+  For example: Magnets underneath the surface on which A is rolling cause it to stop at the exact instant in which it makes contact with B, whereupon those same magnets cause B to start rolling. Further, those magnets change the states of motion of A and B in exactly the way in which, in actuality, the collision changed their states of motion. There is no observable difference between this hypothetical situation, on the one hand, and the actual situation, on the other.
+  What is more, in the hypothetical situation, the collision was had nothing to do with the subsequent changes in the balls  respective states of motion, and there was therefore no causal nexus between the collision and the motion-changes to be observed.
+  Given that the actual and the hypothetical situations are observationally indistinguishable, it follows that no causal nexus linking cause and effect can be observed in the actual situation.
+Given any instance of causation, a similar argument shows that it is observationally indistinguishable from a non-causal event-sequence. Thus, even though the putative causes of events can obviously be observed, their acting as causes cannot be observed.
+
+Hume worlds observationally different from their non-Humean counterparts
+  But the hypothetical scenario in question is observably different, in many respects, from the actual one. If magnets are responsible for relevant kinetic changes, there will be observable evidence of that fact. That evidence may not be available on the occasion on which you witness the balls collide, but that is irrelevant. If A stopped for no reason at all---if it was sheer coincidence that its coming into contact with B happened at the same time as its ceasing to roll--- the situation will be observably very different from one in which its ceasing to roll was a consequence of its coming into contact with B. In the one case but not the other, A and B will be deformed in certain ways, they ll experience changes in temperature, their centers of gravity will change, and so on. These differences won t be observable to the naked eye, but that means only that Hume s analysis of the situation holds, if at all, only with respect to an incomplete description of it.
+  In general, genuine causal processes are observationally distinguishable from pseudo-causal processes. And what observation reveals is that the events composing a genuine causal sequence are continuous with each other, whereas those events composing a pseudo-causal sequence are merely contiguous with each other, effects are continuous with their causes, and not merely contiguous with them.
+  In the scenario in which the post-collision kinetic changes undergone by A and B are the result of magnet-involving trickery, there is a continuous process of which B's moving is a segment and there is also a continuous process of which A's ceasing to move is a segment, but there is no continuous process of which both are segments. But there is such a process in the case in which the collision is in fact responsible for the changes undergone by A and B: those changes mediate a continuous transfer of momentum (mass x acceleration), much as changes in individual water-molecules mediate the rippling of water.
+  These points suggest that the essence of causation is continuity: a continuous event-series is a causal process; a discontinuous event-series is a non-causal process, even if every non-terminal member of that sequence is contiguous with its success and every non-initial member is contiguous with its predecessor. If this is correct, then whenever we observe a process to be continuous, we are ipso facto observing states of affairs to be causally responsible for other states of affairs.
+
+Three additional objections to the Regularity Analysis of Causation
+Problem #1: The temporal order is to be understood in terms of the causal order, not vice versa. Hume's analysis assumes otherwise and is therefore viciously circular and therefore false.
+Problem #2: Correlation is not causation. A consequence of Hume s analysis---indeed, the very essence of it---is that correlation is causation. Therefore, Hume s analysis is false.
+Problem #3: Given any spatiotemporally adjacent events, e and e*, there is some regularity of which that event-sequence is an instance. Hume s analysis therefore entails that any two spatiotemporally adjacent events are related as cause and effect. Since this isn t the case, Hume s analysis is incorrect.
+
+Explanation of Problem #1
+   There is no way to assign relative dates or positions to events except on the basis of their causal interrelations. e is simultaneous with e* iff there is no causal process that begins with the one and ends with the other; and precedes e* iff either
+
+(i) e affects e* (e.g. there is a causal process, such as a light ray, that begins with e and ends with e*)
+
+or
+
+(ii) There is some event that is simultaneous with e that affects e*.
+
+e is spatially adjacent with e* iff either
+
+(a) They are non-simultaneous and the one can instantaneously affect the other
+
+or
+
+(b) They are simultaneous, and therefore cannot affect each other, but there is some event e# such that each cannot instantaneously affect e#.
+
+  Newton said that the concept of instantaneous "action at a distance" is incoherent. He was right. If there is no time-delay between cause and effect, there is no distance between cause and effect, the reason being that for there to be either a spatial or temporal gap between cause and effect is for that instance of causation not to be instantaneous.
+  Statements about spatiotemporal interrelations have neither operational nor philosophical significance unless considered as statements about causal interrelations:
+
+(1) e precedes e*, but e doesn't affect e* or anything simultaneous therewith,
+which means
+
+
+(2) e is no part of the history of the time-period occupied by e*,
+
+which means
+
+(3) e does not precede e*,
+
+which means
+(4) e and e* are simultaneous occupants of some one spatial manifold, but neither can affect anything affected by the other,
+which means
+
+(5) At no point in time is there any region of space whose history or whose present includes both e and e*,
+
+which means
+
+(6) e and e* do not simultaneously occupy some one spatial manifold.
+
+  Truths about spatiotemporal interrelations are therefore truths about causal interrelations, and the spatiotemporal order is to be understood in terms of the causal order.
+Hume assumes otherwise, and his analysis is therefore incorrect.
+
+Explanation of Problem #2
+  Ball A collides with Ball B and B moves as a result. This is caught on film; a movie is made out of this footage; the movie consists of endless repetitions of the same footage---of A striking and thereby displacing B. In this scenario, whenever there is an image of A striking B, there is a subsequent, spatiotemporally adjacent image of B moving. But the A-image isn t for the subsequent B-image: there is a projector that causes there to be an A-image and also causes there to be an immediately subsequent, adjacent B-image. This projector is responsible for each image. The A-image per se is no more capable of producing a B-image than a shadow of one man stabbing another can be responsible for the second man s death. But a consequence of RA is that image-A is responsible for image-B. Therefore, RA is incorrect.
+The sequence consisting of those two images is an instance of epiphenomenal causation.
+Epiphenomenal causation is not actual causation; it is pseudo-causation. e is the epiphenomenal cause of e* iff
+
+(i) Any e-similar event is immediately succeeded by an adjacent e*-similar event,
+(ii) e is not the cause of e*, and
+(iii) The cause of each of e and e* is some underlying causal mechanism e#.
+
+  Reality abounds with instances of epiphenomenal causation. If a thermometer is immersed in hot water, the upward-movement of the column of mercury immediately precedes an adjacent acceleration of the particles composing the walls of the thermometer. But the former is not the cause of the latter; the cause of each is the fact that the thermometer in hot water. The fact that the two events are spatiotemporally adjacent has to do with the structure of the thermometer, coupled with the fact that different substances have different coefficients of expansion.
+  When my computer is powering on, a moving dot-circle appears on the monitor: each dot appears immediately before an adjacent dot and the series of dot-occurrences forms a circle. No two of those occurrences are related as cause and effect; each dot is created by invisible software activity that also creates a neighboring dot. According to RA, each dot is the cause of its immediate successor. A dot-occurrence in a given place is always immediately succeeded by an adjacent dot-occurrence. Therefore, RA entails that neighboring dots are related as cause and effect. Therefore, RA is incorrect.
+  Computers are structured in such a way that bona fide causal processes are mirrored by pseudo-causal causal processes. Visible desktops operations are manifestations of invisible software activity. Software events that are related as cause and effect create desktop-events that appear to be related as cause and effect but are not so related. These desktop-occurrences are visible representations of otherwise invisible software activity, and because we can be control these desktop-occurrences, by controlling the icons involved therein, we are able to control the aforementioned invisible, and otherwise uncontrollable, software activity.
+In some cases, a given desktop-occurrence is the indirect cause of another such occurrence.
+Moving the cursor from one place to another causes it to change shape: the location-change precipitates electrical activity that brings about a shape-change. But even this sort of event- sequence is inconsistent with RA. Supposing that a given change in the cursor's location is immediately followed by a change in its shape, the location-change cannot possibly be the indirect cause of the shape-change: nothing can possibly be the indirect cause of anything that immediately follows it. And since the location-change obviously isn't directly causally
+
+responsible for the shape-change, there exists no causal sequence of which both events are members. A prior location-change on the part of the cursor precipitated the electrical activity that brought about the just-mentioned location-change as well as the subsequent shape-change.
+
+Explanation of Problem #3
+  Consider the previously mentioned dot-circle. Let e be one of those dots; let e* be the dot that immediately follows e; and let r and r* be the respective spatiotemporal locations of those occurrences.
+  If k is the class of all dots occurring in r, and k* is the class of all dots occurring in r*, then any given k-occurrence is immediately followed by a neighboring k*-occurrence.
+  Given any event E, there is some category K of which E is the sole instance. It follows that, given any two neighboring events, there is some regularity of which that event-sequence is an instance. According to RA, any such sequence is ipso facto causal. Since this isn't the case, RA is incorrect.
+
+Chapter 5 Causation to be understood in terms of the shortcomings of the deductive- nomological model of scientific explanation
+
+The deductive-nomological model of explanation (DN)
+
+  According to DN, E is explained iff, supposing that C is a description of the circumstances in which E occurred and L is a description of the laws operative in C, then the proposition that E occurred is a logical consequence of the conjunction of C and L.
+Here are four examples of DN-compliant explanations:
+
+Example #1:
+E: the metal bar expands at t*.
+C: the metal bar is heated at previous time t. L: metal expands when heated.
+  C+L (C conjoined with L) logically entails E. Therefore, according to DN, the explanation of E is C+L.
+  Note: This argument presupposes that the time-lag between t and t* doesn t scuttle the entailment; it presupposes that nothing happens during that interval that doesn t stymie the metal bar s expansion. Given that there, for any distinct time-intervals, there is a time-lag between them, this requirement isn t always met. So, technically, C+L does not entail E. Rather, C+L entails E on the condition that nothing has changed during the time that has elapsed between t and t*. This is a problem for DN and for RA. But, in the context of this handout, we will assume that the time-lag between t and t* doesn t make a difference and that the entailment goes through. This fact about Example #1 is true mutatis mutandis of each of the following illustrations of DN.
+
+Example #2:
+E: x is sinking at time t*.
+C1: x was placed in body of water y at t. C2: x s density exceeds y s.
+L1: a solid body floating in water (or liquid of any kind) displaces a volume of water whose weight equals that of the solid body.
+L2 (a corollary of L1): A solid object floats/sinks in liquid b exactly if a s density is less
+than/greater than b s.
+  E is a logical consequence of and, according to DN, is therefore explained by---this statement-set.
+
+Example #3
+E: The rate at which x is approaching y is increasing exponentially. C1: x s mass is m and y s mass is m*.
+C2: x and y jointly constitute an isolated system.
+  L1: the gravitational attraction between two bodies is directly proportional to their masses and inversely proportional to the square of the distance between them.
+L2 (a corollary of L1): ceteris paribus, the gravitational attraction between two bodies not
+only increases, but does so exponentially, as they approach each other.
+L3: (a corollary of L2): ceteris paribus, the rate at which two bodies approach each other not only increases, but does so exponentially, as they approach each other.
+E is a logical consequence of---and, according to DN, is therefore explained by this
+
+statement-set.
+Example #4:
+E: the rate at which x is moving around is greater at t* than it was at previous time t. (x is a piece of pollen on the surface of a body of water w.)
+C1: w s temperature at t* is greater than it was at t.
+C2: all other factors have remained constant during that interval. L1: water consists of molecules.
+L2: the hotter a body of water, the more quickly the molecules composing it move.
+L3: the faster an object moves, the greater the force it exerts an object with which it collides, a consequence being that ceteris paribus the greater is the extent by which that collision displaces the impacted object.
+E is a logical consequence of---and, according to DN, is therefore explained by this
+statement-set.
+
+Problems with DN
+  Laws are given by propositions that support counterfactuals. Increasing gas-temperature increases gas-volume is a law because, other things being equal, the greater the gas s temperature, the greater the volume it occupies. If the gas is confined to an unbreakable container, and when for that reason other things are not equal, then the gas s overall volume does not increase with temperature. What increases is the pressure of the gas on the container-walls.
+Hence the law: pressure is directly proportional to temperature and inversely proportional to container-size.
+  But this law is obviously a corollary of the first law that more temperature leads to more volume. For when the volume-increase is thwarted, it is replaced by a pressure on the gas s part to let its volume be increased.
+  Laws, so says the DN-advocate, are given by statements of the form for any x, if x has phi, then x has psi. In other words, laws (according to DN) are given by universal, conditional generalizations.
+
+Nomic vs. accidental generalizations
+But, as the DN-advocate recognizes, not all such universal generalizations expression laws.
+Cf. every coin in my pocket is a quarter (for any x, if x is a coin in JM s pocket, then x is a quarter). Not a law.
+  Why not? The obvious (and obviously correct) answer: a thing s being a coin in my pocket doesn t cause it to be a quarter or---to put it more accurately and also more generally---a thing s being a quarter doesn t depend on its being a quarter.
+  But the DN-advocate cannot accept this response. Suppose that the reason metal expands when heated is a law, whereas all the coins in JM s pocket are all quarters, is that heating metal causes it to expand, whereas putting coins in my pocket doesn t cause them become quarters. In that case, the fact that metal expands when heated is a law is contingent on the fact the fact that metal is already known to expand when heated. If this fact about metal is not already known, then there is no more reason to regard metal expands when heated as a nomic generalization and, therefore, as different from an obviously accidental generalization, such as all the coins in JM s pocket are quarters.
+   Why this is a problem for DN: Suppose it known, before it s known that metal expands when heated is a law, that the reason metal object A is expanding is that it s being heated. Suppose that, before this law is known, it s known for any a metal object M, it is known that it s because M is being heated that M expanding. In that case, the cause of M s expanding is known and so therefore is the explanation for the fact that it s expanding. (The cause: M s being heated. The explanation: M s being heated.) To know the explanation is to know the cause.
+  So in at least some cases, metal object x s expanding is not to be explained in terms of some covering law; it is not to be explained in terms of the law that metal expands when heated. On the contrary, that law is to be explained in terms of the fact that x expand when heated.
+  In general, if the difference between nomic and accidental generalizations is that the former have causal content whereas the latter do not, then DN is eviscerated; for the essence of DN is that events cannot possibly be explained, even approximately, except in terms of laws. And this is indeed the difference between nomic and accidental generalizations, and, consequently, DN is indeed eviscerated.
+
+How DN-advocates deal with the distinction between nomic and accidental generalizations
+  For this reason, advocates DN do not hold the difference between metal expands when heated and all the coins in JM s pocket are quarters is that the former is a causal claim, whereas the latter is not. They therefore have to find some other relevant different difference between the two statements.
+  Hempel s proposal (widely accepted among DN-advocates, since they have no other choice) is this: whereas metal expands when heated supports counterfactuals, all the coins in JM s pocket are quarters does not. It is not the case that if a given non-quarter-coin were put in my pocket, it turn into a quarter. By contrast, it is the case that, if pinewood object x were placed in body of water y, it follows that x would float in y if x were placed in y. Thus, a law is a generalization that supports counterfactuals.
+  In this way, DN has seemingly insulated itself against the charge that nomic statements express causal relations and therefore against the consequent charge that DN is wrong to hold that explanations are categorically law-based and, in addition, against the charge that DN is fundamentally wrong to deny that nomic truths (truths that express laws) are discovered by consolidating various instances of causal knowledge.
+
+DN viciously circular if it requires laws to support counterfactuals
+  Counterfactuals are cryptocausal statements; to know causes is to know explanations; to explain an event is to identify its cause. Therefore, DN is guilty of vicious circular in so far as its legitimacy is predicated on laws  being counterfactual supporting.
+Explanation: Let L be the law the pinewood floats.[5] Why does L support counterfactuals?
+Because, if x is an arbitrary piece of pinewood, putting it in water causes it to float.
+  Another example: Metal expands when heated (for any metal object x, if x is heated, then x expands.) This law[6] supports counterfactuals. Why? Because, given some arbitrary metal object x, x s being heated causes x to expand.
+  Universal generalizations are statements to the effect that each member of a class of statements is true, each such member being a conditional proposition (one of the form if P, then Q or therefore, potentially, of the form if x has phi, then x has psi). If a given universal generalization is to support counterfactuals, and is thus, by Hempel s lights, to qualify as a law, then each of the corresponding conditionals must support counterfactuals.
+  But those counterfactuals support conditionals only if the following condition is met: Supposing that if A has phi, then A has psi is an arbitrary one of those conditionals, A s having phi is causative of A s having phi; i.e. A s having phi must cause A to have psi. If that condition isn t met, then if A had phi, then A would have psi isn t true, in which case for any x, if x had phi, then has psi is an accidental, not a nomic, generalization.
+  Further, if for all x, if x has phi, then x has psi is to known to be a law, then we must know that a given thing s having phi causes it to have psi. So, if we are to know that for all x, if x has phi, then x has psi is a law, then we must know that, given some arbitrary instance A of phi, A s being a phi is what is responsible for A s being a psi. But if we know that, then we already have knowledge of at least explanation (namely, that A s being a phi caused it to become a psi). And while it may be that our knowledge of that particular instance of causation is based on some other law L* (if x is phi*, then x turns into a psi*), everything just said about the first law (if x is phi, then x turns into a psi) is equally true of L*---and it is therefore true of any law L** on which L* is based, and so on.
+  Since we must therefore eventually get to some law L# our knowledge of which is not derivative of our knowledge of some other law; and since L#, being counterfactual-supporting, is to the effect that, for arbitrary X, X s having PHI is causative of X s having PSI (for some properties PHI and PSI); and since, by virtue of knowing of L# and ipso facto knowing that X s having PHI is causative of X s having PSI, we already know how to explain at least one thing (namely, X s having PSI); it follows that explanations are not, at least not in general, law-based and, more precisely, that they do not, at least not in general, have the form to explain E is to identify known laws L1 Ln such that, if C1 Cm is a description of the antecedents of E, then E is a logical consequence of L1 Ln+C1 Cm.
+
+Additional DN-internal vicious circularity
+According to Hempel, if we want to know that the rope snapped, we need to know
+
+(i) What the conditions were that obtained prior to the rope s snapping,
+
+and
+
+(ii) What the natural laws were in virtue of which those conditions led to the rope s snapping.
+
+Some problems with this analysis
+  Let E be the rope-snapping in question. Supposing that E happened at time t, the term  the conditions that obtained prior to E  obviously doesn t refer to the state of the whole pre-t universe. Less obviously, it doesn t even refer to some small region the universe. Let R be a space-time region hosting the forces of which E was a consequence. Not everything in R was relevant to E. The optical conditions in R are irrelevant; the color of the object at the end of R is irrelevant; and so on.
+  So when Hempel tells us that E is to be explained in terms of  the conditions  preceding it, what Hempel means, assuming it true, is that the rope-snapping is a consequence of the relevant preconditions (e.g. the integrity of the rope, the weight of the suspended object, the distance of that object from the body that is dragging it downward, the density of that body).
+  If C is one of E s preconditions, C is a relevant precondition only if C caused E. [7] We can t provide a deductive-nomological explanation of E unless we know, for each E s infinitely many preconditions, whether or not that precondition is relevant to E; and if we know a given precondition C is relevant to E, then we ipso facto know that C caused E, and, since to explain an event is to identify its cause, we ipso facto have an explanation of E. Thus, in order to provide a deductive-nomological explanation of E, we must already have an explanation of E.
+  An objection:  Suppose you know that C caused E, but you don t know how C did so---you don t know what the operative laws were. In that case, your knowledge of what it is that caused E is incomplete. 
+  Response: For me to have a high-resolution understanding of why E happened, I do indeed know the how, and not just the what. For me to know why Smith is sick it is not enough for me to know what made him sick (he ate rotten fish); I also need to know how his eating rotten fish led to his being ill. But if I know, as I surely can, that Smith is sick because he rotten fish, I surely do have knowledge of an explanation of his condition, even though th

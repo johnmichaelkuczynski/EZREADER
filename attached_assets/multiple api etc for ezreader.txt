@@ -1,0 +1,143 @@
+Objective
+Upgrade the Easy Reader app to:
+
+Use two-level chunking (macrochunks → subchunks) for ultra-large documents.
+
+Distribute macrochunks across multiple API keys (Anthropic, OpenAI, Perplexity, etc.).
+
+Add timeout and retry safety for all API calls.
+
+Continue streaming results live chunk-by-chunk into the output box (as it does now).
+
+🔷 Detailed Instructions
+1. Implement Two-Level Chunking
+When a document is uploaded:
+
+If total word count > 5,000 words:
+
+Divide it into macrochunks of about 5,000 words each.
+
+Otherwise, use normal ~500-word chunking.
+
+Inside each macrochunk:
+
+Divide into ~500-word subchunks.
+
+Process each subchunk sequentially (one at a time).
+
+2. Distribute Macrochunks Across Multiple API Keys
+Maintain a list of available API keys, e.g.:
+
+python
+Copy
+Edit
+api_keys = ["ANTHROPIC_KEY_A", "ANTHROPIC_KEY_B", "OPENAI_KEY", "PERPLEXITY_KEY"]
+Assign macrochunks to API keys in round-robin fashion:
+
+Macrochunk 1 → API Key A
+
+Macrochunk 2 → API Key B
+
+Macrochunk 3 → API Key C
+
+Macrochunk 4 → API Key D
+
+Macrochunk 5 → API Key A again, and so on.
+
+If an API key fails for a macrochunk:
+
+Retry once immediately with the same key.
+
+If retry also fails, skip the macrochunk or try the next available key.
+
+3. Add Timeout and Retry Logic for Each Subchunk API Call
+For every API call (subchunk processing):
+
+Set a timeout of 45 seconds.
+
+If no response is received within 45 seconds:
+
+Abort the call.
+
+Retry once immediately.
+
+If the second attempt also fails:
+
+Skip the subchunk.
+
+Insert a visible placeholder into the output like:
+
+text
+Copy
+Edit
+[Warning: Subchunk X of Macrochunk Y failed to process after retry. Skipped.]
+4. Stream Output Live Chunk-by-Chunk
+After processing each subchunk:
+
+Immediately append its output to the output box.
+
+After finishing all subchunks of a macrochunk:
+
+Optionally insert:
+
+text
+Copy
+Edit
+[End of Macrochunk X]
+If an entire macrochunk fails:
+
+Insert:
+
+text
+Copy
+Edit
+[Warning: Entire Macrochunk X failed.]
+🔷 Basic Code Structure (Pseudocode)
+python
+Copy
+Edit
+# Load the full input text
+text = load_uploaded_text()
+
+# Determine macrochunks
+if len(text) > 5000 words:
+    macrochunks = split_into_macrochunks(text, 5000 words each)
+else:
+    macrochunks = [text]
+
+# Rotate across API keys
+api_keys = ["key1", "key2", "key3", "key4"]
+api_index = 0
+
+for macrochunk in macrochunks:
+    current_key = api_keys[api_index % len(api_keys)]
+    api_index += 1
+
+    subchunks = split_into_subchunks(macrochunk, 500 words each)
+
+    for subchunk in subchunks:
+        try:
+            result = send_to_api(subchunk, current_key, timeout=45 seconds)
+        except TimeoutError:
+            try:
+                result = send_to_api(subchunk, current_key, timeout=45 seconds) # Retry once
+            except TimeoutError:
+                result = "[Warning: Subchunk X of Macrochunk Y failed to process after retry. Skipped.]"
+
+        append_to_output_box(result)
+
+    append_to_output_box("[End of Macrochunk X]")
+🔷 Additional Notes
+Only one macrochunk is loaded into memory at a time.
+
+If the app crashes, partial progress will be available.
+
+The app can now process documents over 500,000 words.
+
+Failures at API or server level will not crash the app.
+
+Timeout, retry, and multi-API distribution are automatic.
+
+🔷 Deliverable Title
+"Upgrade Easy Reader to Two-Level Chunking, Multi-API-Key Distribution, and Timeout/Retry Safety for Ultra-Long Documents."
+

@@ -1,0 +1,76 @@
+
+i'm using replit to build this app. tell it exactly waht to do
+i'm using replit to build this app. tell it exactly waht to do
+
+Answer
+
+Images
+asdfsfaassafsd.jpg
+You’re almost there! The issue is that the endpoint shown in your Azure portal (https://eastus.api.cognitive.microsoft.com/) is the base endpoint for the resource, not the full Text-to-Speech REST API endpoint.
+
+For TTS, you must append /cognitiveservices/v1 to the endpoint.
+So, your full endpoint should be:
+
+text
+https://eastus.api.cognitive.microsoft.com/cognitiveservices/v1
+Step-by-Step: How to Use Azure TTS on Replit
+Set Your Endpoint and Key
+
+Endpoint:
+https://eastus.api.cognitive.microsoft.com/cognitiveservices/v1
+
+Key:
+Use the value from KEY 1 or KEY 2 in your screenshot.
+
+Install Requests Library
+
+In your Replit project, make sure you have the requests library:
+
+python
+# In your shell or as a requirement:
+pip install requests
+Sample Python Code
+
+python
+import requests
+
+endpoint = "https://eastus.api.cognitive.microsoft.com/cognitiveservices/v1"
+api_key = "YOUR_KEY_HERE"  # Replace with your actual key
+
+headers = {
+    "Ocp-Apim-Subscription-Key": api_key,
+    "Content-Type": "application/ssml+xml",
+    "X-Microsoft-OutputFormat": "audio-16khz-32kbitrate-mono-mp3"
+}
+
+ssml = """
+<speak version='1.0' xml:lang='en-US'>
+    <voice xml:lang='en-US' xml:gender='Female' name='en-US-JessaNeural'>
+        Hello, this is Azure Text to Speech.
+    </voice>
+</speak>
+"""
+
+response = requests.post(endpoint, headers=headers, data=ssml)
+if response.status_code == 200:
+    with open("output.mp3", "wb") as f:
+        f.write(response.content)
+    print("Success! Audio saved as output.mp3")
+else:
+    print(f"Error: {response.status_code} - {response.text}")
+Replace "YOUR_KEY_HERE" with your actual API key.
+
+Run the Code
+
+This will save the synthesized speech as output.mp3 in your Replit project.
+
+Summary
+Use: https://eastus.api.cognitive.microsoft.com/cognitiveservices/v1
+
+Don’t use: https://eastus.api.cognitive.microsoft.com/ (missing /cognitiveservices/v1)
+
+Use your Speech resource key
+
+Send a POST request with proper headers and SSML body
+
+If you follow these steps exactly, your Azure TTS should work on Replit! If you get an error, copy the error message here for more help.

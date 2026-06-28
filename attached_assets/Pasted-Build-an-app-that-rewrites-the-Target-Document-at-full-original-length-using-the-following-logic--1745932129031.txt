@@ -1,0 +1,53 @@
+Build an app that rewrites the Target Document at full original length using the following logic:
+
+🔹 1. Smart Macrochunking
+
+If the uploaded Target Document exceeds 5,000 words, split it into macrochunks of 5,000–8,000 words each.
+
+End macrochunks cleanly at paragraph breaks if possible.
+
+🔹 2. Brutalized Prompt Injection
+
+Before sending each macrochunk to the LLM:
+
+Prepend this special instruction (the full "INSTRUCTION TO LLM" text the user posted above).
+
+Then append the macrochunk text underneath it.
+
+🔹 3. Length Checking After Each Macrochunk
+
+After the LLM returns a rewritten macrochunk:
+
+Measure the number of words in the output.
+
+Compare it to the original macrochunk's word count.
+
+
+Result	Action
+95%–110% of original	✅ Accept the chunk and stream it into output.
+<95% of original	🚨 Re-send the rewritten macrochunk back into the LLM with a second emergency prompt:
+"You have failed to match the original length. Expand the following intelligently by adding clarifications, examples, or elaborations without going off-topic. Match the target length exactly."
+Then feed the short output back into the LLM for expansion. | | >110% of original | ✅ Accept or lightly trim if necessary. |
+
+🔹 4. Streaming Output
+
+Only stream accepted chunks into the output box (either directly or after emergency expansion).
+
+🔹 5. Persistent Full-Document Memory
+
+At the beginning of rewriting any Target Document:
+
+Remind the LLM:
+
+"You are engaged in a full document-length rewrite. Preserve intellectual depth, argument flow, and length integrity throughout."
+
+🔹 6. No Changes to Existing Enrichment System
+
+The current system where users provide customized instructions for how to use the Content Source must remain unchanged.
+
+🔹 7. No Changes to Timeout, Retry, or Multi-API Logic
+
+Keep all current safety protocols active and unchanged.
+
+📜 Deliverable Title:
+"Upgrade Easy Reader to Force Full-Length, High-Depth Rewriting Using Smart Macrochunking, Brutal Prompt Reinforcement, and Length Matching."

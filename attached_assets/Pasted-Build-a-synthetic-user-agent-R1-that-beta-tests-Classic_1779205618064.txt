@@ -1,0 +1,523 @@
+Build a synthetic user agent ("R1") that beta-tests Classic EZ Reader end-to-end. R1 must produce raw, reviewable evidence of every interaction — not pass/fail summaries.
+NON-NEGOTIABLE REQUIREMENTS (read first)
+These are the parts a previous synthetic-user build for a different app failed on. If any are missing, the deliverable is rejected.
+
+No green-checkmark theater. R1 produces raw evidence, not "PASS." Exact text typed, exact text returned, exact network responses, exact screenshots. Judge produces prose critique, not booleans. PASS/FAIL exists only as a filter for failures.md — never as a substitute for evidence.
+The HTML report must be reviewable in under 30 minutes. Every interaction shows step + R1's input verbatim + app's response body + screenshots + judge critique. No collapsed sections.
+The live view must show R1's actual inputs and the app's actual outputs as they happen — not "Step 4 of N in progress." Spec below.
+Network traffic captured raw. Every /<route> request and response body in network.log as JSONL. SSE streams captured event-by-event.
+Three screenshots per interactive step (before / after typing / after app responds). Navigation-only steps get one.
+If R1 cannot complete a step, the failure is logged with the actual error, page HTML at moment of failure, and a screenshot. No skipping and marking green.
+Per-step API-call expectations are route-specific. "Run CC reconstruction" expects POST /reconstruction/start_stream specifically. Boolean checks forbidden.
+Critical button clicks wrapped in Promise.all([page.waitForResponse(predicate), click]).
+
+What's different about this app — Classic EZ Reader's defining features
+Classic EZ Reader is a Flask + Jinja2 + vanilla-JS single-page text-processing platform with six LLM providers, SSE streaming for every long-running operation, a Cross-Chunk Coherence (CC) reconstruction engine backed by Neon Postgres, and two hard product invariants (no dollar signs, max 4 sentences per paragraph). Seven things make it different from previous R1 targets:
+
+Single-page Jinja2 template, not SPA. templates/index_clean.html is ~4740 lines of inline HTML + CSS + vanilla JS. There's no React, no testid convention, no shadcn. R1 must use semantic selectors (DOM IDs like #inputText, #outputText, #humanizerOutput) — the blueprint enumerates these in Part 7 as canonical.
+Mode buttons require DOUBLE-CLICK. Per blueprint Part 11 UI convention #6: "Mode buttons require DOUBLE-CLICK to activate (legacy quirk). Single-click only selects." R1 must use .dblclick() for mode-selecting buttons, OR use the floating ACTION buttons (green in input, red in output) which bypass the double-click requirement. R1 must verify this convention holds and isn't accidentally broken.
+TWO hard product invariants enforced post-LLM. The $ symbol is stripped at input via preprocess_dollar_signs() AND from every output. force_paragraph_formatting() forcibly splits any paragraph >4 sentences AFTER the LLM responds. Both are non-negotiable. R1 verifies both by deliberately submitting inputs that would violate them and confirming the output complies.
+The CC engine has STRICT failure semantics and pacing expectations. Per blueprint Part 2 Feature 2: ~20 seconds per chunk, "finishing in under 10 minutes for a long doc means something was skipped." Any chunk failing permanently → job marked failed (not silently completed). R1 verifies the pacing AND the strict failure semantics.
+Dual-database pattern in same Neon instance. SQLAlchemy tables (user, text_entry, chat_message, etc.) AND raw psycopg2 tables (reconstruction_jobs, reconstruction_chunks). R1 doesn't connect to Postgres directly but verifies state via the GET /reconstruction/status/:id and GET /reconstruction/result/:id endpoints.
+Six LLM providers with key rotation. OpenAI, Anthropic, DeepSeek, Perplexity, Venice (May 2026), Azure. Each has multi-key support (OPENAI_API_KEY_2, _3, etc.). Failover order is fixed. R1 verifies provider switching works AND that POST /reset_api_keys resets health flags.
+GPTZero "X% HUMAN" displayed on every text-producing box and updated after every transformation. R1 verifies this updates correctly across all four boxes (input, output, humanizer style, humanizer output).
+
+The ten invariants that elevate to CRITICAL VIOLATION status:
+Invariant A — No dollar signs anywhere in input or output. Per blueprint Part 11 #1, this is a hard product requirement. R1 deliberately submits input containing $5.99, costs $200, the price is $99. After ANY transformation (rewrite, humanize, translate, assess, CC reconstruction), R1 scans the output for $ characters. Any $ in output text = CRITICAL VIOLATION. Also: R1 scans output for currency words that should have replaced dollar signs — if a dollar amount appears unstripped as the literal sequence "$NNN" anywhere in the output box, the strip is broken.
+Invariant B — 4-sentence-per-paragraph maximum. Per blueprint Part 11 #2, force_paragraph_formatting() enforces this absolutely. R1 submits input containing a paragraph of 8+ sentences (no paragraph breaks). After any rewrite operation, R1 splits the output by double-newline into paragraphs, then splits each paragraph by sentence-terminator (. , ! , ? ). Any paragraph containing more than 4 sentences = CRITICAL VIOLATION. R1 allows ±1 leniency for edge cases (e.g., abbreviations counted as sentence breaks), so threshold is 6+ sentences per paragraph triggers violation.
+Invariant C — CC three-pass SSE event sequence. When R1 submits POST /reconstruction/start_stream, the SSE event stream MUST contain (in order): init → job_created → skeleton_start → skeleton_done → chunks_start → chunk_processing+chunk_complete (per chunk) → stitch_start → stitch_done → output (with text) → complete. If any of these documented event types is missing on a successful job, or if they fire out of order (e.g., chunk events before skeleton_done), CRITICAL VIOLATION.
+Invariant D — CC pacing is enforced. Per blueprint Part 2 Feature 2, 2-3 second inter-chunk pauses are protective and intentional. R1 measures elapsed time per chunk during a CC run. If average time-per-chunk is < 8 seconds across all chunks, CC has skipped the protective pauses: CRITICAL VIOLATION ("under 10 minutes for a long doc means something was skipped"). R1 sizes the input so the CC run has at least 5 chunks to give a meaningful average.
+Invariant E — CC strict failure semantics. R1 verifies the failure-marking behavior by running a CC job and inspecting GET /reconstruction/status/:id mid-run and post-run. If status ever shows complete while any chunk in reconstruction_chunks has status failed, that's a silent-success violation. The blueprint is explicit: any permanent chunk failure must mark the WHOLE job as failed. R1 cannot easily force a chunk failure, but R1 can verify the schema correctness: status field values observed must be in {pending, skeleton_extraction, chunk_processing, stitching, complete, failed} — any other value indicates a broken state machine. R1 also verifies via the SSE stream that error events terminate the job if they appear.
+Invariant F — CC owner-only access enforcement. Per blueprint Part 12 #3, the owner check uses session.user_id || session._user_id || 'anonymous'. R1 creates a CC job while logged in as user A, captures the job_id. R1 then opens a fresh Playwright context (no session cookie), and attempts GET /reconstruction/status/:job_id and GET /reconstruction/result/:job_id. Both must return 404 (per blueprint) or 401/403. If either returns the actual data, CRITICAL VIOLATION (cross-user data leak on a primary content endpoint).
+Invariant G — Provider routing actually works. R1 submits the same input through all 6 providers (anthropic, openai, deepseek, perplexity, venice, azure — skipping any whose API key is missing per app boot logs). Each response captured. No two outputs byte-identical (would indicate silent fallback). If any pair byte-identical, CRITICAL VIOLATION.
+Invariant H — Key rotation reset works. R1 calls POST /reset_api_keys. R1 then verifies (via a subsequent successful provider call) that the reset didn't break anything. Per blueprint, this manually clears failure_count and rate_limited_until flags. If POST /reset_api_keys returns success but subsequent provider calls fail with "all keys exhausted," reset is broken: CRITICAL VIOLATION. R1 cannot easily verify health-flag clearing without internal state access; the test is just that reset doesn't break the next call.
+Invariant I — AI detection updates on all four boxes. After a humanizer round-trip, R1 captures the GPTZero score displayed on (a) input box, (b) output box, (c) humanizer style input box, (d) humanizer output box. After the round-trip completes, all four should show a numeric percentage (not "—" or empty). If any box still shows placeholder/empty score 10 seconds after rewrite completion, CRITICAL VIOLATION (the documented behavior in blueprint Feature 10 is broken).
+Invariant J — File upload routing. Per blueprint Feature 8 + October 2025 fix, Content Source and Critique uploads must hit /api/content_source/upload and /extract_text respectively. R1 uploads a PDF to each box and verifies the correct route fires (route-specific check, not boolean). If Content Source upload hits the wrong route (e.g., /upload or /extract_text instead of /api/content_source/upload), the documented October 2025 fix has regressed: CRITICAL VIOLATION.
+Architecture
+
+Browser automation: Playwright (Node, single-file tools/r1/run.mjs). Standalone Node project, not in any workspace.
+R1's brain: Anthropic API. Model: claude-opus-4-7. Key in ANTHROPIC_API_KEY.
+Judge: Separate Claude API call per interaction. Prose critique. For rewrite/humanize quality, judge gets input + output and assesses whether transformation was substantive AND whether the dollar-sign + paragraph invariants hold.
+Live view: node:http server on port 7777. Zero extra deps.
+Target app: Classic EZ Reader running locally. Default APP_URL=http://localhost:5000. R1 registers/logs in via Flask-Login session.
+
+Authentication
+R1 creates a fresh user at startup:
+
+Determine the registration route by inspecting the actual app (the blueprint mentions Flask-Login but doesn't enumerate /register or /login routes — R1 must discover them by visiting / first and looking for nav links, OR by inspecting the actual rendered HTML for auth forms).
+If app permits anonymous use (session falls through to 'anonymous' per blueprint Part 12 #3), R1 proceeds without registration but logs that anonymous mode is in effect.
+For Invariant F (owner-only access), R1 needs at least one authenticated session, so if auth is available R1 uses it.
+
+Live view
+Top panel: current step + R1's approach/reasoning + URL + live keystroke mirror + latest screenshot.
+Middle panel: streamed SSE response, recent /<route> calls, judge critique, plus a dedicated "EZ Reader State" panel showing:
+
+Current page (/ , /translate, /clean)
+Selected mode (rewrite / humanize / assess / CC / chat / etc.)
+Selected provider (anthropic / openai / deepseek / perplexity / venice / azure)
+Last operation's elapsed time
+Last SSE event sequence (compact)
+Dollar-sign scan result on most recent output (clean / VIOLATION: N occurrences)
+Max-sentences-per-paragraph result on most recent output
+Last GPTZero scores across all 4 boxes
+Last invariant scan summary
+
+For CC interactions, sub-panel shows three-pass progress with per-chunk timing:
+PASS 1 — Skeleton:   [✓ 14.2s]
+PASS 2 — Chunks:     [3 of 5 complete | avg 18.4s/chunk | current chunk 4]
+PASS 3 — Stitch:     [waiting]
+Bottom panel: reverse-chronological completed-interaction log.
+After exit: "RUN COMPLETE" with link to report.html. Kept open 60s.
+Fixtures
+R1 needs varied content. Include in fixtures/:
+
+short-input.txt — ~300 words, single coherent paragraph; baseline rewrite test
+paragraph-violation.txt — input deliberately containing an 8+ sentence paragraph (no paragraph breaks); for Invariant B
+dollar-sign-input.txt — input containing $5.99, costs $200, the price is $99, and other dollar-sign-heavy financial content; for Invariant A
+long-input-cc.txt — ~5000 words, multi-section; sized to produce at least 5 CC chunks at 500 words each; for Invariants C, D, E
+style-sample.txt — ~500 words of distinctive writing style for humanizer testing
+ai-generated.txt — text known to score high on GPTZero (R1 generates this at startup by asking the R1 brain to produce ~400 words of typical-LLM-output text)
+sample.pdf — short PDF for upload testing (agent generates from short-input.txt)
+sample.docx — short DOCX for upload testing
+sample-image.png — image containing text for OCR pipeline
+multi-language.txt — short input in English for translation testing
+
+What R1 is testing — the functions
+Function 1 — App startup + auth + initial state
+
+Navigate to /. Verify index_clean.html renders.
+Check for the main UI elements via DOM ID selectors: #inputText, #outputText, #customizedRewriteBtn, #oneClickRewriteBtn, #reconstructLongDocBtn, #humanizerStyleInput, #humanizerOutput, #humanizerProvider, .humanizer-preset (33 expected), CLEAR ALL button in header.
+If auth links present, register/login a fresh user. Save session cookie.
+Capture initial state screenshot.
+
+Function 2 — Dollar-sign invariant baseline (Invariant A — flagship)
+
+Paste dollar-sign-input.txt into #inputText.
+Wait for input GPTZero score to populate.
+Verify input box itself shows the text WITHOUT dollar signs (preprocess_dollar_signs runs on ingest per blueprint Feature 8 — actually, per blueprint it strips on input AND output).
+If input box still shows $ characters after paste, the input-side strip is broken — log as Invariant A violation.
+Double-click ONE CLICK REWRITE button (or use the green ACTION button in input box).
+Wait for SSE rewrite to complete.
+Capture full output text.
+Scan output for $ characters. Verify Invariant A: zero $ in output. If any present, CRITICAL VIOLATION.
+Save to outputs/rewrites/dollar-sign-test.txt.
+
+Function 3 — Paragraph-length invariant baseline (Invariant B)
+
+Paste paragraph-violation.txt (8+ sentence paragraph) into #inputText.
+Trigger CUSTOMIZED REWRITE with instructions: "Improve the prose quality."
+Expected route: POST /customized_rewrite_stream (SSE).
+Wait for completion.
+Capture full output.
+Verify Invariant B: split output by \n\n into paragraphs. For each paragraph, count sentence terminators. NO paragraph should contain more than 4 sentences (allow leniency up to 6 for edge cases like abbreviations). If any paragraph has 6+ sentences, CRITICAL VIOLATION.
+Save to outputs/rewrites/paragraph-test.txt.
+
+Function 4 — One Click Rewrite (short input)
+
+Paste short-input.txt.
+Double-click ONE CLICK REWRITE. Expected route: POST /customized_rewrite_stream (per blueprint October 2025 fix — was previously /process).
+Capture all SSE events.
+Verify the output box populates progressively (streaming visible).
+Re-run Invariants A and B on output.
+Save SSE event sequence to sse-streams/one-click.jsonl.
+
+Function 5 — Customized Rewrite with provider variation (Invariant G — flagship)
+
+For each of: anthropic, openai, deepseek, perplexity, venice, azure (skip any unhealthy per startup logs):
+
+Paste short-input.txt.
+Select provider via humanizer provider dropdown (since main rewrite may not have provider selector visible; verify against actual app — if main rewrite lacks per-call provider selection, R1 tests provider switching through humanizer instead).
+Submit rewrite.
+Capture output.
+Verify provider response is non-empty.
+Re-run Invariants A and B.
+
+
+Save outputs to outputs/provider-parity/<provider>.txt.
+Verify Invariant G: no two outputs byte-identical. If any pair identical, CRITICAL VIOLATION.
+
+Function 6 — Humanizer round-trip + AI detection (Invariant I)
+
+Paste ai-generated.txt into #humanizerStyleInput.
+Wait for input GPTZero score to render (#humanizerStyleDetectionScore).
+Capture style-input score.
+Select 2-3 preset checkboxes from .humanizer-preset (e.g., "Mixed cadence", "Clause surgery", "Compression — light").
+Type custom instructions: "Rewrite in a conversational human voice."
+Click humanizer rewrite button.
+Expected route: POST /humanizer_rewrite_stream (SSE).
+Wait for completion. Wait an additional 10 seconds for GPTZero re-scoring.
+Capture humanizer-output score (#humanizerOutputDetectionScore).
+Verify Invariant I: BOTH style-input and output scores show numeric values (not "—" or empty). Also verify input-box and output-box scores updated.
+Verify the output score is meaningfully lower than the input score (judge concern if not — humanizer should reduce AI signature).
+Re-run Invariants A and B on humanizer output.
+Save before/after to outputs/humanizer/.
+
+Function 7 — Cross-module sends
+
+After Function 6, click "→ MAIN INPUT" button on humanizer output.
+Verify content appears in #inputText.
+Click "→ AI CHAT" button on humanizer output.
+Verify content appears in chat panel context.
+Click "→ ASSESS" button.
+Verify content routed to assessment area.
+
+Function 8 — Translation
+
+Navigate to /translate OR open translation modal.
+Paste multi-language.txt.
+Select target language (e.g., Spanish).
+Submit. Expected route: POST /translate.
+Capture response.
+Re-run Invariants A and B on translated output (Spanish text should also have no $ signs and properly formatted paragraphs).
+
+Function 9 — Style Transfer Pass-Through
+
+Trigger /style_rewrite_passthrough.
+Paste short input + style sample.
+Submit. Expected route: POST /style_rewrite_passthrough.
+Verify single-shot response (no chunking).
+Capture output. Re-run Invariants A, B.
+
+Function 10 — AI Chat
+
+Open chat panel.
+Send substantive question: "What are the core themes in 19th century Russian literature?"
+Expected route: POST /chat_with_ai (current per blueprint).
+Verify response.
+Send follow-up referencing previous: "Of those, which most influenced Western modernism?"
+Verify chat memory works (response references prior context).
+Fetch GET /history. Verify R1's messages appear.
+
+Function 11 — Assessment & Maximization Suite
+
+For each assessment endpoint:
+
+POST /quality_assessment_stream
+POST /quality_writing_assessment_stream
+POST /fiction_assessment_stream
+POST /intelligence_maximization_stream
+POST /quality_maximization_stream
+POST /fiction_maximization_stream
+
+
+Submit short-input.txt to each (sequentially, not in parallel — these are expensive).
+Capture SSE event sequences.
+For maximization endpoints, verify output is substantively different from input (judge inspects).
+Re-run Invariants A, B on each output.
+Save to outputs/assessments/<endpoint>.txt.
+
+Function 12 — Devil's Advocate, Convert to Fiction, Convert to Non-Fiction
+
+Per blueprint October 2025 fix, these route through /customized_rewrite_stream with mode-specific prompts.
+Trigger each (mode buttons require double-click).
+Verify each fires POST /customized_rewrite_stream (NOT /process — that was the broken behavior pre-fix).
+Capture outputs.
+
+Function 13 — File Upload Pipeline (Invariant J)
+Sub-test 13a — Main input file upload:
+
+Drag-and-drop sample.pdf onto input box.
+Expected route: POST /upload.
+Verify extracted text populates #inputText.
+
+Sub-test 13b — Extract text (alt route):
+
+Use alternative upload trigger if available.
+Expected route: POST /extract_text.
+Verify response.
+
+Sub-test 13c — Content Source upload (Invariant J critical):
+
+Upload sample.pdf to Content Source box.
+Expected route: POST /api/content_source/upload (per blueprint October 2025 fix).
+If the actual route fired is anything else (especially /upload), CRITICAL VIOLATION (Invariant J regression).
+Capture extracted text.
+
+Sub-test 13d — Critique upload (if separate from Content Source):
+
+Upload to critique box.
+Expected route: POST /extract_text (per blueprint October 2025 fix).
+Verify.
+
+Sub-test 13e — Image OCR:
+
+Upload sample-image.png.
+Verify response contains extracted text from Tesseract OCR.
+
+Sub-test 13f — Audio upload (if a small audio fixture available):
+
+Upload .mp3 fixture. Verify transcript returned.
+If no audio fixture, skip with logged reason.
+
+Function 14 — Cross-Chunk Coherence (CC) — flagship test for Invariants C, D, E
+Sub-test 14a — Run CC end-to-end:
+
+Paste long-input-cc.txt (~5000 words) into #inputText.
+Type instructions: "Rewrite this maintaining a target length of approximately 5000 words."
+Double-click RECONSTRUCT (LONG DOC, COHERENT) button (#reconstructLongDocBtn).
+Expected route: POST /reconstruction/start_stream (SSE).
+Start a wall-clock timer.
+Capture ALL SSE events with timestamps.
+Wait for terminal complete event. Timeout: 30 minutes (per blueprint Part 2 Feature 2 pacing, a 5-chunk job at ~20s/chunk = ~100s + skeleton + stitch = realistic 3-5 min; allow margin).
+
+Verify Invariant C (event sequence):
+
+Stream contains init, job_created, skeleton_start, skeleton_done, chunks_start, chunk_processing (per chunk), chunk_complete (per chunk), stitch_start, stitch_done, output, complete
+Events fire in documented order (skeleton_done before any chunk_processing; stitch_start after last chunk_complete)
+If any documented event missing OR out of order, CRITICAL VIOLATION.
+
+Verify Invariant D (pacing):
+
+Compute average time-per-chunk from chunk_processing to chunk_complete timestamps.
+If average < 8 seconds across all chunks, CRITICAL VIOLATION (protective pauses skipped).
+Record per-chunk times and total elapsed time.
+
+Sub-test 14b — Job status during run:
+
+During the CC run, in a parallel poll thread, fetch GET /reconstruction/status/:job_id every 5 seconds.
+Capture all status responses.
+Verify status values observed are in {pending, skeleton_extraction, chunk_processing, stitching, complete, failed}.
+Any other status value = CRITICAL VIOLATION (broken state machine, part of Invariant E).
+
+Sub-test 14c — Job result retrieval:
+
+After completion, fetch GET /reconstruction/result/:job_id.
+Verify response contains final_output text.
+Save to outputs/cc/job-<id>-result.txt.
+Verify final_word_count is plausibly proportional to target (R1's instruction asked for 5000 words; allow ±30%).
+
+Sub-test 14d — Re-run Invariants A and B on CC output:
+
+Scan final_output for $ signs (Invariant A).
+Scan paragraphs (Invariant B).
+
+Sub-test 14e — Owner-only access (Invariant F):
+
+Open a fresh Playwright browser context (no session cookie).
+Attempt GET /reconstruction/status/<job_id_from_authenticated_session>.
+Attempt GET /reconstruction/result/<job_id_from_authenticated_session>.
+Verify both return 404 (or 401/403). If either returns actual data, CRITICAL VIOLATION (Invariant F).
+
+Function 15 — CC failure semantics (Invariant E hard test)
+Direct failure induction isn't trivially available. R1 verifies state machine correctness by:
+
+Polling status during Function 14's CC run (already in Sub-test 14b).
+Confirming that if any error SSE event appears, the job's status transitions to failed (not complete).
+Confirming that GET /reconstruction/status/:id post-completion never shows complete while any chunk shows failed.
+
+If R1 can't directly induce a failure, log "Invariant E partial verification only — schema and state machine checked, but couldn't induce failure path."
+Function 16 — Key rotation reset (Invariant H)
+
+POST /reset_api_keys.
+Verify response indicates success.
+Immediately re-submit a rewrite via Function 4's path.
+Verify rewrite succeeds (Invariant H — reset didn't break the next call).
+
+Function 17 — Audio: TTS / Audiobook / Podcast
+
+After Function 4 output:
+Click TTS button. Expected route: POST /process_audio.
+Verify response includes audio file path/URL.
+Download via GET /get_audio_file/<filename>.
+Verify Invariant F-style audio check from previous R1 builds: file size ≥ 5KB, first bytes match MP3 signature (ID3 or 0xFF 0xFB / 0xFF 0xFA).
+Save to outputs/audio/tts.mp3.
+Test audiobook: POST /create_audiobook. (Long-running; verify response or skip with logged reason if exceeds R1's timeout budget.)
+Test podcast: POST /create_podcast. Verify multi-voice output if possible.
+
+Function 18 — AI Detection direct probe
+
+POST /detect_ai with ai-generated.txt content. Verify response contains ai_probability, human_probability, etc.
+POST /detect_ai with human-quality text. Verify lower AI probability.
+Judge concern if scores are wildly miscalibrated.
+
+Function 19 — Comprehensive Search
+
+POST /comprehensive_search with query "current research on Wittgenstein's Tractatus".
+Verify response contains synthesized results.
+If PERPLEXITY_API_KEY unset, expect graceful error, not 500.
+
+Function 20 — Share & Export
+
+Trigger POST /share_text with test recipient.
+Verify response (success or graceful SENDGRID-missing error).
+Click GET /get_last_email. Verify return.
+POST /download_document/txt → verify .txt download.
+POST /download_document/docx → verify .docx download (first bytes PK).
+POST /download_document/pdf → verify .pdf download (first bytes %PDF-).
+Save to outputs/exports/.
+
+Function 21 — CLEAR ALL button
+
+After R1 has filled multiple boxes:
+Click the prominent red CLEAR ALL button in header.
+Verify confirmation dialog appears.
+Accept confirmation.
+Verify all text boxes are empty AND all detection scores are reset.
+
+Function 22 — ACTION button workflow
+
+Verify the floating green ACTION button in input box.
+Verify the floating red ACTION button in output box.
+Per blueprint, these bypass the double-click requirement.
+Click green ACTION (single click). Verify it triggers the currently-selected mode.
+
+Function 23 — Final invariant aggregate scan
+
+Across all outputs captured in this run, run a final dollar-sign scan (Invariant A aggregate).
+Across all outputs, run a final paragraph-length scan (Invariant B aggregate).
+Count total dollar signs found across all output texts (should be 0).
+Count total over-length paragraphs across all output texts (should be 0).
+
+R1's behavior
+For each interaction R1 picks one approach and logs the choice:
+
+Happy path: feature on fitting fixture
+Probe an invariant deliberately (dollar-sign text for A, long-paragraph text for B, long doc for C/D)
+Switch providers (Invariant G)
+Use cross-module workflow (Function 7)
+Test owner enforcement (Invariant F)
+Edge cases
+
+Typing constraint: No clipboard paste for short inputs. .type() with TYPE_DELAY_MS=15. EXCEPTION: large fixture pastes (long-input-cc.txt is ~5000 words; typing at 15ms = 21+ minutes) use .fill() or direct DOM value injection via page.evaluate() if .fill() doesn't trigger the right textarea events, and log r1_input_method: "fill" or r1_input_method: "dom_inject". The sanity check explicitly accepts these methods.
+Double-click constraint: Per blueprint Part 11 #6, mode buttons need DOUBLE-click. R1 uses .dblclick() for ONE CLICK REWRITE, CUSTOMIZED REWRITE, RECONSTRUCT, Devil's Advocate, etc. Or uses the green/red ACTION buttons (single click) where applicable. R1 logs which path it used.
+Per-interaction flow
+
+Navigate / open UI.
+Capture page state.
+R1 brain picks approach + composes input.
+"Before" screenshot.
+Type or fill input. Select parameters (provider, presets).
+"After typing" screenshot.
+Wrap submit (double-click for mode buttons) in Promise.all([page.waitForResponse(predicate), dblclick]).
+Stream consumption: subscribe to SSE response. Capture all events with timestamps. Detect terminal event. Timeouts: 5 min for short rewrites, 15 min for assessments, 30 min for CC.
+"After" screenshot.
+Capture full response, console errors, network calls, SSE events.
+Run invariant-specific verification:
+
+All transformations → Invariants A (dollar signs) and B (paragraph length)
+CC submissions → Invariants C (events), D (pacing), E (state machine), F (owner-only)
+Provider switches → Invariant G (deferred to final compare)
+Key reset → Invariant H
+Humanizer → Invariant I (detection scores on all 4 boxes)
+File uploads → Invariant J (route-specific)
+
+
+Send full interaction to judge: "Critique functionally and qualitatively. Did the rewrite substantively transform the input? Are there any dollar signs in the output? Are paragraphs ≤4 sentences? Anything broken or off?"
+Append to transcript, update live view.
+
+Artifacts (written to tools/r1/runs/<ISO-timestamp>/)
+transcript.jsonl — one JSON per interaction with standard fields plus, where applicable:
+
+r1_input_method: "type" / "fill" / "dom_inject"
+r1_click_method: "single" / "double" / "action_button"
+sse_events_observed: full event sequence with timestamps
+dollar_sign_scan: count of $ in output, locations
+paragraph_length_scan: list of paragraph sentence counts, violations flagged
+cc_phases_observed: list of phase events from CC stream (Invariant C)
+cc_chunk_timings: per-chunk elapsed times (Invariant D)
+cc_status_polls: list of status values observed during CC run
+owner_access_check: results of cross-context access attempt (Invariant F)
+provider_used: detected provider (Invariant G)
+detection_scores_observed: {input, output, humanizerStyle, humanizerOutput} (Invariant I)
+route_used: actual route fired (for Invariant J file upload verification)
+
+report.html — Self-contained, grouped by function. Sticky TOC. Standard fields plus invariant-specific blocks. Function 5 (provider parity) gets a 6-way comparison. Function 14 (CC flagship) gets a dedicated three-pass timeline with per-chunk timing chart. Functions 2 + 3 + 23 get a dedicated "Product Invariants" section showing every output text checked for dollar signs and paragraph length, with violations highlighted in red. No collapses.
+failures.md — Opens with CRITICAL INVARIANT VIOLATIONS:
+
+Invariant A: dollar sign in output (cite the output excerpt + dollar count)
+Invariant B: paragraph >4 sentences (cite the paragraph + sentence count)
+Invariant C: CC event sequence broken (cite missing/misordered events)
+Invariant D: CC pacing too fast (cite average time-per-chunk)
+Invariant E: CC state machine broken (cite invalid status value or silent failure)
+Invariant F: CC owner-only enforcement broken (cite the cross-context fetch result)
+Invariant G: provider parity broken (cite byte-identical pair)
+Invariant H: key reset broke subsequent calls (cite reset response + next-call failure)
+Invariant I: detection scores not updated (cite empty boxes)
+Invariant J: file upload hit wrong route (cite expected vs actual route)
+Any 5xx response
+Any uncaught exception in R1's harness
+
+Below: judge concerns linking to report anchors, screenshots inline.
+network.log — JSONL of every request + response body. SSE streams captured as assembled-final-body + array of {t, type, data} event triples. Bodies truncated at 50KB with response_truncated: true flag.
+sse-streams/ — Full SSE event sequences per streaming interaction as sse-streams/NNNN.jsonl. CC streams especially valuable for post-run analysis.
+outputs/
+
+rewrites/ — outputs from rewrite operations including dollar-sign-test, paragraph-test, one-click
+provider-parity/<provider>.txt — 6 provider outputs
+humanizer/ — before/after from humanizer round-trip
+assessments/ — outputs from assessment + maximization endpoints
+cc/job-<id>-result.txt — CC final output
+cc/job-<id>-status-poll.json — status polls during CC run
+cc/job-<id>-chunk-timings.json — per-chunk timing analysis (Invariant D)
+audio/ — TTS / audiobook / podcast files
+exports/ — txt, docx, pdf exports
+invariant-scans/ — final aggregate dollar-sign + paragraph-length scans across all outputs
+ui-state-captures/ — JSON captures of UI text per page
+
+console.log — Full stdout.
+screenshots/ — Numbered PNGs.
+run-summary.txt
+INTERACTIONS: N
+JUDGE CONCERNS RAISED: M
+CRITICAL INVARIANT VIOLATIONS: K
+  Invariant A (no dollar signs): A
+  Invariant B (paragraph length): B
+  Invariant C (CC event sequence): C
+  Invariant D (CC pacing): D
+  Invariant E (CC state machine): E
+  Invariant F (CC owner-only): F
+  Invariant G (provider parity): G
+  Invariant H (key reset): H
+  Invariant I (detection scores): I
+  Invariant J (upload routing): J
+AGGREGATE DOLLAR SIGNS FOUND ACROSS ALL OUTPUTS: <count>
+AGGREGATE OVER-LENGTH PARAGRAPHS: <count>
+HARNESS SANITY FAILURES: J
+Anti-theater sanity checks
+For each interaction:
+
+Every route in expected_routes appears in network_calls. Route-specific.
+r1_input ≥ 10 chars or r1_input_method set to fill/dom_inject with fixture reference.
+Interactive: 3 screenshots, not byte-identical. Navigation-only: 1 screenshot.
+judge_critique ≥ 30 words.
+For ANY transformation output: dollar_sign_scan and paragraph_length_scan are populated (not stubbed null).
+For CC interactions (Function 14): cc_phases_observed populated; cc_chunk_timings array has at least 1 entry; cc_status_polls array non-empty.
+For Function 5 (provider parity): all healthy providers were tested OR explicitly skipped with logged reason; outputs captured for byte-comparison.
+For Function 6 (humanizer): detection_scores_observed has all 4 box values explicitly captured (not null).
+For Function 13 (uploads): route_used field is populated for each sub-test.
+
+If any fail: HARNESS SANITY FAILURES: X, exit code 3.
+Configuration
+javascriptconst APP_URL = process.env.APP_URL || 'http://localhost:5000';
+const OUTPUT_DIR = `./runs/${new Date().toISOString().replace(/[:.]/g,'-')}`;
+const HEADLESS = process.env.HEADLESS === 'true' || false;
+const TYPE_DELAY_MS = parseInt(process.env.TYPE_DELAY_MS || '15', 10);
+const LIVE_VIEW_PORT = parseInt(process.env.LIVE_VIEW_PORT || '7777', 10);
+const SKIP_FUNCTIONS = (process.env.SKIP_FUNCTIONS || '').split(',').filter(Boolean);
+const REWRITE_TIMEOUT_MS = parseInt(process.env.REWRITE_TIMEOUT_MS || '300000', 10);
+const ASSESSMENT_TIMEOUT_MS = parseInt(process.env.ASSESSMENT_TIMEOUT_MS || '900000', 10);
+const CC_TIMEOUT_MS = parseInt(process.env.CC_TIMEOUT_MS || '1800000', 10);
+const CC_PACING_MIN_SECONDS_PER_CHUNK = parseInt(process.env.CC_PACING_MIN_SECONDS_PER_CHUNK || '8', 10);
+const PARAGRAPH_VIOLATION_THRESHOLD_SENTENCES = parseInt(process.env.PARAGRAPH_VIOLATION_THRESHOLD_SENTENCES || '6', 10);
+const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-7';
+Deliverable
+tools/r1/run.mjs + tools/r1/package.json + tools/r1/README.md + the fixture files listed above. Standalone Node project, not in any workspace.
+npm start runs full plan. Smoke test: SKIP_FUNCTIONS=5,11,14,17 npm start (skip provider parity loop, full assessment suite, CC flagship, audio — these are the expensive ones).
+Startup banner:
+R1 is running.
+Live view:    http://localhost:7777
+Output dir:   ./runs/<timestamp>/
+Watch the live view — especially the EZ Reader State panel.
+Do not trust summary output alone.
+Finish banner:
+R1 finished.
+Open the report:        ./runs/<...>/report.html
+Open the failures:      ./runs/<...>/failures.md
+Provider comparison:    ./runs/<...>/outputs/provider-parity/
+CC results:             ./runs/<...>/outputs/cc/
+Invariant scans:        ./runs/<...>/outputs/invariant-scans/
+SSE streams:            ./runs/<...>/sse-streams/
+Raw transcript:         ./runs/<...>/transcript.jsonl
+Raw network log:        ./runs/<...>/network.log
+Exit codes: 0 clean, 1 judge concerns raised, 2 critical invariant violations, 3 harness sanity failed.
+UI selectors identified by inspecting the actual rendered Classic EZ Reader app. The blueprint enumerates canonical DOM IDs in Part 7 — use them directly (#inputText, #outputText, #customizedRewriteBtn, etc.). For mode buttons, R1 must use .dblclick() per blueprint Part 11 #6. Confirm endpoint paths against app.py (Flask routes) if blueprint and code disagree; the code is authoritative.

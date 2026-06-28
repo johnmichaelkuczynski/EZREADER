@@ -1,0 +1,90 @@
+# Replit App — Publishing + API Keys Master Instruction
+
+Paste this whole block to the Replit agent at the START of every app. It covers
+both failures that keep recurring: PUBLISHING crash-loops and API KEYS not loading.
+
+---
+
+## PART 1 — API KEYS (the #1 recurring failure)
+
+This app reads every API key from THIS project's Secret store at startup. Cloning
+or migrating does NOT carry secrets over — the clone starts with only DATABASE_URL,
+PG*, and SESSION_SECRET. If keys are missing, the app loads 0 keys per provider and
+every AI/TTS feature silently dies.
+
+The agent CANNOT supply key values — only I can put them in Secrets. The agent's job
+is to confirm exactly which keys the code needs, verify the names match, and report
+the real loaded count. There is NO "activation" step: a key present in Secrets with
+the correct NAME is usable.
+
+### Keys this app requires in Secrets:
+```
+ANTHROPIC_API_KEY
+OPENAI_API_KEY
+AZURE_OPENAI_API_KEY
+AZURE_OPENAI_ENDPOINT
+AZURE_SPEECH_KEY
+AZURE_SPEECH_REGION
+AZURE_SPEECH_ENDPOINT
+DEEPGRAM_API_KEY
+DEEPSEEK_API_KEY
+GLADIA_API_KEY
+GPTZERO_API_KEY
+ELEVEN_API_KEY
+MATHPIX_API_KEY
+MATHPIX_APP_ID
+PERPLEXITY_API_KEY
+SENDGRID_API_KEY
+VENICE_API_KEY
+DATABASE_URL
+SESSION_SECRET
+```
+
+### Agent must:
+1. Grep the source for every env var the code reads (process.env.* / os.environ).
+   List any key referenced in code that is NOT in the list above, and any in the
+   list that the code does NOT read.
+2. Confirm each env var NAME in code matches the Secret NAME EXACTLY (case-sensitive).
+   Report every mismatch (e.g. OPENAI_API_KEY in code vs OPENAI_KEY in Secrets).
+3. After I add the keys, RESTART the app and read back the ACTUAL startup log showing
+   the loaded count per provider (e.g. "Loaded 3 OpenAI keys"). If any shows 0, the
+   key didn't land — report which and stop.
+4. Do NOT claim keys are "activated." Do NOT add an activation/availability gate.
+   A present key = usable, full stop.
+5. Do NOT add, re-enable, or modify any payment keys (PayPal / Stripe / billing).
+
+### Fastest way to load all keys at once (my action, not the agent's):
+Original repl → Secrets → "More" → "Edit as JSON" → copy.
+Clone repl → Secrets → "More" → "Edit as JSON" → paste → Save → restart.
+
+---
+
+## PART 2 — PUBLISHING / DEPLOY (the crash-loop)
+
+Symptom: deploy logs show `Cannot find module '.../dist/index.cjs'` or
+`ERR_MODULE_NOT_FOUND`, exit status 1, healthcheck 500s, then "crash loop detected."
+Republishing NEVER fixes this — it re-runs the same broken command. Diagnose in the
+Shell, not the Logs tab.
+
+### Agent must, before declaring the app deployable:
+1. The deploy RUN COMMAND must point at the EXACT file the BUILD produces. Run the
+   build, then `ls -la dist/`, and confirm that file exists at that path with that
+   exact extension. `.cjs` and `.js` are NOT interchangeable — make run-command and
+   build-output agree.
+2. If `dist/` is empty or missing, the build failed or didn't run. Show me the build
+   error and fix it FIRST. Do not deploy on top of a failed build.
+3. Every package imported in the code must be a real entry under "dependencies" in
+   package.json (NOT devDependencies) and present in node_modules. If the bundler
+   uses `--packages=external`, node_modules must ship with the deploy.
+4. If a required package is missing, install the PACKAGE (code only) — but do NOT
+   reactivate or populate payment-related keys to make a build pass.
+5. Do NOT republish repeatedly hoping it self-fixes. Diagnose in the Shell, then
+   report the exact error line if anything is still broken.
+
+---
+
+## VERIFY BEFORE HANDOFF
+- App boots and passes healthcheck.
+- Deploy run-command points at a file that actually exists in dist/.
+- Startup log shows non-zero loaded keys for EVERY provider I supplied.
+Report: the loaded-key counts per provider, and the deploy status.

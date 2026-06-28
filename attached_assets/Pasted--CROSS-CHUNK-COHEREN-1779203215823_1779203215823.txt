@@ -1,0 +1,277 @@
+═══════════════════════════════════════════════════════════════════════════════
+CROSS-CHUNK COHERENCE (CC) CONTEXT DOCUMENT
+For Use in Future Claude Sessions
+═══════════════════════════════════════════════════════════════════════════════
+
+OVERVIEW
+────────
+This document provides context for continuing work on the Cross-Chunk Coherence
+(CC) problem in John-Michael Kuczynski's reconstruction app (part of Model Wiz).
+The app is targeted at institutional clients: hedge funds, investment banks, 
+law firms, AI/tech firms.
+
+═══════════════════════════════════════════════════════════════════════════════
+THE CORE PROBLEM
+═══════════════════════════════════════════════════════════════════════════════
+
+When processing long documents, the app chunks them (e.g., 800 words per chunk)
+and processes each chunk independently. This creates "Frankenstein" outputs:
+
+- Terminology drift (same term means different things in different chunks)
+- Commitment violations (chunk 5 contradicts what chunk 2 established)
+- Redundancy (multiple chunks make the same point independently)
+- No connective tissue (no cross-references, no unified argument arc)
+- Structural incoherence (reads like 8 different authors)
+
+═══════════════════════════════════════════════════════════════════════════════
+THE THREE-PASS ARCHITECTURE (WORKING FOR SHORT DOCS)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASS 1 — GLOBAL SKELETON EXTRACTION
+Before chunking, extract and store:
+1. Outline: 8-20 numbered claims/sections
+2. Thesis: Central argument or purpose
+3. Key Terms: Important terms with definitions
+4. Commitment Ledger: "Document asserts X, rejects Y, assumes Z"
+5. Entities: People, organizations, variables that must stay consistent
+6. Audience Parameters: Who this is for
+7. Rigor Level: Quality standard being applied
+
+Store as document_skeleton (JSON) in Neon.
+
+PASS 2 — CONSTRAINED CHUNK PROCESSING
+For each chunk, send:
+- The chunk text
+- The global skeleton (or relevant portions)
+- Strict instruction: Do not contradict the ledger; honor key term definitions;
+  if conflict detected, flag explicitly rather than silently violate.
+
+Each chunk returns:
+- Processed chunk text
+- Delta report: new claims, terms used, conflicts detected
+
+Store as chunk_output with chunk_delta in Neon.
+
+PASS 3 — GLOBAL CONSISTENCY STITCH
+After all chunks processed, run one pass that receives:
+- The global skeleton
+- All chunk delta reports (NOT full chunks)
+
+This pass:
+1. Detects cross-chunk contradictions, terminology drift, redundancies
+2. Generates conflict list with specific locations
+3. Produces repair plan (which chunks need adjustment)
+4. Executes micro-repairs only on flagged chunks
+5. Assembles final coherent output
+
+Store as document_validation and final_output.
+
+═══════════════════════════════════════════════════════════════════════════════
+DATABASE SCHEMA (NEON)
+═══════════════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS reconstruction_documents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT,
+    title TEXT,
+    original_text TEXT,
+    global_skeleton JSONB,
+    final_output TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reconstruction_chunks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    document_id UUID REFERENCES reconstruction_documents(id),
+    chunk_index INTEGER,
+    chunk_input_text TEXT,
+    chunk_output_text TEXT,
+    chunk_delta JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS reconstruction_runs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    document_id UUID REFERENCES reconstruction_documents(id),
+    run_type TEXT, -- 'skeleton', 'chunk_pass', 'stitch'
+    run_input JSONB,
+    run_output JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+═══════════════════════════════════════════════════════════════════════════════
+CURRENT STATUS (AS OF THIS SESSION)
+═══════════════════════════════════════════════════════════════════════════════
+
+CC FOR RECONSTRUCTION: WORKING (tested on 3 documents up to ~3500 words)
+
+Tests passed:
+1. Kuczynski legal philosophy paper (~2000 words) — terminology stable, 
+   distinctions tracked, cross-references honored
+2. Confucius Analects (~3500 words, fragmented aphoristic source) — 
+   20 points identified and maintained consistently, no contradictions
+3. "Will to Project" (~2500 words, abstract philosophical + empirical 
+   integration) — theses stable, examples coherent across chunks
+
+NOT YET IMPLEMENTED:
+- CC for Objections function (Stage 2)
+- CC for Counter-objections function (Stage 3)  
+- CC for Bullet-proof Version function (Stage 4)
+- Horizontal Coherence (HC) across pipeline stages
+- Scaling to large documents (15,000+ words)
+
+═══════════════════════════════════════════════════════════════════════════════
+THE PIPELINE (FULL RECONSTRUCTION SUITE)
+═══════════════════════════════════════════════════════════════════════════════
+
+INPUT (original document)
+    ↓
+STAGE 1: RECONSTRUCTION (needs CC) ← WORKING
+    ↓
+STAGE 2: OBJECTIONS (needs CC) ← NOT YET IMPLEMENTED
+    ↓
+STAGE 3: COUNTER-OBJECTIONS/RESPONSES (needs CC) ← NOT YET IMPLEMENTED
+    ↓
+STAGE 4: BULLET-PROOF VERSION (needs CC) ← NOT YET IMPLEMENTED
+    ↓
+OUTPUT (final hardened document)
+
+Each stage needs VERTICAL COHERENCE (VC): coherence within that stage's output.
+The full pipeline needs HORIZONTAL COHERENCE (HC): coherence across stages.
+
+Without VC at Stage 1, Stage 2 generates objections to Frankenstein artifacts,
+not real weaknesses. Garbage propagates forward and gets laundered.
+
+═══════════════════════════════════════════════════════════════════════════════
+THE MEGA-CC PROBLEM (SCALING TO LARGE DOCUMENTS)
+═══════════════════════════════════════════════════════════════════════════════
+
+TARGET DOCUMENT SIZES FOR INSTITUTIONAL CLIENTS:
+- 10-K filings: 80,000 - 200,000 words (100-250 chunks)
+- M&A due diligence: 20,000 - 100,000 words (25-125 chunks)
+- Contracts: 10,000 - 100,000 words (12-125 chunks)
+- Litigation briefs: 5,000 - 25,000 words (6-31 chunks)
+
+MEDIAN SERIOUS DOCUMENT: 15,000 - 50,000 words (19-62 chunks)
+
+CURRENT PARAMETERS:
+- Max input: 5,000 words
+- Chunk size: ~800 words
+- Max chunks: ~6-7
+
+WHY THE CURRENT ARCHITECTURE MAY NOT SCALE:
+
+1. SKELETON PROBLEM
+   At 3,000 words: skeleton is 500-800 tokens, easily injectable.
+   At 50,000 words: skeleton must capture dozens of sections, hundreds of 
+   terms, complex cross-references. Either:
+   - Skeleton stays small → can't capture enough structure
+   - Skeleton scales → 5,000-10,000 tokens, context window pressure
+
+2. STITCH PROBLEM
+   At 4 chunks: stitch pass receives 4 delta reports. Easy.
+   At 62 chunks: stitch pass receives 62 delta reports. May exceed context 
+   window. Stitch pass itself needs chunking → who stitches the stitch?
+
+3. COMMITMENT LEDGER PROBLEM
+   At 3,000 words: 10-20 commitments. Manageable.
+   At 50,000 words: 200+ commitments. Inject all into every chunk? 
+   Or need retrieval system for relevant commitments per chunk?
+
+4. CROSS-REFERENCE PROBLEM
+   Large documents (10-Ks) have explicit cross-references: "See Note 7."
+   Skeleton must track these; chunks must honor them.
+
+═══════════════════════════════════════════════════════════════════════════════
+CANDIDATE SOLUTIONS FOR MEGA-CC
+═══════════════════════════════════════════════════════════════════════════════
+
+1. HIERARCHICAL SKELETONS
+   Document-level skeleton (compressed) → Section-level skeletons (detailed)
+   Each chunk gets: global skeleton + its section skeleton
+
+2. RETRIEVAL-AUGMENTED SKELETON INJECTION
+   Don't inject whole skeleton into every chunk.
+   Embed skeleton entries, embed chunk, retrieve top-k relevant entries.
+
+3. HIERARCHICAL STITCHING
+   Stitch chunks 1-10, then 11-20, etc.
+   Then stitch the stitch-outputs. Pyramid structure.
+
+4. COMPRESSED DELTAS
+   Force delta reports to be very short (50-100 tokens each).
+   62 chunks × 100 tokens = 6,200 tokens. Fits context window.
+
+5. SECTION-BASED PROCESSING
+   Group chunks by document section.
+   Stitch within section first.
+   Then stitch across sections.
+
+6. INCREMENTAL COMMITMENT LEDGER
+   Chunk N gets ledger as of chunk N-1.
+   Ledger grows as processing proceeds.
+   Tradeoff: creates ordering dependencies, loses parallelization.
+
+═══════════════════════════════════════════════════════════════════════════════
+NEXT STEPS (AS OF END OF THIS SESSION)
+═══════════════════════════════════════════════════════════════════════════════
+
+IMMEDIATE:
+1. Test current CC architecture on 15,000-20,000 word document
+2. Identify what breaks at scale
+3. Determine which scaling solution to implement
+
+THEN:
+4. Implement CC for Objections function
+5. Implement CC for Counter-objections function
+6. Implement CC for Bullet-proof Version function
+7. Implement Horizontal Coherence across pipeline
+
+═══════════════════════════════════════════════════════════════════════════════
+KEY TERMINOLOGY
+═══════════════════════════════════════════════════════════════════════════════
+
+CC (Cross-Chunk Coherence): Coherence within a single processing stage.
+
+VC (Vertical Coherence): Same as CC. Coherence within one stage's output.
+
+HC (Horizontal Coherence): Coherence across pipeline stages. Objections 
+target what's actually in the reconstruction; responses address actual 
+objections; bullet-proof version incorporates actual responses.
+
+Skeleton: The constraint set extracted in Pass 1. Contains outline, thesis,
+key terms, commitment ledger, entities, parameters.
+
+Delta Report: What each chunk adds/changes/flags during processing.
+
+Stitch Pass: Pass 3, which reconciles all chunks using delta reports.
+
+Commitment Ledger: Explicit list of what the document asserts, rejects, 
+assumes. Chunks must not contradict.
+
+Frankenstein: The incoherent output that results from processing chunks
+independently without CC.
+
+═══════════════════════════════════════════════════════════════════════════════
+CRITICAL RULES (FROM ORIGINAL ARCHITECTURE)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. If a chunk conflicts with the global skeleton, the model must either:
+   - Produce the closest adjacent repair that preserves intent, OR
+   - Return a specific flagged conflict with a proposed minimal change
+   - NEVER silently contradict the skeleton
+   - NEVER respond with "can't" — always produce output or repair proposal
+
+2. Skeleton extraction must be fast and lightweight — do not rewrite.
+
+3. Chunk boundaries must respect document structure. Break at paragraph 
+   ends. Never break mid-sentence.
+
+4. All three passes must complete before returning final output.
+
+5. Store all intermediate state in database for debugging and resumption.
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF CONTEXT DOCUMENT
+═══════════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,80 @@
+**REPLIT REWRITE ENGINE FIX: LONG DOCUMENTS STALLING**
+
+---
+
+### 🚨 CRITICAL PROBLEM
+
+The rewrite function **fails completely** on long documents.
+
+Symptoms:
+- Rewrite hangs indefinitely or crashes for documents > 1500–2000 words
+- Large .docx or .txt inputs stall out at 0% or freeze mid-way
+- No error message provided to user, and nothing is processed
+
+This is a **systemic architectural failure**, not a logic bug.
+
+---
+
+### ⚠️ ROOT CAUSES
+
+| Problem Area       | Description |
+|--------------------|-------------|
+| **Token Limit**     | LLMs (GPT-4, Claude, etc.) have hard max token limits (~8k, 16k, 32k). Long texts overflow context window. |
+| **Timeouts**        | Replit's backend times out if a response takes too long. Whole-doc rewrites breach that threshold. |
+| **Memory Overload** | Attempting to pass a full 10,000+ word document causes RAM spikes or crashes. |
+| **Improper Chunking** | If chunking isn’t implemented, or if it's naive (e.g. raw character split), rewrite fails silently or mid-execution. |
+| **No Process Tracking** | App doesn’t track rewrite progress by chunk — can't resume, retry, or report failure. |
+
+---
+
+### 🔧 MANDATORY FIX PLAN
+
+#### ✅ 1. **Smart Chunking System**
+- Break large documents into semantic chunks (ideally 700–1500 words)
+- Split by paragraph boundaries, heading markers, or newline delimiters
+
+#### ✅ 2. **Chunk Token Limit Check**
+Use a token calculator to check each chunk:
+```ts
+if (tokenCount(chunkText) > 6000) {
+  splitAgain(chunkText);
+}
+```
+Fallback chunking should be recursive until all segments are safely under LLM limit.
+
+#### ✅ 3. **Sequential Processing Engine**
+- Rewrite one chunk at a time using `await` or a message queue
+- Only send the next chunk after receiving a completed response from the last
+
+#### ✅ 4. **Session-Based Rewrite Tracking**
+Use a session object or server memory to store:
+```ts
+{
+  totalChunks: 8,
+  currentChunk: 4,
+  status: "processing",
+  chunks: [chunk1, chunk2, ..., chunk8]
+}
+```
+This allows for progress display, retry on fail, and resumable rewrites.
+
+#### ✅ 5. **Post-Stitching Phase**
+After all chunks are rewritten:
+- Join them together into a single document
+- Optionally run a cleanup pass to harmonize transitions (optional)
+
+#### ✅ 6. **User Feedback & Error Handling**
+- Show "Processing chunk X of Y" progress indicator
+- Timeout/error fallback: "Rewrite failed on chunk X. Retry or skip."
+
+---
+
+### 📆 TIMELINE: PATCH WITHIN 48 HOURS
+
+This rewrite failure prevents the core app function from working on most real documents.
+This is not optional. Fix this **immediately** or the rewrite feature must be flagged as non-functional in production.
+
+---
+
+**END OF INSTRUCTION**
+

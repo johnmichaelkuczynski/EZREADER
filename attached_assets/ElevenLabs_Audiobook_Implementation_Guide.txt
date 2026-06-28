@@ -1,0 +1,98 @@
+
+REPLIT IMPLEMENTATION GUIDE:
+Converting Rewritten/Translated Texts to Audiobooks using ElevenLabs
+
+OVERVIEW:
+This guide ensures safe, stable integration of ElevenLabs TTS into your rewrite app, with correct voice-language mapping and chunked synthesis to avoid crashes or voice mismatches.
+
+===========================
+STEP 1: CHUNKING LONG TEXTS
+===========================
+
+Problem:
+ElevenLabs cannot handle long text blobs (> ~2,000–2,500 characters). Sending unchunked documents causes failure or partial output.
+
+✅ SOLUTION: Implement robust chunking logic
+
+- Use `textwrap.wrap(text, 2000, break_long_words=False, break_on_hyphens=False)`
+- Always split at sentence boundaries if possible (using `nltk.sent_tokenize` or regex)
+- Add a short pause or boundary marker between chunks when merging (e.g. 300ms of silence or a tone)
+
+===========================
+STEP 2: VOICE MATCHING BY LANGUAGE
+===========================
+
+Problem:
+The app often uses an English voice for non-English text, resulting in idiotic narration or silent failure.
+
+✅ SOLUTION: Use explicit language-to-voice mapping
+
+Use language detection (e.g. `langdetect.detect(text)`) and assign voice accordingly:
+
+- English → "Rachel" or "Adam"
+- Spanish → "Eli" or "Antonio"
+- German → "Clara" or "Thomas"
+- French → "Léa" or "Mathieu"
+- Italian → "Bella"
+- Polish → "Domi"
+- Portuguese → "João"
+
+DO NOT guess voice by filename or user profile. Use real-time detection of actual text content.
+
+===========================
+STEP 3: SYNTHESIZING AUDIO
+===========================
+
+1. For each chunk, send it to ElevenLabs using their TTS API.
+   - Use `voice_id` matching the detected language.
+   - Use `stability` and `similarity_boost` params for voice consistency.
+   - Retry on error with exponential backoff.
+
+2. Save each audio blob as `chunk_1.mp3`, `chunk_2.mp3`, etc.
+
+===========================
+STEP 4: MERGING AUDIO
+===========================
+
+1. Use `pydub.AudioSegment` to combine all chunks:
+   ```
+   from pydub import AudioSegment
+
+   final_audio = AudioSegment.empty()
+   for i in range(num_chunks):
+       segment = AudioSegment.from_file(f"chunk_{i}.mp3")
+       final_audio += segment + AudioSegment.silent(duration=300)
+   final_audio.export("final_output.mp3", format="mp3")
+   ```
+
+2. Serve this merged file back to user via a download link.
+
+===========================
+STEP 5: SAFETY CHECKS
+===========================
+
+✅ Fail gracefully:
+- If voice/language detection fails, alert user instead of defaulting to English.
+- If ElevenLabs API fails, log the response content (don’t suppress it).
+- Always test small files before synthesizing full documents.
+
+===========================
+OPTIONAL ENHANCEMENTS
+===========================
+
+- Allow user override: [ ] Use detected voice  [ ] Choose voice manually
+- Display language + narrator name before synthesis
+- Provide real-time synthesis progress bar or “chunk X of Y complete” status
+
+===========================
+SUMMARY
+===========================
+
+✔ Chunk smartly (~2,000 characters max)
+✔ Detect language of actual text
+✔ Map voice explicitly
+✔ Merge audio using pydub
+✔ Fail with clarity
+
+This will eliminate crashes, eliminate mismatched voices, and produce clean audiobooks from rewritten or translated text.
+

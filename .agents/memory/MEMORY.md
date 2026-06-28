@@ -1,0 +1,4 @@
+- [AI provider model identifiers](ai-provider-models.md) — retired model IDs (not bad keys) cause provider 404/invalid-model failures; check models-list, then mass-replace.
+- [AI failover](ai-failover.md) — generate_with_failover() switches keys then providers on failure; diagnostic self-test must NOT penalize the sabotaged key.
+- [Diagnostics dashboard](diagnostics-dashboard.md) — one-button self-test at /diagnostics tests every provider key + core function; use it first when "nothing works".
+- [Secret name mismatches](secret-name-mismatches.md) — env secret names can differ from what code reads (e.g. ELEVEN_API_KEY vs ELEVENLABS_API_KEY); check both before assuming a key is bad.

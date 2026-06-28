@@ -1,0 +1,98 @@
+/* Content Source Upload and Translation Styling */
+.content-source-box {
+    background-color: #1a1a1a; 
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.content-source-box h6 {
+    color: #7a7aff;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.content-source-instructions {
+    margin-top: 10px;
+}
+
+.drop-zone-small {
+    border: 2px dashed #555;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+    background-color: #222;
+}
+
+.drop-zone-small.dragover {
+    border-color: #7a7aff;
+    background-color: #2a2a42;
+    box-shadow: 0 0 10px rgba(122, 122, 255, 0.3);
+}
+
+.drop-zone-small .drop-zone-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+}
+
+.drop-zone-small .drop-zone-text i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #7a7aff;
+}
+
+.drop-zone-small .drop-zone-text p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.content-source-info {
+    background-color: #222;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.content-source-info h6 {
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.content-source-info p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Translation dropdown styling */
+#targetLanguage {
+    background-color: #222;
+    color: #fff;
+    border-color: #444;
+}
+
+#targetLanguage option {
+    background-color: #222;
+    color: #fff;
+}
+
+#targetLanguage:focus {
+    border-color: #7a7aff;
+    box-shadow: 0 0 0 0.25rem rgba(122, 122, 255, 0.25);
+}
+
+/* Language flag icons if needed */
+.language-flag {
+    width: 20px;
+    height: 15px;
+    margin-right: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}

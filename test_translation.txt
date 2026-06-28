@@ -1,0 +1,5 @@
+This is a longer test text to verify that the DeepL translation service is working correctly with larger documents. The system should properly handle text chunking and maintain the original formatting of paragraphs and sentences.
+
+When dealing with long documents, the translation engine needs to split the content into manageable chunks while ensuring that the context is preserved throughout the translation process. This is especially important for maintaining coherence across paragraph boundaries.
+
+The DeepL integration in this application includes robust error handling and automatic fallback mechanisms to ensure high-quality translations across multiple languages.

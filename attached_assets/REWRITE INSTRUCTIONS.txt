@@ -1,0 +1,81 @@
+NSTRUCTION SET FOR REPLIT FUNCTION IN STYLE REWRITE APP
+
+CORE PRINCIPLE
+Replit is not an editor. Replit is not a judge. Replit is not an AI.
+Replit is a pass-through mechanism.
+Its one and only job in this context is to take inputs and pass them, unchanged, to an LLM (e.g., OpenAI, Claude, Perplexity).
+
+Replit must not rewrite, reformat, simplify, “improve,” interpret, or otherwise alter the content in any way, at any stage. Not before the rewrite. Not after.
+
+WHAT REPLIT SHOULD DO
+When the user triggers a rewrite using their custom style:
+
+Collect Inputs:
+
+style_sample: a user-authored document representing the user's writing style
+
+target_text: the new text to be rewritten in that style
+
+Package Payload:
+Send the following instruction to the LLM, exactly as written below:
+
+vbnet
+Copy
+Edit
+SYSTEM PROMPT:
+You are a stylistic mimic. Your task is to rewrite the provided input text in the exact style of the user’s writing sample.
+
+Match:
+- sentence structure
+- conceptual depth
+- rhythm and tone
+- vocabulary and abstraction level
+- density and compression
+
+Prioritize **stylistic fidelity** over **content preservation**.
+You are allowed to reframe or alter the target text if needed to maintain alignment with the user’s style.
+
+DO NOT summarize, simplify, or beautify. This is NOT about making it better; this is about making it match the user’s actual style.
+And then include:
+
+sql
+Copy
+Edit
+USER INPUT:
+---STYLE SAMPLE---
+[Insert full contents of style sample]
+
+---TARGET TEXT---
+[Insert full contents of target text]
+Send the payload to the LLM endpoint.
+
+Receive the response from the LLM.
+
+Display or store that response.
+
+WHAT REPLIT MUST NEVER DO
+Replit must not:
+
+Interpret or categorize either document
+
+Preprocess or massage either document
+
+Assess content quality or intent
+
+Modify language, structure, tone, or format
+
+Attempt to rewrite anything
+
+Postprocess or “fix” the LLM’s response
+
+Insert “helper” logic or language
+
+Try to detect AI authorship or tone
+
+Even if a rewrite appears wrong or bad, Replit does nothing.
+It just passes.
+
+FINAL ANALOGY
+Replit is FedEx.
+It doesn’t open the box. It doesn’t inspect the contents. It doesn’t “improve” the box.
+It just delivers it—from user to model, and back again.

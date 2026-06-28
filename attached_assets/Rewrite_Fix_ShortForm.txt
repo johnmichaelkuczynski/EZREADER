@@ -1,0 +1,66 @@
+
+REPLIT INSTRUCTION PACKET: FIX STYLE MIMICRY AND DENSITY LOSS IN REWRITES
+
+SUMMARY:
+
+The rewrite function is still broken. The app fails to rewrite documents in the requested style, and fails to preserve argument structure and intellectual density.
+
+This document gives clear examples of what the app is doing wrong and how to fix it.
+
+---
+
+❌ PROBLEM: STYLE MIMICRY IGNORED
+
+EXAMPLE:
+
+Original text (user-provided):
+> Urban’s contention is not that the Church is a force of good, but that the Church is, indeed, a church and that, by virtue of fighting for its own existence, it has come, however paradoxically, to represent freedom from establishment tyranny.
+
+App's rewrite (bad):
+> Urban does not argue that Scientology is a good institution. Instead, he says it qualifies as a church and that, paradoxically, its resistance to external suppression has made it a symbol of religious freedom.
+
+Problem: This is a soft, casual rephrasing. The original had sharp phrasing, formal rhythm, and logical complexity. The rewrite flattened the tone and simplified the structure.
+
+✔ CORRECT REWRITE EXAMPLE:
+
+> Let C be the claim that Scientology is tyrannical. Let F be the fact that the establishment seeks to destroy it. Let L be the principle: any institution fighting for its existential rights against state suppression embodies resistance to tyranny. Urban accepts C and F. Therefore, regardless of C, the Church satisfies L.
+
+This rewrite matches the logical density, tone, and phrasing cadence of the original.
+
+---
+
+❌ PROBLEM: PARAGRAPH LOGIC GUTTED
+
+Original text:
+> Hubbard wasn’t exercising his right to join a religion—he was doing what Moses, Jesus, and Mohammed did. But he was doing it in the 20th century, and using a 20th-century idiom.
+
+Bad rewrite:
+> Hubbard did not join a religion, but instead founded a new one in a modern way.
+
+Problem: The rewrite collapses multiple precise claims into a bland simplification.
+
+✔ CORRECT REWRITE:
+
+> Hubbard’s act was not derivative of existing religious practice. Rather, it was structurally identical to what Moses, Jesus, and Mohammed did: founding a new religion ex nihilo. The novelty was temporal and aesthetic—he used spaceships, not clouds.
+
+---
+
+MANDATORY FIXES:
+
+1. When a user gives no special instructions, rewrites must:
+   - Match or exceed the length of the original text (target 100%–110%)
+   - Maintain argument structure and paragraph-by-paragraph logic
+   - Preserve or elevate the intellectual density and tone
+
+2. When a user asks to rewrite “in the style of” a sample text:
+   - The rewrite must match the sentence structure, tone, formality, and rhythm of the sample
+   - The rewrite must NOT simplify, summarize, or "breezify" the input
+
+3. Add emergency recovery logic:
+   - If output is shorter or simpler than input, rerun with prompt: "Rewrite again. Match length and preserve full intellectual structure and tone."
+
+---
+
+This behavior must become default. The current rewrite engine is failing even basic philosophical content tests.
+
+END OF INSTRUCTION.

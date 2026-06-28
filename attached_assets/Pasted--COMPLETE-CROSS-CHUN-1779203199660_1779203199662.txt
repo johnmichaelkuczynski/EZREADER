@@ -1,0 +1,851 @@
+═══════════════════════════════════════════════════════════════════════════════
+COMPLETE CROSS-CHUNK COHERENCE (CC) SYSTEM
+Instructions for Replit Agent
+═══════════════════════════════════════════════════════════════════════════════
+
+This document contains everything needed to implement cross-chunk coherence
+for the Reconstruction function. It combines:
+- Hierarchical CC architecture
+- Output length enforcement
+- Processing discipline and pacing
+- Database storage for intermediate state
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 1: THE CORE PROBLEM
+═══════════════════════════════════════════════════════════════════════════════
+
+When processing long documents, chunking them and processing each chunk
+independently creates "Frankenstein" outputs:
+
+- Terminology drift (same term means different things in different chunks)
+- Commitment violations (chunk 5 contradicts what chunk 2 established)
+- Redundancy (multiple chunks make the same point independently)
+- No connective tissue (no cross-references, no unified argument arc)
+- Length failures (output too short or truncated)
+
+SOLUTION: Three-pass architecture with strict length enforcement and
+database-backed state management.
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 2: THREE-PASS ARCHITECTURE
+═══════════════════════════════════════════════════════════════════════════════
+
+PASS 1 — GLOBAL SKELETON EXTRACTION (before any reconstruction)
+─────────────────────────────────────────────────────────────────
+
+Before chunking, run one pass over the full input document that extracts:
+
+1. OUTLINE: 8-20 numbered claims or sections identifying document structure
+2. THESIS: The central argument or purpose of the document
+3. KEY TERMS: Important terms with their intended meanings as used in this document
+4. COMMITMENT LEDGER: "Document asserts X, rejects Y, assumes Z"
+5. ENTITIES: People, organizations, policies, technical terms for consistent reference
+6. AUDIENCE PARAMETERS: Who this reconstruction is targeting (from user input)
+7. RIGOR LEVEL: The reconstruction standard being applied (from user input)
+
+Store as JSON in the database. This pass must be SHORT — extract structure only,
+do not rewrite anything.
+
+Token budget: ~2000 tokens max for skeleton.
+
+PASS 2 — CONSTRAINED CHUNK PROCESSING
+─────────────────────────────────────
+
+Divide input into chunks of approximately 500 words (respect paragraph boundaries).
+
+For each chunk, send to the model:
+- The chunk text
+- The global skeleton (or relevant portions)
+- The per-chunk word count target (see Part 3)
+- Strict instruction: "Do not contradict the commitment ledger. Use key terms
+  as defined. If conflict detected, flag explicitly rather than silently violate."
+
+Each chunk returns:
+- Reconstructed chunk text
+- Actual word count
+- Delta report: new claims introduced, terms used, conflicts detected
+
+Store each result immediately to database.
+
+PASS 3 — GLOBAL CONSISTENCY STITCH
+──────────────────────────────────
+
+After all chunks processed, run one final pass that receives:
+- The global skeleton
+- All chunk delta reports (not full chunks)
+
+This pass:
+1. Detects cross-chunk contradictions, terminology drift, redundancies
+2. Generates conflict list with specific locations
+3. Produces repair plan identifying which chunks need adjustment
+4. Executes micro-repairs only on flagged chunks
+5. Assembles final coherent output
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 3: OUTPUT LENGTH ENFORCEMENT
+═══════════════════════════════════════════════════════════════════════════════
+
+LENGTH CALCULATION LOGIC
+────────────────────────
+
+STEP 1: Parse user's length requirement from custom instructions
+
+Search for patterns like:
+- "at least X words" → target_min = X
+- "no more than X words" → target_max = X
+- "approximately X words" → target_min = X * 0.9, target_max = X * 1.1
+- "X-Y words" → target_min = X, target_max = Y
+- "X words" → target_min = X * 0.9, target_max = X * 1.1
+
+If no explicit target: output ≈ input length (ratio 1.0)
+If user says "expand/enrich" without number: ratio 1.3-1.5
+If user says "compress/summarize" without number: ratio 0.3-0.5
+
+STEP 2: Calculate metrics
+
+total_input_words = word count of full document
+target_mid_words = (target_min + target_max) / 2
+num_chunks = ceil(total_input_words / 500)
+length_ratio = target_mid_words / total_input_words
+
+STEP 3: Calculate per-chunk target
+
+chunk_target_words = ceil(target_mid_words / num_chunks)
+chunk_min_words = floor(chunk_target_words * 0.85)
+chunk_max_words = ceil(chunk_target_words * 1.15)
+
+STEP 4: Determine length mode
+
+IF length_ratio < 0.5: length_mode = 'heavy_compression'
+IF length_ratio >= 0.5 AND < 0.8: length_mode = 'moderate_compression'
+IF length_ratio >= 0.8 AND < 1.2: length_mode = 'maintain'
+IF length_ratio >= 1.2 AND < 1.8: length_mode = 'moderate_expansion'
+IF length_ratio >= 1.8: length_mode = 'heavy_expansion'
+
+LENGTH MODE GUIDANCE TEMPLATES
+──────────────────────────────
+
+HEAVY COMPRESSION (ratio < 0.5):
+"""
+LENGTH MODE: HEAVY COMPRESSION
+You must significantly compress this chunk while preserving core arguments.
+- Remove examples, keep only the most critical one
+- Remove repetition and redundancy
+- Convert detailed explanations to concise statements
+- Preserve thesis statements and key claims verbatim
+- Remove transitional phrases and rhetorical flourishes
+"""
+
+MODERATE COMPRESSION (ratio 0.5-0.8):
+"""
+LENGTH MODE: MODERATE COMPRESSION
+You must compress this chunk while preserving argument structure.
+- Keep the strongest 1-2 examples, remove weaker ones
+- Tighten prose without losing meaning
+- Preserve all key claims and their primary support
+- Remove redundancy but keep necessary emphasis
+"""
+
+MAINTAIN LENGTH (ratio 0.8-1.2):
+"""
+LENGTH MODE: MAINTAIN LENGTH
+Your output should be approximately the same length as input.
+- Improve clarity and coherence without changing length significantly
+- Replace weak examples with stronger ones of similar length
+- Restructure sentences for better flow
+- Do not add or remove substantial content
+"""
+
+MODERATE EXPANSION (ratio 1.2-1.8):
+"""
+LENGTH MODE: MODERATE EXPANSION
+You must expand this chunk while maintaining focus.
+- Add 1-2 supporting examples or evidence for key claims
+- Elaborate on implications of major points
+- Add transitional sentences to improve flow
+- Expand terse statements into fuller explanations
+- Do NOT add tangential content or padding
+"""
+
+HEAVY EXPANSION (ratio >= 1.8):
+"""
+LENGTH MODE: HEAVY EXPANSION
+You must significantly expand this chunk with substantive additions.
+- Add 2-3 concrete examples (historical, empirical, or hypothetical)
+- Elaborate on each major claim with supporting analysis
+- Add relevant context and background
+- Develop implications and consequences of arguments
+- Add appropriate qualifications and nuances
+- Do NOT add filler or padding—all additions must be substantive
+"""
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 4: DATABASE SCHEMA (NEON/POSTGRES)
+═══════════════════════════════════════════════════════════════════════════════
+
+Use the Neon Postgres database (DATABASE_URL) for ALL intermediate storage.
+Do NOT store chunks in memory or Replit's local filesystem.
+
+CREATE TABLES:
+
+```sql
+-- Main job tracking
+CREATE TABLE IF NOT EXISTS reconstruction_jobs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id TEXT,
+    document_title TEXT,
+    original_text TEXT,
+    
+    -- Length parameters
+    total_input_words INTEGER,
+    target_min_words INTEGER,
+    target_max_words INTEGER,
+    target_mid_words INTEGER,
+    length_ratio DECIMAL,
+    length_mode TEXT,
+    
+    -- Chunk parameters
+    num_chunks INTEGER,
+    chunk_target_words INTEGER,
+    
+    -- Skeleton
+    global_skeleton JSONB,
+    
+    -- Custom instructions
+    custom_instructions TEXT,
+    
+    -- Progress tracking
+    status TEXT DEFAULT 'pending',  
+    -- Values: 'pending', 'skeleton_extraction', 'chunk_processing', 
+    --         'stitching', 'complete', 'failed'
+    current_chunk INTEGER DEFAULT 0,
+    
+    -- Output
+    final_output TEXT,
+    final_word_count INTEGER,
+    
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Individual chunk tracking
+CREATE TABLE IF NOT EXISTS reconstruction_chunks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    job_id UUID REFERENCES reconstruction_jobs(id) ON DELETE CASCADE,
+    chunk_index INTEGER,
+    
+    -- Input
+    chunk_input_text TEXT,
+    chunk_input_words INTEGER,
+    
+    -- Targets
+    target_words INTEGER,
+    min_words INTEGER,
+    max_words INTEGER,
+    
+    -- Output
+    chunk_output_text TEXT,
+    actual_words INTEGER,
+    chunk_delta JSONB,
+    
+    -- Processing state
+    retry_count INTEGER DEFAULT 0,
+    status TEXT DEFAULT 'pending',
+    -- Values: 'pending', 'processing', 'complete', 'retry', 'failed'
+    error_message TEXT,
+    
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for fast lookups
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON reconstruction_jobs(status);
+CREATE INDEX IF NOT EXISTS idx_jobs_user ON reconstruction_jobs(user_id);
+CREATE INDEX IF NOT EXISTS idx_chunks_job_id ON reconstruction_chunks(job_id);
+CREATE INDEX IF NOT EXISTS idx_chunks_status ON reconstruction_chunks(status);
+CREATE INDEX IF NOT EXISTS idx_chunks_index ON reconstruction_chunks(job_id, chunk_index);
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 5: MANDATORY PROCESSING DISCIPLINE
+═══════════════════════════════════════════════════════════════════════════════
+
+The system MUST follow strict pacing. Rushing produces truncated garbage.
+
+PHASE 1: PRE-PROCESSING (before any LLM calls)
+──────────────────────────────────────────────
+
+```javascript
+async function initializeJob(originalText, customInstructions, userId) {
+    // 1. Count input words
+    const totalInputWords = countWords(originalText);
+    
+    // 2. Parse target length from custom instructions
+    const { targetMin, targetMax } = parseTargetLength(customInstructions);
+    const targetMid = Math.floor((targetMin + targetMax) / 2);
+    
+    // 3. Calculate length ratio and mode
+    const lengthRatio = targetMid / totalInputWords;
+    const lengthMode = getLengthMode(lengthRatio);
+    
+    // 4. Calculate chunk parameters
+    const numChunks = Math.ceil(totalInputWords / 500);
+    const chunkTargetWords = Math.ceil(targetMid / numChunks);
+    
+    // 5. Create job in database
+    const job = await db.reconstruction_jobs.create({
+        user_id: userId,
+        original_text: originalText,
+        total_input_words: totalInputWords,
+        target_min_words: targetMin,
+        target_max_words: targetMax,
+        target_mid_words: targetMid,
+        length_ratio: lengthRatio,
+        length_mode: lengthMode,
+        num_chunks: numChunks,
+        chunk_target_words: chunkTargetWords,
+        custom_instructions: customInstructions,
+        status: 'pending'
+    });
+    
+    // 6. Split text into chunks and create chunk records
+    const chunks = splitIntoChunks(originalText, 500);
+    for (let i = 0; i < chunks.length; i++) {
+        const chunkInputWords = countWords(chunks[i]);
+        const chunkTarget = Math.ceil(chunkInputWords * lengthRatio);
+        
+        await db.reconstruction_chunks.create({
+            job_id: job.id,
+            chunk_index: i,
+            chunk_input_text: chunks[i],
+            chunk_input_words: chunkInputWords,
+            target_words: chunkTarget,
+            min_words: Math.floor(chunkTarget * 0.85),
+            max_words: Math.ceil(chunkTarget * 1.15),
+            status: 'pending'
+        });
+    }
+    
+    // 7. LOG everything
+    console.log(`Job ${job.id} initialized:`);
+    console.log(`  Input: ${totalInputWords} words`);
+    console.log(`  Target: ${targetMin}-${targetMax} words (mid: ${targetMid})`);
+    console.log(`  Ratio: ${lengthRatio.toFixed(2)} (${lengthMode})`);
+    console.log(`  Chunks: ${numChunks} at ~${chunkTargetWords} words each`);
+    
+    return job;
+}
+```
+
+PHASE 2: SKELETON EXTRACTION
+────────────────────────────
+
+```javascript
+async function extractSkeleton(jobId) {
+    const job = await db.reconstruction_jobs.findOne({ id: jobId });
+    
+    // Update status
+    await db.reconstruction_jobs.update({ 
+        id: jobId, 
+        status: 'skeleton_extraction',
+        updated_at: new Date()
+    });
+    
+    // Build skeleton extraction prompt
+    const prompt = buildSkeletonPrompt(job.original_text);
+    
+    // Call LLM
+    const skeleton = await callLLM(prompt, { max_tokens: 3000 });
+    
+    // Store skeleton
+    await db.reconstruction_jobs.update({
+        id: jobId,
+        global_skeleton: skeleton,
+        updated_at: new Date()
+    });
+    
+    console.log(`Skeleton extracted for job ${jobId}`);
+    
+    // WAIT before proceeding
+    await sleep(3000);
+    
+    return skeleton;
+}
+```
+
+PHASE 3: CHUNK-BY-CHUNK PROCESSING
+──────────────────────────────────
+
+```javascript
+async function processAllChunks(jobId) {
+    const job = await db.reconstruction_jobs.findOne({ id: jobId });
+    
+    // Update status
+    await db.reconstruction_jobs.update({
+        id: jobId,
+        status: 'chunk_processing',
+        updated_at: new Date()
+    });
+    
+    // Get all pending chunks in order
+    const chunks = await db.reconstruction_chunks.find({
+        job_id: jobId,
+        status: 'pending'
+    }).orderBy('chunk_index');
+    
+    const lengthGuidance = getLengthGuidanceTemplate(job.length_mode);
+    
+    for (const chunk of chunks) {
+        // WAIT before starting each chunk
+        await sleep(2000);
+        
+        console.log(`Processing chunk ${chunk.chunk_index + 1}/${job.num_chunks}...`);
+        
+        // Update chunk status
+        await db.reconstruction_chunks.update({
+            id: chunk.id,
+            status: 'processing',
+            updated_at: new Date()
+        });
+        
+        // Build chunk prompt with length enforcement
+        const prompt = buildChunkPrompt({
+            chunkText: chunk.chunk_input_text,
+            skeleton: job.global_skeleton,
+            customInstructions: job.custom_instructions,
+            targetWords: chunk.target_words,
+            minWords: chunk.min_words,
+            maxWords: chunk.max_words,
+            lengthGuidance: lengthGuidance,
+            totalChunks: job.num_chunks,
+            chunkIndex: chunk.chunk_index
+        });
+        
+        // Call LLM
+        let response = await callLLM(prompt, { max_tokens: 4000 });
+        let outputText = response.processed_text;
+        let actualWords = countWords(outputText);
+        
+        // LOG target vs actual
+        console.log(`  Chunk ${chunk.chunk_index + 1}: Target=${chunk.target_words}, Actual=${actualWords}`);
+        
+        // RETRY if too short
+        if (actualWords < chunk.min_words * 0.8) {
+            console.log(`  Chunk ${chunk.chunk_index + 1} too short. Retrying...`);
+            await sleep(5000);
+            
+            const retryPrompt = buildRetryPrompt({
+                previousOutput: outputText,
+                actualWords: actualWords,
+                targetWords: chunk.target_words,
+                minWords: chunk.min_words,
+                needsExpansion: true
+            });
+            
+            response = await callLLM(retryPrompt, { max_tokens: 4000 });
+            outputText = response.processed_text;
+            actualWords = countWords(outputText);
+            
+            console.log(`  Retry result: ${actualWords} words`);
+            
+            await db.reconstruction_chunks.update({
+                id: chunk.id,
+                retry_count: chunk.retry_count + 1
+            });
+        }
+        
+        // RETRY if too long
+        if (actualWords > chunk.max_words * 1.2) {
+            console.log(`  Chunk ${chunk.chunk_index + 1} too long. Retrying...`);
+            await sleep(5000);
+            
+            const retryPrompt = buildRetryPrompt({
+                previousOutput: outputText,
+                actualWords: actualWords,
+                targetWords: chunk.target_words,
+                maxWords: chunk.max_words,
+                needsCompression: true
+            });
+            
+            response = await callLLM(retryPrompt, { max_tokens: 4000 });
+            outputText = response.processed_text;
+            actualWords = countWords(outputText);
+            
+            console.log(`  Retry result: ${actualWords} words`);
+            
+            await db.reconstruction_chunks.update({
+                id: chunk.id,
+                retry_count: chunk.retry_count + 1
+            });
+        }
+        
+        // SAVE to database immediately
+        await db.reconstruction_chunks.update({
+            id: chunk.id,
+            chunk_output_text: outputText,
+            actual_words: actualWords,
+            chunk_delta: response.delta_report || {},
+            status: 'complete',
+            updated_at: new Date()
+        });
+        
+        // Update job progress
+        await db.reconstruction_jobs.update({
+            id: jobId,
+            current_chunk: chunk.chunk_index + 1,
+            updated_at: new Date()
+        });
+        
+        // WAIT before next chunk
+        await sleep(3000);
+    }
+    
+    console.log(`All chunks processed for job ${jobId}`);
+}
+```
+
+PHASE 4: STITCHING AND FINAL ASSEMBLY
+─────────────────────────────────────
+
+```javascript
+async function stitchAndAssemble(jobId) {
+    const job = await db.reconstruction_jobs.findOne({ id: jobId });
+    
+    // Update status
+    await db.reconstruction_jobs.update({
+        id: jobId,
+        status: 'stitching',
+        updated_at: new Date()
+    });
+    
+    // Get all completed chunks
+    const chunks = await db.reconstruction_chunks.find({
+        job_id: jobId,
+        status: 'complete'
+    }).orderBy('chunk_index');
+    
+    // Collect delta reports for stitch pass
+    const deltaReports = chunks.map(c => ({
+        index: c.chunk_index,
+        delta: c.chunk_delta,
+        words: c.actual_words
+    }));
+    
+    // Run stitch pass
+    const stitchPrompt = buildStitchPrompt({
+        skeleton: job.global_skeleton,
+        deltaReports: deltaReports
+    });
+    
+    const stitchResult = await callLLM(stitchPrompt, { max_tokens: 2000 });
+    
+    // If conflicts found, handle repairs
+    if (stitchResult.conflicts && stitchResult.conflicts.length > 0) {
+        console.log(`Found ${stitchResult.conflicts.length} conflicts. Repairing...`);
+        // TODO: Implement repair logic for flagged chunks
+    }
+    
+    // Assemble final output (stream from database, don't load all into memory)
+    let finalOutput = '';
+    let totalWords = 0;
+    
+    for (const chunk of chunks) {
+        finalOutput += chunk.chunk_output_text + '\n\n';
+        totalWords += chunk.actual_words;
+    }
+    
+    // Validate final length
+    console.log(`Final output: ${totalWords} words (target: ${job.target_min_words}-${job.target_max_words})`);
+    
+    if (totalWords < job.target_min_words * 0.8) {
+        console.log(`WARNING: Output significantly below target!`);
+    }
+    
+    // Save final output
+    await db.reconstruction_jobs.update({
+        id: jobId,
+        final_output: finalOutput,
+        final_word_count: totalWords,
+        status: 'complete',
+        updated_at: new Date()
+    });
+    
+    return finalOutput;
+}
+```
+
+PHASE 5: MAIN ORCHESTRATION
+───────────────────────────
+
+```javascript
+async function runReconstruction(originalText, customInstructions, userId) {
+    let job;
+    
+    try {
+        // Initialize
+        job = await initializeJob(originalText, customInstructions, userId);
+        
+        // Extract skeleton
+        await extractSkeleton(job.id);
+        
+        // Process all chunks (with pacing)
+        await processAllChunks(job.id);
+        
+        // Stitch and assemble
+        const finalOutput = await stitchAndAssemble(job.id);
+        
+        return { success: true, output: finalOutput, jobId: job.id };
+        
+    } catch (error) {
+        console.error(`Job failed: ${error.message}`);
+        
+        if (job) {
+            await db.reconstruction_jobs.update({
+                id: job.id,
+                status: 'failed',
+                error_message: error.message,
+                updated_at: new Date()
+            });
+        }
+        
+        return { success: false, error: error.message, jobId: job?.id };
+    }
+}
+
+// Resume failed/interrupted job
+async function resumeReconstruction(jobId) {
+    const job = await db.reconstruction_jobs.findOne({ id: jobId });
+    
+    if (!job) {
+        throw new Error(`Job ${jobId} not found`);
+    }
+    
+    console.log(`Resuming job ${jobId} from status: ${job.status}`);
+    
+    switch (job.status) {
+        case 'pending':
+            await extractSkeleton(job.id);
+            // fall through
+        case 'skeleton_extraction':
+            await processAllChunks(job.id);
+            // fall through
+        case 'chunk_processing':
+            // Check if all chunks done
+            const pending = await db.reconstruction_chunks.count({
+                job_id: jobId,
+                status: 'pending'
+            });
+            if (pending > 0) {
+                await processAllChunks(job.id);
+            }
+            // fall through
+        case 'stitching':
+            return await stitchAndAssemble(job.id);
+        case 'complete':
+            return job.final_output;
+        default:
+            throw new Error(`Unknown status: ${job.status}`);
+    }
+}
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 6: PROMPT TEMPLATES
+═══════════════════════════════════════════════════════════════════════════════
+
+SKELETON EXTRACTION PROMPT:
+───────────────────────────
+
+```
+You are extracting a structural skeleton from a document.
+This skeleton will guide coherent processing of individual sections.
+
+Extract the following (total must be under 2000 tokens):
+
+1. THESIS (1-3 sentences): The central argument or purpose
+
+2. OUTLINE (numbered list): 8-20 main sections/claims and their purposes
+
+3. KEY TERMS (definition list): Important terms with specific meanings
+   Format: "TERM: definition"
+
+4. COMMITMENT LEDGER (numbered list): What the document asserts, rejects, assumes
+   Format: "ASSERTS: X" / "REJECTS: Y" / "ASSUMES: Z"
+
+5. ENTITIES: People, organizations, technical terms requiring consistent reference
+
+Be precise. Preserve exact terminology. This skeleton constrains all 
+downstream processing—errors here propagate everywhere.
+
+DOCUMENT TEXT:
+{document_text}
+```
+
+CHUNK PROCESSING PROMPT:
+────────────────────────
+
+```
+You are processing one chunk of a larger document. You must maintain coherence
+with the document's established structure and commitments.
+
+GLOBAL SKELETON (you must honor this):
+{skeleton}
+
+CUSTOM INSTRUCTIONS:
+{custom_instructions}
+
+*** OUTPUT LENGTH REQUIREMENT ***
+This is chunk {chunk_index + 1} of {total_chunks}.
+Original chunk: {chunk_input_words} words
+
+YOUR OUTPUT MUST BE: {min_words}-{max_words} words
+TARGET: approximately {target_words} words
+
+This is a HARD REQUIREMENT. If your output is outside this range, you have
+failed the task. Count your words before finalizing.
+
+{length_guidance}
+*** END LENGTH REQUIREMENT ***
+
+CONSTRAINTS:
+- Do NOT contradict any commitment in the skeleton
+- Use key terms EXACTLY as defined in the skeleton
+- If you detect a conflict, FLAG IT EXPLICITLY
+- Preserve the chunk's contribution to the overall argument
+
+CHUNK TEXT:
+{chunk_text}
+
+Provide your response in this format:
+
+PROCESSED_TEXT:
+[Your reconstructed chunk here, {min_words}-{max_words} words]
+
+WORD_COUNT: [actual number]
+
+DELTA_REPORT:
+- New claims: [list any new claims introduced]
+- Terms used: [list key terms from skeleton that you used]
+- Conflicts: [any conflicts with skeleton, or "none"]
+```
+
+RETRY PROMPT (expansion):
+─────────────────────────
+
+```
+Your previous output was {actual_words} words, but the target is {min_words}-{max_words} words.
+
+You need to ADD approximately {target_words - actual_words} more words.
+
+PREVIOUS OUTPUT:
+{previous_output}
+
+Expand this with:
+- Additional examples or evidence
+- More detailed explanations
+- Elaboration on implications
+- Transitional sentences
+
+Do NOT add filler or padding. All additions must be substantive.
+
+Provide the expanded version that meets the word count target.
+```
+
+RETRY PROMPT (compression):
+───────────────────────────
+
+```
+Your previous output was {actual_words} words, but the target is {min_words}-{max_words} words.
+
+You need to REMOVE approximately {actual_words - target_words} words.
+
+PREVIOUS OUTPUT:
+{previous_output}
+
+Compress by:
+- Removing weaker examples
+- Tightening prose
+- Eliminating redundancy
+- Converting detailed explanations to concise statements
+
+Preserve all key claims and the core argument.
+
+Provide the compressed version that meets the word count target.
+```
+
+STITCH PROMPT:
+──────────────
+
+```
+You are reviewing processed chunks for cross-chunk coherence.
+
+GLOBAL SKELETON:
+{skeleton}
+
+CHUNK DELTA REPORTS:
+{delta_reports}
+
+Review for:
+1. CONTRADICTIONS: Do any chunks contradict each other or the skeleton?
+2. TERM DRIFT: Is any key term used inconsistently across chunks?
+3. REDUNDANCIES: Do multiple chunks make the same point unnecessarily?
+4. GAPS: Is anything from the skeleton missing from the chunks?
+
+Provide:
+
+CONFLICTS_FOUND:
+[List specific issues, or "none"]
+
+REPAIR_PLAN:
+[For each conflict: which chunk needs what change, or "no repairs needed"]
+```
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 7: TIMING EXPECTATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+For a 35,000 word document with target 15,000 words:
+- Chunks: ~70 at 500 words each
+- Per-chunk processing: ~10-15 seconds
+- Delays between chunks: ~5 seconds
+- Retries: ~10% of chunks may need retry (+15 seconds each)
+- Skeleton extraction: ~30 seconds
+- Stitch pass: ~30 seconds
+
+EXPECTED TOTAL TIME: 70 × 20 seconds = ~23-30 minutes
+
+*** IF PROCESSING COMPLETES IN UNDER 10 MINUTES, SOMETHING IS WRONG ***
+
+The system should be taking 20-40 minutes for a 35,000 word document.
+If it finishes faster, chunks are being skipped or truncated.
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 8: CLEANUP POLICY
+═══════════════════════════════════════════════════════════════════════════════
+
+- Keep completed jobs for 24 hours (allows re-download)
+- Run hourly cleanup:
+  DELETE FROM reconstruction_jobs 
+  WHERE status = 'complete' 
+  AND updated_at < NOW() - INTERVAL '24 hours'
+- Keep failed jobs for 7 days for debugging
+- Cascade delete handles reconstruction_chunks automatically
+
+═══════════════════════════════════════════════════════════════════════════════
+PART 9: CRITICAL RULES
+═══════════════════════════════════════════════════════════════════════════════
+
+1. NEVER process more than 1 chunk at a time
+2. ALWAYS save to database after each chunk (not in batches)
+3. ALWAYS wait 2-3 seconds between chunks
+4. ALWAYS log target vs actual word count for each chunk
+5. ALWAYS retry if chunk is >20% below target
+6. NEVER hold more than 1 chunk in memory
+7. If skeleton conflicts with chunk, flag explicitly—never silently violate
+8. Never respond with "can't"—always produce output or repair proposal
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF INSTRUCTIONS
+═══════════════════════════════════════════════════════════════════════════════

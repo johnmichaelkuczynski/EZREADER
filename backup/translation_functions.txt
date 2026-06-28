@@ -1,0 +1,200 @@
+1949-            }), 401
+1950-        
+1951-        return jsonify({'error': error_msg}), 500
+1952-
+1953-@app.route('/translate_only', methods=['POST'])
+1954:def translate_only():
+1955-    """
+1956-    Enhanced translation endpoint that supports multiple languages and AI providers
+1957-    Translates text directly without reprocessing
+1958-    """
+1959-    try:
+1960-        data = request.json
+1961-        text = data.get('text', '')
+1962-        source_language = data.get('source_language', 'auto')
+1963-        target_language = data.get('target_language', 'en')
+1964-        preserve_formality = data.get('preserve_formality', True)
+1965-        ai_provider = data.get('ai_provider', '')  # Can be 'openai', 'anthropic', 'perplexity', or '' for auto
+1966-        document_length_mode = data.get('document_length_mode', 'short')  # 'short' or 'full'
+1967-        
+1968-        if not text:
+1969-            return jsonify({'success': False, 'error': 'No text provided'}), 400
+1970-            
+1971-        # If source and target are the same, or it's already English and target is English
+1972-        if (source_language == target_language) or (source_language == 'auto' and target_language == 'en' and is_english(text)):
+1973-            return jsonify({
+1974-                'success': True,
+1975-                'translated_text': text, 
+1976-                'message': 'No translation needed',
+1977-                'engine': 'None (same language)'
+1978-            })
+1979-        
+1980-        # Check if the language is supported for full-length translation
+1981-        word_count = len(text.split())
+1982-        is_long_document = word_count > SHORT_DOCUMENT_THRESHOLD
+1983-        is_deepl_supported = target_language in DEEPL_SUPPORTED_LANGUAGES
+1984-        
+--
+2048-        common_english_words = {'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I', 'it', 'for'}
+2049-        words = set(text.lower().split()[:50])  # Check first 50 words
+2050-        matches = words.intersection(common_english_words)
+2051-        return len(matches) >= min(3, len(words) / 5)
+2052-
+2053:def translate_with_ai(text, target_language, source_language='auto', provider='openai'):
+2054-    """Translate text using AI provider"""
+2055-    
+2056-    # If text is very long, split it into chunks
+2057-    if len(text.split()) > 1000:
+2058-        chunks = chunk_text(text)
+2059-        translated_chunks = []
+2060-        
+2061-        for chunk in chunks:
+2062-            translated_chunk = translate_single_chunk(chunk, target_language, source_language, provider)
+2063-            translated_chunks.append(translated_chunk)
+2064-        
+2065-        return ' '.join(translated_chunks)
+2066-    else:
+2067-        return translate_single_chunk(text, target_language, source_language, provider)
+2068-
+2069:def translate_single_chunk(text, target_language, source_language='auto', provider='openai'):
+2070-    """Translate a single chunk of text using specified AI provider"""
+2071-    
+2072-    language_names = {
+2073-        'en': 'English', 'fr': 'French', 'zh': 'Chinese', 'es': 'Spanish', 
+2074-        'de': 'German', 'it': 'Italian', 'ja': 'Japanese', 'ru': 'Russian',
+2075-        'pt': 'Portuguese', 'ar': 'Arabic', 'hi': 'Hindi'
+2076-    }
+2077-    
+2078-    target_name = language_names.get(target_language, target_language)
+2079-    source_hint = '' if source_language == 'auto' else f' from {language_names.get(source_language, source_language)}'
+2080-    
+2081-    system_message = f"You are a professional translator with expertise in multiple languages."
+2082-    user_message = f"Translate the following text{source_hint} into {target_name}. Preserve the original formatting, tone, and meaning:\n\n{text}"
+2083-    
+2084-    # Process using multi_provider_processor to leverage our existing provider selection logic
+2085-    provider_preference = provider if provider in ['openai', 'anthropic', 'perplexity'] else None
+2086-    
+2087-    try:
+2088-        translated = multi_provider_processor.process_chat(
+2089-            system_message=system_message,
+2090-            user_message=user_message,
+2091-            provider_preference=provider_preference
+2092-        )
+2093-        return translated
+2094-    except Exception as e:
+2095-        logger.error(f"Translation error with {provider}: {str(e)}")
+2096-        # If we have a specific provider and it fails, try without specifying
+2097-        if provider_preference:
+2098-            logger.info(f"Retrying translation without provider preference after {provider} failed")
+2099-            return multi_provider_processor.process_chat(
+--
+2101-                user_message=user_message
+2102-            )
+2103-        else:
+2104-            raise
+2105-
+2106:def translate_text(text, target_language, document_length_mode='short'):
+2107-    """
+2108-    Multi-engine translation system that routes between DeepL and OpenAI
+2109-    based on language support and document length.
+2110-    
+2111-    Args:
+2112-        text: Text to translate
+2113-        target_language: Target language code
+2114-        document_length_mode: 'short' for texts ≤2,000 words, 'full' for longer texts
+2115-        
+2116-    Returns:
+2117-        tuple: (translated_text, engine_used)
+2118-    """
+2119-    try:
+2120-        if not target_language or target_language == 'en':
+2121-            return text, 'None (already English)'  # No translation needed for English
+2122-        
+2123-        # Calculate document length
+2124-        word_count = len(text.split())
+2125-        logger.info(f"Starting translation to {target_language}, text length: {len(text)} chars, {word_count} words")
+2126-        logger.info(f"Document length mode: {document_length_mode}")
+2127-        
+2128-        # For very large documents, use the specialized chunking protocol
+2129-        if word_count > 20000:  # 20K words is about 40-50 pages
+2130-            logger.info(f"Very large document detected ({word_count} words). Using advanced chunking protocol.")
+2131-            from translation_chunker import translate_large_document
+2132-            
+2133-            # Determine which translation API to use
+2134-            from deepl_translator import is_language_supported
+2135-            is_deepl_supported = is_language_supported(target_language)
+2136-            api_choice = "deepl" if is_deepl_supported and document_length_mode == 'full' else "openai"
+--
+2247-        if "<html" in error_msg or "<!DOCTYPE" in error_msg or "Unexpected token '<'" in error_msg:
+2248-            raise ValueError("Translation failed: document too long or server overloaded. Try using a smaller document or the 'full' mode.")
+2249-        
+2250-        raise ValueError(f"Translation failed: {error_msg}")
+2251-
+2252:def translate_with_openai(text, target_language):
+2253-    """
+2254-    Translate text using OpenAI's API with chunking for large documents
+2255-    """
+2256-    try:
+2257-        # For very small texts (under 1000 words), don't chunk
+2258-        word_count = len(text.split())
+2259-        if word_count < 1000:
+2260-            logger.debug("Text is small enough for single-chunk OpenAI translation")
+2261-            return translate_text_chunk_openai(text, target_language)
+2262-            
+2263-        # For larger texts, split into chunks
+2264-        logger.debug("Using chunked translation for large document with OpenAI")
+2265-        chunks = chunk_text(text)
+2266-        logger.debug(f"Split text into {len(chunks)} chunks for OpenAI translation")
+2267-        
+2268-        # Translate each chunk
+2269-        translated_chunks = []
+2270-        for i, chunk in enumerate(chunks):
+2271-            logger.debug(f"Translating chunk {i+1}/{len(chunks)} with OpenAI")
+2272-            try:
+2273-                translated_chunk = translate_text_chunk_openai(chunk, target_language)
+2274-                translated_chunks.append(translated_chunk)
+2275-                logger.debug(f"Successfully translated chunk {i+1} with OpenAI")
+2276-            except Exception as chunk_error:
+2277-                logger.error(f"Error translating chunk {i+1} with OpenAI: {str(chunk_error)}")
+2278-                # On error, append the original chunk to avoid data loss
+2279-                translated_chunks.append(chunk)
+2280-                logger.warning(f"Using original text for chunk {i+1} due to OpenAI translation error")
+2281-        
+2282-        # Combine the translated chunks
+--
+2298-            
+2299-    except Exception as e:
+2300-        logger.error(f"Error in OpenAI translation: {str(e)}")
+2301-        raise ValueError(f"OpenAI translation error: {str(e)}")
+2302-
+2303:def translate_text_chunk_openai(chunk, target_language):
+2304-    """
+2305-    Translate a single chunk of text using OpenAI's API with robust error handling
+2306-    for HTML responses and large document handling
+2307-    """
+2308-    # Ensure chunk size is reasonable (300-1500 words max per chunk)
+2309-    words = chunk.split()
+2310-    word_count = len(words)
+2311-    if word_count > 1500:
+2312-        logger.warning(f"Chunk size ({word_count} words) exceeds recommended maximum. Splitting further.")
+2313-        # Recursively process smaller chunks
+2314-        mid_point = len(words) // 2
+2315-        first_half = ' '.join(words[:mid_point])
+2316-        second_half = ' '.join(words[mid_point:])
+2317-        
+2318-        # Process each half and combine
+2319-        try:
+2320-            first_result = translate_text_chunk_openai(first_half, target_language)
+2321-            second_result = translate_text_chunk_openai(second_half, target_language)
+2322-            return first_result + '\n\n' + second_result
+2323-        except Exception as split_error:
+2324-            logger.error(f"Error in split-chunk processing: {str(split_error)}")
+2325-            # Fall through to normal processing as a fallback
+2326-    
+2327-    try:
+2328-        if not target_language or target_language == 'en':
+2329-            return chunk  # No translation needed for English
+2330-
+2331-        # Import api_key_manager
+2332-        from api_key_manager import api_key_manager
+2333-        

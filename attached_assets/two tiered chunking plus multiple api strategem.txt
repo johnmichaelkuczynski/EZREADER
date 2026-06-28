@@ -1,0 +1,102 @@
+EASY READER APP — Unified Upgrade Instructions for Replit
+🔷 Objective:
+Upgrade the Easy Reader app so that it can process long documents reliably and faster by:
+
+Implementing Two-Level Chunking (Macrochunk + Subchunk).
+
+Using Multiple API Keys across macrochunks to distribute processing load.
+
+Keeping the current live-stream output behavior intact (partial output after each subchunk processed).
+
+🔷 Detailed Instructions:
+1. Implement Two-Level Chunking
+First Level (Macrochunking):
+
+If the uploaded input text is over 5,000 words, divide it into macrochunks, each of about 5,000 words.
+
+Each macrochunk should be processed independently.
+
+Second Level (Subchunking inside Macrochunks):
+
+Within each macrochunk, divide it into subchunks of ~500 words each.
+
+Process each subchunk sequentially inside the macrochunk, one after another.
+
+2. Distribute Macrochunks Across Multiple API Keys
+Prepare a list of available API keys (can be keys from Anthropic, OpenAI, Perplexity, etc.).
+
+When processing the macrochunks:
+
+Assign different API keys to different macrochunks.
+
+Cycle through the keys in round-robin fashion.
+
+Example:
+
+Macrochunk 1 → API Key A
+
+Macrochunk 2 → API Key B
+
+Macrochunk 3 → API Key C
+
+Macrochunk 4 → API Key A (cycle repeats)
+
+etc.
+
+If only one API key is available, just use it for all macrochunks.
+
+3. Add Timeout and Retry Logic for Each API Call
+For every single API call (each subchunk):
+
+Set a timeout of 45 seconds.
+
+If the API does not respond within 45 seconds, abort the call.
+
+Retry once automatically.
+
+If the retry also fails, skip that subchunk and insert a placeholder warning:
+
+[Warning: Subchunk X failed to process after retry. Skipped.]
+
+🔷 Special Notes:
+If an API key fails (e.g., rate limit or server error), skip it for the remainder of the session or fallback to another key if available.
+
+Maintain a simple in-memory tracking list:
+
+Which macrochunk was assigned to which API key.
+
+Whether that key succeeded or needs to be skipped for future chunks.
+
+You can initially assume that all API responses are roughly equivalent in quality (we will fine-tune for style consistency later if needed).
+
+Always preserve the order of macrochunks and subchunks in the final output.
+
+🔷 Result:
+✅ Documents of up to 50,000–100,000 words (short books) can be processed without stalling.
+✅ Partial results appear live, chunk by chunk.
+✅ No complete failure if one chunk or API key fails — maximum resilience.
+
+📜 Summary Overview
+First split long text into 5,000-word macrochunks.
+
+Inside each macrochunk, split into ~500-word subchunks.
+
+Assign macrochunks across multiple API keys in a round-robin way.
+
+For every API call: 45s timeout + one retry, then skip if needed.
+
+Stream output live after every subchunk processed.
+
+🛡️ (Optional but Recommended)
+Later, you can upgrade further by:
+
+Detecting "stalled" API keys dynamically and disabling them mid-run.
+
+Allowing user-configurable chunk sizes.
+
+Letting users pick "strict" vs "flexible" rewrite styles depending on which API is used.
+
+📢 Deliverable Title:
+"Upgrade Easy Reader to Two-Level Chunking with Multi-API-Key Load Distribution and Timeout/Retry Safety."
+
+

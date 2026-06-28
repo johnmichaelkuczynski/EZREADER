@@ -1,0 +1,213 @@
+/* Uniform Button Styling */
+.btn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  line-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease-in-out !important;
+  /* Override Bootstrap button styles */
+  min-height: 38px !important;
+  max-height: 38px !important;
+}
+
+/* Fix the button toolbar to align all buttons properly */
+.btn-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: 0 !important;
+}
+
+.btn-toolbar .btn-group {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 38px !important;
+}
+
+.btn-group {
+  height: 38px !important;
+  margin-right: 8px !important;
+}
+
+.btn-group .btn + .btn {
+  margin-left: -1px !important;
+}
+
+.btn-group .btn:not(:last-child) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.btn-group .btn:not(:first-child) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Input Group Alignment */
+.input-group {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.input-group .form-control {
+  height: 38px !important;
+  line-height: 38px !important;
+  box-sizing: border-box !important;
+}
+
+.input-group .btn {
+  margin: 0 !important;
+  height: 38px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Specific Button Fixes */
+#applyInstructionsBtn {
+  height: 38px !important;
+  margin-top: 8px !important;
+  width: 100% !important;
+}
+
+#styleRewriteBtn {
+  height: 38px !important;
+  width: auto !important;
+  min-width: 130px !important;
+  margin: 0 !important;
+  border-radius: 0 0.375rem 0.375rem 0 !important;
+}
+
+#rewriteCompleteBtn,
+#quickRewriteBtn,
+#detectAiBtn {
+  height: 38px !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Download and Share section */
+.level-control:nth-child(5) {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+#downloadFormat {
+  height: 38px !important;
+  margin-right: 8px !important;
+  flex: 0 0 auto !important;
+}
+
+#downloadBtn, 
+#shareBtn {
+  height: 38px !important;
+  min-width: 110px !important;
+  margin-right: 8px !important;
+  flex: 0 0 auto !important;
+}
+
+/* Bottom row primary action buttons */
+.controls-section {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 16px !important;
+  gap: 16px !important;
+}
+
+#rewriteBtn, 
+#extractTextBtn {
+  height: 38px !important;
+  min-width: 150px !important;
+  margin: 0 !important;
+}
+
+/* Clear buttons - same size as all others */
+#clearInputBtn, 
+#clearOutputBtn, 
+#clearChatBtn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  line-height: 38px !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+}
+
+/* Form select consistency */
+.form-select,
+select.form-select {
+  height: 38px !important;
+  line-height: 38px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Quick Options section */
+#educationLevel {
+  margin-bottom: 8px !important;
+}
+
+/* Chat input section */
+.chat-container .input-group {
+  margin-bottom: 0 !important;
+}
+
+/* Fix row spacing in level controls */
+.level-control {
+  margin-bottom: 16px !important;
+  padding-bottom: 8px !important;
+}
+
+/* For cleaner spacing in humanizer section */
+.humanizer-section button,
+.humanizer-section .form-check {
+  margin-bottom: 8px !important;
+}
+
+/* Modal buttons consistency */
+.modal-footer .btn {
+  height: 38px !important;
+  min-width: 90px !important;
+  margin: 0 4px !important;
+}
+
+/* Chat section buttons */
+#sendChatBtn {
+  height: 38px !important;
+  margin: 0 !important;
+  min-width: 80px !important;
+}
+
+/* Ensure ALL buttons have consistent look - no exceptions */
+.btn,
+.btn.btn-primary, 
+.btn.btn-secondary, 
+.btn.btn-info, 
+.btn.btn-warning,
+.btn.btn-success,
+.btn.btn-danger,
+.btn.btn-outline-secondary,
+.btn.btn-outline-primary,
+.btn.btn-sm,
+.btn.btn-lg {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 38px !important;
+  box-sizing: border-box !important;
+}

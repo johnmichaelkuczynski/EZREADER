@@ -1,0 +1,98 @@
+
+📢 INSTRUCTIONS FOR REPLIT: INSTALL GOOGLE CLOUD TEXT-TO-SPEECH
+
+The ElevenLabs implementation has been removed. Replace it completely with Google Cloud TTS.
+
+🟢 Requirements:
+- I already uploaded my Google Cloud service account key as: `bot-jxgn-788f55a.json`
+- The API is enabled
+- The audiobook functionality should now use Google’s TTS
+
+---
+
+✅ STEP 1: INSTALL DEPENDENCIES
+
+In the shell or Replit package manager, install:
+
+```bash
+pip install google-cloud-texttospeech langdetect
+```
+
+---
+
+✅ STEP 2: INITIALIZE GOOGLE TTS IN `audiobook_generator.py`
+
+At the top of `audiobook_generator.py`, add:
+
+```python
+import os
+from google.cloud import texttospeech
+from langdetect import detect
+
+# Point to the uploaded service account key
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "bot-jxgn-788f55a.json"
+
+tts_client = texttospeech.TextToSpeechClient()
+```
+
+---
+
+✅ STEP 3: ADD THIS FUNCTION TO HANDLE AUDIOBOOK GENERATION
+
+```python
+def synthesize_google_tts(text: str, output_path="output.mp3"):
+    language = detect(text)
+
+    voice_map = {
+        "en": ("en-US", "en-US-Wavenet-D"),
+        "es": ("es-ES", "es-ES-Wavenet-B"),
+        "fr": ("fr-FR", "fr-FR-Wavenet-E"),
+        "de": ("de-DE", "de-DE-Wavenet-B"),
+        "it": ("it-IT", "it-IT-Wavenet-A"),
+        "pt": ("pt-BR", "pt-BR-Wavenet-C"),
+        "pl": ("pl-PL", "pl-PL-Wavenet-A"),
+        "ru": ("ru-RU", "ru-RU-Wavenet-B"),
+        "ja": ("ja-JP", "ja-JP-Wavenet-B"),
+        "ko": ("ko-KR", "ko-KR-Wavenet-A"),
+    }
+
+    language_code, voice_name = voice_map.get(language, ("en-US", "en-US-Wavenet-D"))
+
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(
+        language_code=language_code,
+        name=voice_name
+    )
+    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+
+    response = tts_client.synthesize_speech(
+        input=synthesis_input,
+        voice=voice,
+        audio_config=audio_config
+    )
+
+    with open(output_path, "wb") as out:
+        out.write(response.audio_content)
+        print(f"✅ Audio saved to {output_path}")
+```
+
+---
+
+✅ STEP 4: USAGE EXAMPLE
+
+Anywhere in your backend, just call:
+
+```python
+synthesize_google_tts("La economía es el arte de aprovechar los recursos limitados.", "spanish_sample.mp3")
+```
+
+---
+
+🎯 RESULT:
+- Text is language-detected
+- Voice is automatically selected
+- `.mp3` is saved to the Replit project directory
+
+---
+
+DO NOT re-add ElevenLabs. Only use Google Cloud TTS moving forward.

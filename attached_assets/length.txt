@@ -1,0 +1,111 @@
+You are upgrading the Originality Meter app's rewrite functionality. The app must obey the following rules without exception:
+
+🔴 1. Mandatory Length Preservation
+Every rewritten macrochunk must match or exceed 100% of the original macrochunk length.
+
+NOT 95%. NOT 90%.
+
+Target = 100%–110% word count.
+
+Under no circumstances may a rewritten macrochunk be shorter than the original macrochunk.
+
+🔴 2. Emergency Expansion on Shortfall
+If the LLM returns an output that is even one word shorter than the input macrochunk:
+
+The app must automatically re-send the output to the LLM with this emergency instruction:
+
+“You failed to preserve length. Expand the text intelligently, elaborating existing points with clarifications, examples, and deeper explanation. DO NOT add unrelated material. DO NOT summarize. Bring output to match the original length precisely or slightly exceed it.”
+
+This process repeats until the rewritten macrochunk meets the word count requirement.
+
+🔴 3. Smart Macrochunking
+For documents larger than 5,000 words:
+
+Break into macrochunks of 5,000–8,000 words.
+
+Always split on paragraph boundaries.
+
+No sentence-level splits (splitting inside a paragraph = ❌).
+
+🔴 4. Rewrite Logic (Not Summarization)
+The rewritten output must:
+
+Preserve every major argument.
+
+Preserve paragraph structure.
+
+Maintain or deepen complexity.
+
+Never summarize, condense, or "simplify" unless explicitly instructed.
+
+🔴 5. Content Source Integration (if present)
+If a Content Source Document is uploaded, even if the user gives vague instructions:
+
+The rewritten output must integrate 2–3 meaningful, non-random ideas from the Content Source into each macrochunk.
+
+The integrations must be natural and reinforce the original argument.
+
+🔴 6. Streaming and Finalization
+Only stream macrochunks that:
+
+Meet the length requirement,
+
+Preserve the original structure,
+
+Enrich properly (if Content Source is present).
+
+2. 📜 CONCRETE TEXT EXAMPLES
+EXAMPLE 1: Tiny Sample Paragraph
+Original Text:
+
+"Reverse-brain engineering offers a method for naturalizing epistemology. Rather than theorizing about cognition, we build AI systems and observe their problem-solving processes. If the AI succeeds at solving unbounded problem sets like humans, it implies structural alignment between AI cognition and human cognition."
+
+❌ WRONG (Summarized, Too Short, Too Shallow) Rewrite:
+"Reverse-brain engineering helps us understand knowledge by making AI. If the AI solves problems like humans do, it shows they think alike."
+
+Length: 50% of original.
+Problem: Oversimplified. Lost nuance about "unbounded problem sets" and "structural alignment."
+
+✅ CORRECT Rewrite:
+"Reverse-brain engineering presents a rigorous methodology for naturalizing epistemology. Instead of relying solely on theoretical conjectures about cognition, it advocates for constructing artificial intelligence systems and systematically examining how these systems engage with problem-solving. When AI systems demonstrate the ability to solve unbounded, infinitely expandable sets of problems, and do so in ways congruent with human cognitive methods, this suggests a profound structural alignment between artificial and human cognition—thus offering empirical support for naturalized epistemological theories."
+
+Length: 105% of original.
+Problem-solving structure preserved.
+Complexity expanded, not reduced.
+
+✅ This is the model of rewriting required across all macrochunks.
+
+EXAMPLE 2: Longer Sample Paragraph (Full Microchunk)
+Original Text:
+
+"A crucial feature of functional AI systems is their alignment with human norms of inference. Without this, even successful problem-solving would fail to constitute genuine knowledge. By studying the inferential patterns encoded within high-performing AI models, we can gain new insight into the epistemic norms that govern actual knowledge-formation processes."
+
+❌ WRONG Rewrite:
+"AI models show us how people reason. By studying good AI, we learn about knowledge-making."
+
+Length: 40% of original.
+Problem: No detail. No preservation of "norms of inference." No mention of functional criteria.
+
+✅ CORRECT Rewrite:
+"A pivotal aspect of successfully engineered AI systems is their congruence with human standards of inference. Without adherence to these epistemic norms, even an AI’s correct outputs would not constitute genuine knowledge. Thus, by analyzing the specific inferential architectures embedded within high-performing AI models, we can extract valuable insights into the very epistemological principles that underlie authentic knowledge-formation processes in human beings."
+
+Length: 110% of original.
+Full preservation and deepening of logical flow.
+
+3. 🧠 EVALUATION RULES FOR ACCEPTANCE
+✅ When you test the upgraded app:
+
+
+Test	Pass/Fail Criteria
+Length Test	Each rewritten macrochunk must be ≥ 100% original word count.
+Depth Test	Each rewritten macrochunk must preserve or increase original depth — not simplify.
+Content Source Test	If Content Source uploaded, rewritten text must naturally incorporate 2–3 relevant ideas per macrochunk.
+Emergency Expand Test	If rewrite is short, app must auto-re-expand until length is met.
+Structure Test	Paragraph flow and argument logic must match original macrochunk, unless user specifically says otherwise.
+✅ If even one of these tests fail, the app has not been built correctly.
+
+📜 FINAL PACKET DELIVERABLE TITLE:
+"Full Rewrite System Correction for Originality Meter App: Mandatory Length Preservation, Depth Preservation, Smart Macrochunking, Emergency Expansion, and Example-Guided Rewrite Modeling."
+
+✅ This is your full, real instruction set to hand Replit.
+✅ No excuses. No "we misunderstood." No ambiguity.

@@ -1,0 +1,92 @@
+Thanks for sharing the screenshot — the error SendGrid error: HTTP Error 400: Bad Request means SendGrid is rejecting the request due to bad input or malformed data.
+
+Here are 7 likely causes and how to fix them:
+
+✅ 1. Missing or Invalid "From" Email
+Cause: You must specify a verified "from" address in the SendGrid request.
+
+Even if the "to" address is valid, SendGrid will reject it if "from" is missing or unverified.
+
+Fix: Make sure your from_email is a verified sender (like your domain or a verified single sender). Example:
+
+python
+Copy
+Edit
+from_email = Email("your_verified_email@yourdomain.com")
+✅ 2. Subject or Body Contains Illegal Characters
+Cause: Sometimes SendGrid rejects requests with line breaks, special characters, or malformed JSON.
+
+Fix:
+
+Double check the subject and body strings for weird characters.
+
+Sanitize the input like this:
+
+python
+Copy
+Edit
+subject = subject.strip()
+content = content.replace("\r", "").replace("\n", "\n")
+✅ 3. The Email Body Is Empty
+Cause: If the user hasn’t rewritten anything yet, or if the body content is blank, SendGrid will reject the request.
+
+Fix:
+
+python
+Copy
+Edit
+if not content.strip():
+    raise Exception("Email body is empty!")
+✅ 4. Invalid JSON Format in the Payload
+Cause: If you're manually crafting the JSON or using the wrong structure, that’ll throw a 400.
+
+Fix: Make sure you use the correct structure like this:
+
+python
+Copy
+Edit
+import sendgrid
+from sendgrid.helpers.mail import Mail
+
+message = Mail(
+    from_email='your_verified_email@domain.com',
+    to_emails='jmkuczynski@yahoo.com',
+    subject='Your Rewritten Text',
+    plain_text_content='Here is your rewritten text: ...'
+)
+✅ 5. You're Accidentally Sending HTML as Plain Text
+Fix: If you're using plain_text_content, keep it text-only. If it's HTML, use html_content= instead.
+
+✅ 6. SendGrid API Key Is Missing or Invalid
+Fix:
+
+Double check your API key is correct and added in Replit Secrets like:
+
+python
+Copy
+Edit
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+✅ 7. PDF Attachment Error
+Cause: If you're sending a PDF and the file is invalid, improperly base64-encoded, or over size limits, SendGrid will reject it.
+
+Fix: If you’re attaching PDFs:
+
+python
+Copy
+Edit
+from sendgrid.helpers.mail import Attachment, FileContent, FileName, FileType, Disposition
+import base64
+
+with open("your.pdf", "rb") as f:
+    data = f.read()
+encoded = base64.b64encode(data).decode()
+
+attachment = Attachment()
+attachment.file_content = FileContent(encoded)
+attachment.file_type = FileType('application/pdf')
+attachment.file_name = FileName('rewrite.pdf')
+attachment.disposition = Disposition('attachment')
+
+message.attachment = attachment
+🛠️ Recommendation
+Start with the simplest working version — just a basic email without subject or PDF — and then add features incrementally. Let me know what your current code looks like (especially the part where you send the email), and I can help debug line-by-line.

@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Translation Tool{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="text-center mb-4">Language Translation Tool</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Source Text</h5>
+                        <div>
+                            <select class="form-select form-select-sm" id="sourceLanguage">
+                                <option value="auto" selected>Auto-detect</option>
+                                <option value="en">English</option>
+                                <option value="es">Spanish (Español)</option>
+                                <option value="fr">French (Français)</option>
+                                <option value="de">German (Deutsch)</option>
+                                <option value="it">Italian (Italiano)</option>
+                                <option value="pt">Portuguese (Português)</option>
+                                <option value="nl">Dutch (Nederlands)</option>
+                                <option value="ru">Russian (Русский)</option>
+                                <option value="zh">Chinese (中文)</option>
+                                <option value="ja">Japanese (日本語)</option>
+                                <option value="ko">Korean (한국어)</option>
+                                <option value="ar">Arabic (العربية)</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="tr">Turkish (Türkçe)</option>
+                                <option value="vi">Vietnamese (Tiếng Việt)</option>
+                                <option value="th">Thai (ไทย)</option>
+                                <option value="id">Indonesian (Bahasa Indonesia)</option>
+                                <option value="pl">Polish (Polski)</option>
+                                <option value="sv">Swedish (Svenska)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="position-relative flex-grow-1">
+                        <textarea id="sourceText" class="form-control h-100" placeholder="Enter text to translate..." style="min-height: 300px;"></textarea>
+                        <div id="sourceWordCount" class="word-count-indicator">
+                            <span class="badge bg-primary">0 words</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button id="clearSourceBtn" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg"></i> Clear
+                        </button>
+                        <button id="uploadSourceFileBtn" class="btn btn-outline-primary ms-2">
+                            <i class="bi bi-file-earmark-text"></i> Upload File
+                        </button>
+                        <input type="file" id="sourceFileInput" class="d-none" accept=".txt,.doc,.docx,.pdf">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Translated Text</h5>
+                        <div>
+                            <select class="form-select form-select-sm" id="targetLanguage">
+                                <option value="en" selected>English</option>
+                                <option value="es">Spanish (Español)</option>
+                                <option value="fr">French (Français)</option>
+                                <option value="de">German (Deutsch)</option>
+                                <option value="it">Italian (Italiano)</option>
+                                <option value="pt">Portuguese (Português)</option>
+                                <option value="nl">Dutch (Nederlands)</option>
+                                <option value="ru">Russian (Русский)</option>
+                                <option value="zh">Chinese (中文)</option>
+                                <option value="ja">Japanese (日本語)</option>
+                                <option value="ko">Korean (한국어)</option>
+                                <option value="ar">Arabic (العربية)</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="tr">Turkish (Türkçe)</option>
+                                <option value="vi">Vietnamese (Tiếng Việt)</option>
+                                <option value="th">Thai (ไทย)</option>
+                                <option value="id">Indonesian (Bahasa Indonesia)</option>
+                                <option value="pl">Polish (Polski)</option>
+                                <option value="sv">Swedish (Svenska)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="position-relative flex-grow-1">
+                        <textarea id="targetText" class="form-control h-100" placeholder="Translation will appear here..." style="min-height: 300px;" readonly></textarea>
+                        <div id="targetWordCount" class="word-count-indicator">
+                            <span class="badge bg-success">0 words</span>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button id="copyTranslationBtn" class="btn btn-outline-secondary">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                        <button id="downloadTranslationBtn" class="btn btn-outline-primary ms-2">
+                            <i class="bi bi-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <div class="translation-controls mb-4">
+                <button id="translateBtn" class="btn btn-lg btn-success px-5">
+                    <i class="bi bi-translate"></i> Translate
+                </button>
+                
+                <button class="btn btn-outline-secondary ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#advancedOptions" aria-expanded="false" aria-controls="advancedOptions">
+                    <i class="bi bi-gear"></i> Advanced Options
+                </button>
+            </div>
+            
+            <div class="collapse" id="advancedOptions">
+                <div class="card card-body mb-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="aiProvider" class="form-label">Translation Engine:</label>
+                                <select class="form-select" id="aiProvider">
+                                    <option value="auto" selected>Auto (Best for language pair)</option>
+                                    <option value="openai">OpenAI (GPT-4o)</option>
+                                    <option value="anthropic">Anthropic (Claude 3.5)</option>
+                                    <option value="perplexity">Perplexity (Llama 3.1)</option>
+                                </select>
+                                <div class="form-text">Select the AI model to use for translation</div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="formalityCheck" checked>
+                                <label class="form-check-label" for="formalityCheck">
+                                    Preserve formal tone in translation
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="processingMode" class="form-label">Processing Mode:</label>
+                                <select class="form-select" id="processingMode">
+                                    <option value="standard" selected>Standard (best for texts under 2,000 words)</option>
+                                    <option value="chunk">Chunked (for 2,000-20,000 words)</option>
+                                    <option value="advanced">Advanced (for very large documents)</option>
+                                </select>
+                                <div class="form-text">Select processing method based on text size</div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="preserveFormatting" checked>
+                                <label class="form-check-label" for="preserveFormatting">
+                                    Preserve original formatting (paragraphs, lists, etc.)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div id="translationLoadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="display: none !important; background-color: rgba(0,0,0,0.7); z-index: 9999;">
+        <div class="card p-4 text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4 id="translationStatusText">Translating...</h4>
+            <div class="progress mt-3" style="height: 20px;">
+                <div id="translationProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+            <p id="translationProgressText" class="mt-2">Processing 0 of 0 chunks</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/translation.js') }}"></script>
+{% endblock %}

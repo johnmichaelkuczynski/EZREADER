@@ -1,0 +1,1 @@
+Testing text with dollar signs: The item costs $25.99 and the service fee is $4.50. Additional charges include $10.00 processing fee and $2.50 handling fee.

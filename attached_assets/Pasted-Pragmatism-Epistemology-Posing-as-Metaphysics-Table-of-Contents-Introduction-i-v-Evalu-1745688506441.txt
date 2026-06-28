@@ -1,0 +1,309 @@
+Pragmatism: Epistemology Posing as Metaphysics
+
+Table of Contents
+
+Introduction
+
+(i)-(v) Evaluated.
+
+Evaluated
+
+A Pragmatist Counterargument
+
+What about Hypotheses that are observationally equivalent for reasons of natural law?
+
+Evaluated
+
+Evaluated
+
+and (v) Evaluated
+
+Pragmatism: Epistemology Posing as Ontology
+
+The Essence of Pragmatism: What (i)-(v) Have in Common
+
+Introduction
+
+James puts forth several different definitions of ‘pragmatism.’ The following list contains the primary such definitions:
+
+The meaning of a hypothesis—what it says about the world—lies in its observable consequences.
+
+A true idea is one that allows us to control the world; a false one is one that doesn’t.
+
+True ideas are those that we can ‘assimilate’, and false ones are those we cannot.
+
+‘Truth happens to an idea.’
+
+Truth is made, not discovered.
+
+This list contains some redundancies, as we will see. But we will start by going through each of these contentions individually, so as to avoid prejudging their logical interrelations. We will find that each of (i)-(v) is false but that they are distorted ways of expressing a number of legitimate insights concerning knowledge and the acquisition thereof.
+
+(i)-(v) Evaluated.
+
+Evaluated
+
+In a representative passage, James writes:
+
+Pragmatism, on the other hand, asks its usual question. "Grant an idea or belief to be true," it says, "what concrete difference will its being true make in anyone's actual life? How will the truth be realized? What experiences will be different from those which would obtain if the belief were false? What, in short, is the truth's cash-value in experiential terms?"
+
+In other words:
+
+The meaning of a hypothesis—what it says about the world—lies in its observable consequences.
+
+is tantamount to saying:
+
+(i*) Instead of asserting some hypothesis H, you might as well just assert O, where O is a description of H’s observable consequences.
+
+But (i*) is false. The reason is that the relationship between a hypothesis and its observable consequences is always contingent, never analytic, as it depends on what the operative conditions and causal mechanisms are. Consider the hypothesis that:
+
+(H) People come from apes (i.e., are descended from apelike creatures).
+
+What are the observable consequences of H? Presumably, they concern observations of fossil records, humanoid skeletons, crudely made weapons, and the like. But these are the observable consequences of H only if certain conditions and causal mechanisms obtain. If different conditions obtained or different mechanisms were operative, those would not be the observational consequences of H.
+
+So, H is observationally equivalent with
+
+(O) O1…On are the observable consequences of H
+
+only if certain conditions and certain mechanisms are operative. Given that different conditions and mechanisms might be operative, this means that H and O are not equivalent, observationally or otherwise. This becomes evident when we assign specific values to the variables (‘O1…On’) in O. Consider:
+
+(O^) Skeletons having such and such a shapes and color will be discovered in what is	now Tanzania, and such and such chemical experiments conducted on those skeletons will yield such and such results (and so on).
+
+One could, without self-contradiction or incoherence, accept H and deny O^. Therefore, H is not equivalent with O^ or, by parity of reasoning, with any other instance of O. Consequently, (i) is false.
+
+What about Hypotheses that are observationally equivalent for reasons of natural law?
+
+There may be cases where, for reasons for natural law, two hypotheses cannot possibly differ in their observable consequences. For example, it is said (and for the purposes of this argument, we will assume, possibly falsely) that:
+
+(Q) There are deterministic mechanisms underlying quantum phenomena
+
+must, for reasons of natural law, have the same observable consequences as
+
+(Q*) There are no deterministic mechanisms underlying quantum phenomena.
+
+But does this mean that Q and Q* are the same hypothesis?
+
+No. First of all, given the fact that natural law is what guarantees their observational equivalence, it follows that they make different claims about the world. One doesn’t have to know the laws of physics to know that:
+
+(H) People come from apes
+
+is observationally equivalent with
+
+(H^) Either three is even or people come from apes,
+
+since those two hypotheses are logically equivalent and therefore make the very same claim about the spatiotemporal world. But one does have to know the laws of physics to know that Q and Q* are
+
+observationally equivalent, since they don’t make the very same claim. Indeed, the (alleged) observational equivalence of Q and Q* was only recently discovered.
+
+In general, observational equivalence only guarantees actual equivalence when it is built into the very meanings of the claims in question—when, in other words, it is analytic in nature, as it is with H and H*. But in such cases, observational equivalence is a mere consequence of meaning-equivalence and therefore does not redound to the credit of the pragmatist’s position.
+
+Evaluated
+
+James writes that:
+
+Truth, as any dictionary will tell you, is a property of certain of our ideas. It means their 'agreement,' as falsity means their disagreement, with 'reality.' Pragmatists and intellectualists both accept this definition as a matter of course. They begin to quarrel only after the question is raised as to what may precisely be meant by the term 'agreement,' and what by the term 'reality,' when reality is taken as something for our ideas to agree with.
+
+Shortly thereafter, James explains what the pragmatist means by ‘agreement’:
+
+To 'agree' in the widest sense with a reality, CAN ONLY MEAN TO BE GUIDED EITHER STRAIGHT UP TO IT OR INTO ITS SURROUNDINGS, OR TO BE PUT INTO SUCH WORKING TOUCH WITH IT AS TO HANDLE EITHER IT OR SOMETHING CONNECTED WITH IT BETTER THAN IF WE DISAGREED. 1
+
+In other words:
+
+1 The capitalization is James’ own.
+
+(ii) A true idea is one that allows us to control the world; a false one is one that doesn’t.
+
+On at least one reading, (ii) is true. If I believe that cyanide is poisonous, I am to that extent better able to control the world, including my own fate, than I am if I believe otherwise. Taken literally, therefore, (ii) is trivially true and cannot be what the pragmatist means when he affirms it. What the pragmatist does mean, presumably, is that:
+
+(ii#) For an idea to be true is for it increase our ability to control the world.
+
+Thus, whereas the realist’s position is that a consequence of an idea’s being true is that it increases the power of those who accept it, the pragmatist’s position is that this is what it is for an idea to be true.
+
+For analogues of the reasons stated in connection with (i), the realist is right and the pragmatist is wrong. Consider the true claim that:
+
+(C) copper has a higher degree of conductivity than brass.
+
+In the year 1700, C, even if known to be true, would have done little or nothing to increase man’s powers, simply because the requisite scientific and industrial infrastructure did not yet exist. But that infrastructure exists now, and for that reason C is now replete with practical significance. The reality described by C hasn’t changed in the last 300 years. What has changed is our relationship to that reality. Because that relationship has changed, the nature and degree of C’s usefulness has changed.
+
+But the pragmatist cannot take this position, since, in his view, there is nothing to C’s being true other than its being useful, forcing him to take the absurd view that the reality described by C didn’t exist 300 years ago or didn’t exist in its current form. In general, for the pragmatist, i.e., for someone who takes
+
+the view a claim’s being true is its being useful, there is no way to explain a given claim’s usefulness. He cannot say that C’s usefulness is derived from facts about copper and electricity, since such a position is tantamount to saying that C’s usefulness is derived from its truth, which presupposes a distinction between truth and usefulness and is therefore not available to him. But the realist doesn’t have this problem, and he can take the position that C’s usefulness is a consequence of its being on the right side of the operative causal mechanisms.
+
+There is also the fact the nature and degree of a claim’s usefulness varies from person to person (C is more useful to an electrical engineer than to a poet) and from time to time (C’s usefulness to a given person increases when he career-shifts from poetry into electrical engineering). For variants of the reasons just given, the realist can, whereas the pragmatist cannot, explain this variability.
+
+(iii) Evaluated
+
+James writes that
+
+TRUE IDEAS ARE THOSE THAT WE CAN ASSIMILATE, VALIDATE, CORROBORATE, AND VERIFY. FALSE IDEAS ARE THOSE THAT WE CANNOT. That is the practical
+
+difference it makes to us to have true ideas; that therefore is the meaning of truth, for it is all that truth is known as.2
+
+In light of this, let us evaluate the claim, internal to the above quotation, that:
+
+(iii) True ideas are those we can ‘assimilate’, and false ones are those we cannot.
+
+2 The capitalization is James’ own.
+
+First of all, (iii) is similar to (ii), given that, presumably, at least part of what it is for an idea to be ‘assimilable’ is for it to be useful. To ‘assimilate’ an idea, after all, is presumably to put it to practical use or to absorb it into a useful (and possibly otherwise wieldy) theory. So yes—true ideas do indeed tend to be more ‘assimilable’ than false ones. The idea that a bag full of lead is lighter than an otherwise identical empty bag is of negative practical utility and is correspondingly more difficult to assimilate into a useful theory.
+
+But when a pragmatist asserts (iii), he cannot possibly be making the innocuous claim that true ideas tend to be more assimilable than false ones. What he means by (iii) is that for an idea to be true is for it to be assimilable---in which case, for the reasons given in connection with (ii), what the pragmatist is saying is false.
+
+Also, if an idea is hard to assimilate, we are unlikely to recognize it as being true. So, as it is meant by the pragmatist, (iii) involves selection bias. The idea that space is non-Euclidean is not very useful to very many people, and acceptance of it was commensurately slow in coming. And there are plenty of examples from everyday experience. People tend to know nothing about medical conditions until they succumb to them; nothing about investing until they have money to invest; and nothing about parenting until they become parents. People are dismissive, or simply ignorant, of ideas that are irrelevant to their lives, and the seemingly tight connection between the true and the assimilable is therefore, at least in part, an appearance born of selection bias.
+
+Then there is the fact that the connection between the true and the assimilable holds to varying degrees and, as we discover every time we make a counterintuitive discovery, sometimes simply fails to hold. The pragmatist has no way of explaining this variability, since, for him, truth and assimilability are one the same, whereas the realist has no trouble explaining it, since, for him, assimilability is merely a contingent and circumstance-specific reflection of truth.
+
+(iv) and (v) Evaluated
+
+James writes that:
+
+This thesis is what I have to defend. The truth of an idea is not a stagnant property inherent in it. Truth HAPPENS to an idea. It BECOMES true, is MADE true by events. Its verity is in fact an event, a process: the process namely of its verifying itself, its veri-FICATION. Its validity is the process of its valid-ATION.3
+
+In light of this, let us consider the claim that:
+
+(iv) ‘Truth happens to an idea.’
+
+The first question is: What does (iv) mean exactly? James’ own answer is not very clear. In any case, an answer that is in line with the above quotation, and with James’ thought in general, is as follows:
+
+(iv*) Given that truth is identical with usefulness and given that ideas often gain in
+
+usefulness, rather than having a fixed quantity of usefulness that is present in them ab	initio, it follows that ‘truth’ (i.e. usefulness) does indeed happen (i.e. accrue) to an idea.
+
+(iv*) merely registers a corollary of the contention that truth is identical with usefulness and does not provide any independent evidence for it. And because (iv*) presupposes that truth is identical with usefulness, it is refutable for the same reasons as (iii) and (iv).
+
+But there is another possible reading of (iv*), namely:
+
+3 The capitalization and hyphenations are James’ own.
+
+(iv^) Not only is truth identical with usefulness: specific truths are nothing other than instruments whose purpose is to help organize experience.
+
+There are several passages in Pragmatism that indicate that James accepts (iv^) and also that (iv^) is a possible interpretation of the opaque claim that ‘truth happens to an idea’, for example:
+
+Is a constellation properly a thing? Or an army? or is an ENS RATIONIS such as space or justice a thing? Is a knife whose handle and blade are changed the 'same'?... The moment you pass beyond the practical use of these categories (a use usually suggested sufficiently by the circumstances of the special case) to a merely curious or speculative way of thinking, you find it impossible to say within just what limits of fact any one of them shall apply.
+
+The point being that, rather than representing external realities, the categories in terms of which we experience the world---knife, army, rock, tree, and possibly even persistent object---do not represent external realities but merely embody ways of organizing what would otherwise be an amorphous mass of experience. A corollary is that the ‘truths’ (for lack of a better term) that are constructed out of these categories are themselves to be understood in instrumental, as opposed to representational, terms. (If plate, knife, etc. embody mere constructs, then the same is true of the truths, so-called, that they compose, e.g., there is a fork next to the plate on Randal Johnson’s table). And given that the property of being experience-organizing can be acquired over time by a given ‘truth’ (so-called), this corollary would warrant acceptance of (iv^).
+
+Also, if (iv^) is the right interpretation of (iv), then it is also the right interpretation of James’ statement (contained in the above quotation) that “truth…is made true by events”, i.e., that:
+
+(v) Truth is made, not discovered.
+
+Is James right to say knives, forks, nations, economies, and armies are merely projective constructs, albeit useful ones?
+
+No—because a construct won’t be useful unless it tracks objective realities---unless, to be more specific, it is hewed to existing causal mechanisms. Why do we say that the blade and the handle constitute a single object (‘the knife’), whereas we do not say that the blade and plate on which it is now resting do so? Because the blade and the knife constitute a predictively robust ensemble. So, while it may
+
+well be that we wouldn’t regard the blade and the handle as constituting a single object were it not for our practical interests, those same practical interests wouldn’t be well-served unless the collective thereby formed had a certain causal and predictive integrity.
+
+Similarly, the reason we find it useful to group people into nations and armies and economies; useful to group bricks into houses; useful to group stars into galaxies; is that such groups have a certain dynamic cohesiveness in virtue of which they support otherwise hard to generate predictions and explanations. It is all very well to say that thermometers and scalpels are but ‘useful fictions’—useful ways of grouping together qualia or events (or whatever it is you take to be indisputably real). But see how far you get without these so-called fictions, as either a diagnostician (theoretician) or a practitioner (agent). And see how far you get as an investor without assuming the actual existence of economies and nations.
+
+The reason these ‘fictions’ are useful, it must be stressed, is that they track actual causal
+
+mechanisms. They are ‘schematic’ not in the sense that they don’t exist but only in the sense that they are not ontological rock bottom. Nations are composed of people; people are composed of organs; organs are composed of cells; cells are composed of molecules and atoms. Are we to say that only subatomic particles exist? No—for that would be absurdly revisionist. A better position is to say that nations, people, etc. exist, albeit derivatively of other, more fundamental entities. As for why we can speak of nations without having to speak of the individuals composing them, and of houses without having to speak of the bricks composing them, and so on, the reason is clearly that these higher-order entities are causally
+
+coherent and, however ‘fictitious’ they might otherwise be, therefore constitute undeniably real causal systems. So, no—the objects that it is useful to think in terms of must for that very reason be non-fictions, since a ‘fiction’ isn’t useful unless it tracks real causal mechanisms, in which case it isn’t really a fiction.
+
+To be sure, not all explanatorily important causal mechanisms are represented in the categories in terms of which we instinctively think. Scientists make discoveries, many of them counterintuitive. But such discoveries tend to give us fine-grained knowledge of the causal mechanisms embodied in our pre- theoretical cognitive schemata. The scientists doesn’t tell us that water doesn’t exist; he tells us what
+
+water is. He doesn’t tell us that hearts don’t exist; he tells us exactly what they do and how they do it. To be sure, it may well be that science does more than just delineate of categories constitutive of day-to-day thought. Either way, those categories would be utterly useless, even as starting points, unless they represented actual fault-lines in nature.
+
+Pragmatism: Epistemology Posing as Ontology
+
+So where does this leave us? Is pragmatism without value?
+
+Pragmatism has tremendous value—as a description, not of truth per se, but of our knowledge of it—and, more precisely, of our acquisition of that knowledge. Once again, consider James’ claim that:
+
+(iv) Truth happens to an idea.
+
+Taken literally, this is both opaque and false. But replace ‘truth’ with ‘the property of being knowledge.’ This gives us:
+
+(iv+) Ideas acquire the property of being knowledge; i.e., they do not typically start out as knowledge, but they can become knowledge.
+
+Unlike (iv), which is prima facie false, (iv+) is prima facie true, at least where some beliefs are concerned. My belief that rabbits are herbivores did not constitute knowledge when, at the age of three, I first acquired it. First of all, I probably did not initially believe that rabbits are herbivores—at least not in the same, robust sense in which I believed that snow is cold or that fish live in water. I initially just
+
+accepted as much, probably I heard it or read it somewhere, and I didn’t have any competing beliefs. With the passage of time and the accumulation of experience, that acceptance became increasingly informed and justified and, for that reason, become increasingly knowledge-constitutive. So, the property of being knowledge happened to that belief.
+
+Similar points holds with respect to (v). Truth per se is discovered, not made. But knowledge is indeed made. Indeed, it is made in two distinct senses. First, it involves the generation of the belief that, once it is sufficiently justified, becomes knowledge. Second, it involves the aforementioned process of justification. In order to know that rabbits are herbivores, I must first accept that they are, and that acceptance must then become sufficiently justified as to constitute knowledge. That belief of mine becomes knowledge because a justification for it is constructed over time. In general, beliefs become knowledge thanks to a process of justification-construction. In a word:
+
+(v+) Knowledge is acquired by being constructed.
+
+Unlike (v), which is clearly false, (v+) is eminently defensible.
+
+Similar points hold of (i)-(iii). Consider:
+
+(iii) True ideas are those that we can ‘assimilate’, and false ones are those we cannot,
+
+If taken literally, (iii) is at best a half-truth, given that there are highly assimilable false ideas and highly non-assimilable true ones. And as it is meant by the pragmatist, (iii) is identical with the outright falsehood that:
+
+(iii*) For an idea to be true is for it to be assimilable, and for an idea to be false is for it to be non-assimilable; i.e., truth is assimilability and falsehood is non-assimilability.
+
+In any case, each of (iii) and (iii*) can be seen as an oblique way of expressing the truth that:
+
+(iii+) knowledge is assimilated truth, and beliefs become increasingly knowledge- constitutive as become increasingly grounded.
+
+Now consider:
+
+(ii) A true idea is one that allows us to control the world; a false one is one that doesn’t.
+
+This is obviously similar to the claim that knowledge is power—or, more precisely, that:
+
+(ii+) Instances of knowledge are ipso facto empowering.
+
+But what (ii) incorrectly represents as a virtue of truth itself, (ii+) correctly represents as a virtue of our knowledge of it. There are many truths, and they tend to add to one’s power when they are known. But they are useless unless known—which shows that the property of being power-enhancing belongs not to those truths per se, but to our knowledge of them. In other words, it isn’t truth that is empowering: it is knowledge. The false claim, urged by the pragmatist, that the truth is ipso facto empowering corresponds to the true one that knowledge is empowering.
+
+Finally, let us consider:
+
+(i) The meaning of a hypothesis—what it says about the world—lies in its observable consequences.
+
+(I) is false, as we saw, since the observable consequences of a given hypothesis are the vector sum both of what that hypothesis says about world and of the subject’s relationship to the alleged reality being described. But (i) parallels the true (albeit utterly truistic) claim that:
+
+(i+) Our knowledge of the veracity of a given hypothesis is based on its observable consequences.
+
+The Essence of Pragmatism: What (i)-(v) Have in Common
+
+What (i)-(v) have in common is that they are ways of combatting an ‘intellectualist’ conception of knowledge and of replacing it with an ‘interactionist’ or ‘operationalist’ conception of it. To make a similar, though perhaps non-coincident point, (i)-(v) replace an object-oriented conception of knowledge with a subject-oriented—or, better, an agent-oriented—conception of knowledge.
+
+The way to see this is to replace (i)-(v) with their negations:
+
+(iN) The meaning of a hypothesis is an observation-transcendent reality.
+
+(iiN) An idea can be true without for that reason increasing our control over the world. (iiiN) True ideas are not necessarily more assimilable than false ones.
+
+(ivN) An idea is either true or false; it does not become true. (vN) Truth is discovered, not made.
+
+Each of (iN)-( vN) is correct, as we have seen. But what they suggest (not what they not imply, be it noted, but merely suggest, albeit strongly) is that knowledge-acquisition is about passively taking in what is out there and therefore doing as little as possible to disrupt it. Developed further, the idea that James is concerned to refute would be as follows (‘CE’ stands for ‘Classical Epistemology’):
+
+(CE) Knowledge-acquisition is about taking note of what exists and therefore doing as little as possible to change it. Action, by contrast, is about changing what exists---that is its very purpose. Consequently, there is a sense in which knowledge-acquisition is antithetical to action. To be sure, knowledge-acquisition obviously involves many different forms of action since it would otherwise be impossible to have the requisite observations. Sometimes these actions are relatively non-disruptive---consider the astronomer who merely gazes through his telescope. But in some cases, the actions in question are extremely invasive---consider the medical researcher who vivisects animals to look at their organs or the archeologist who uses explosives to excavate. But such actions are mere precursors to the having of the observations in question. The only reason the archeologist clears away soil is so that he can look at the artefacts currently hidden by it. Soil removal is merely a precursor to his having these observations and therefore is not constitutive of his doing so or, consequently, of his acquiring the knowledge in which his having these observations will eventuate. So, granting that scientists have to engage in action to ply their trade, the scientific process proper only begins when passive observation begins and, therefore, when action ends.
+
+For the moment, let us set aside question ‘what does James believe the problem with CE to be?’, and let us instead ask ‘what is in fact the problem with CE?’
+
+First of all, CE may well be true in some narrow, technical sense. But intellectual discoveries are made by solving practical problems. Ventures are undertaken; roadblocks are hit; workarounds are
+
+created; and insights are the ‘collateral damage’ of these workarounds. Much of physics is the fallout of
+
+attempts to create better weapons and dams and the like, and much of mathematics is constructed to validate this fallout. Economics was invented as a way of managing the enormous influx into Europe of wealth from the New World. Anthropology was invented to help Europeans understand, and interactive more productively with, the natives of the lands they were colonizing. Psychoanalysis was developed in order to solve otherwise unsolvable psychiatric problems.
+
+Even ‘purely philosophical’ problems are not, in fact, purely philosophical. When did modern epistemology come into existence? In the mid-1600s. When did modern physics and engineering come into existence? About the same time. When did Church doctrines lose credibility? About the same time, the reason being they were interfering scientific progress. With faith-based epistemology (if there even is such a thing) no longer possible, philosophers had to come up with new, non-dogmatic—or even anti- dogmatic—epistemologies. Hence Cartesian skepticism and Lockean empiricism. To take a different example, the discipline of logic began in the mid-1800s, with the work of George Boole, whose objective was to automate reasoning. This happened at precisely the time that much physical production was being automated. A coincidence? Surely not.
+
+Of course, once a discipline is launched, it can—and to some extent should—concern itself with ‘purely theoretical’ problems. But what are ‘purely theoretical’ problems? They are problems relating to the mutual coherence of discoveries made in the course of solving actual, practical problems. Calculus was invented to compute planetary orbits and other ballistics-related problems. Once it was invented, ‘purely theoretical’ questions arose, the best-known ones relating to infinitesimals and fractals. But the
+
+only reason these ‘purely theoretical’ problems were seen as being worth solving is that they were needed to validate an enormously useful belief-system.
+
+A corollary is that ‘purely theoretical’ knowledge, so far as there is such a thing, tends to be stale and one-dimensional. A personal anecdote will clarify my meaning. Before engaging in any ventures, I studied finance, and I understood the principles of the discipline well enough to do well in my classes.
+
+But when I went into business, my ‘book knowledge’ of those principles proved useless. It wasn’t that those principles were false. It was rather that I had never actually learned them in the first place: I had
+
+instead learned formalisms that were based on them, and it wasn’t until I had to relearn those principles in such a way as to enable me to solve practical problems that I could replace that schematic pseudo- understanding of mine with real understanding. In general, there is a tendency for ‘pure theory’ to concern itself with mere schemata and, consequently, for ‘theoretical knowledge’ to be stale and one-dimensional.
+
+According to James, ideas are true because they are useful, not the other way around.
+
+Technically, this is false. The theorems of trigonometry are useful because they are true, not the other way around. What is true is that truths are learned—and are worth learning---because they are useful. Yes— theoretical knowledge does exist and should exist. It should exist as long as it is anchored in practical knowledge. When it ceases to be so anchored, it degenerates into knowledge of empty formalisms or assumes some otherwise degraded form. So, while it is absurd to identify the true with the useful, it is not absurd to so identify the true in so far as it is worth learning.
+
+Technically, truth is objective. Either there is an even number of stars in the galaxy or there isn’t, and the truth of the matter, whatever it is, may not worth be knowing. But knowledge is a relationship between subject and object—between mind and world—and there is therefore a subjective side to it. And, speaking biologically, the intellect (i.e., the ability to acquire and organize knowledge) exists to help the organism survive and procreate. In human beings, intellect has to some extent become autonomous. The applied mathematician is interested in relations among numbers and other mathematical objects because of their possible practical applications. The pure mathematician is interested in those relations ‘for their own sake’, i.e., his objective is not to use them, but simply to learn more about them. But he is learning about coherence-relations internal to a dataset that is itself of interest only because of its practical applications.
+
+The same is even of the most seemingly recherché branches of learning. The philosopher is
+
+interested in ethical truths ‘for their own sake’, meaning that his objective is to deepen his understanding of them, whereas the jurist his interested in them in them because of their practical applications. But the philosopher is investigating coherence-relations internal to a dataset that is of interest only because of its
+
+practical applications. Much the same is true---so I would suggest, though I cannot prove it here—of the other branches of philosopher.
+
+Another, rather distinct possibility is that, in ‘disinterestedly’ contemplating truth, the theoretician (e.g., the philosopher, the pure mathematician) is exercising his ability to do what the practitioner is already doing, the idea being that theoretician is to the practitioner what the martial artist is to the soldier. This has the consequence, already noted, that it is the practitioner who determines both what the theoretician is studying and the general lines along which he studies it.
+
+I would suggest that these points hold equally of artistic endeavor. Like the engineer, the artist organizes matter (paint, marble, sound, etc.). But whereas the engineer is interested in relations among material objects because of their possible practical applications, the artist is interested in them ‘for their own sake’. And this, I would suggest, means that he is interested either in deepening his understanding of those relations or in exercising his ability to understand them. Consequently, the artist appears to have turned his back on reality only because he is exercising his ability to engage it, with the much the same holding of the theoretician. Thus, what we refer to as interest in truth or beauty ‘for their own sake’, though not directly concerned with practical results, is directly concerned with the cognitive basis of our ability to generate practical results; and James’ thesis that truth is utility, though itself false, may be regarded as a distorted expression of this truth.

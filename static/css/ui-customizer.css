@@ -1,0 +1,222 @@
+/* UI Customizer Styles */
+
+/* Customization Controls */
+.customization-controls {
+    position: fixed;
+    top: 10px;
+    right: 70px; /* Moved further right to avoid overlapping with other buttons */
+    background-color: var(--bs-dark);
+    border: 1px solid var(--bs-primary);
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.customization-controls button {
+    margin: 5px 0;
+    width: 100%;
+}
+
+.customization-controls #customization-options {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Elements being customized */
+.customizable {
+    border: 2px dashed transparent;
+    transition: border 0.2s ease;
+    position: relative;
+    margin: 3px;
+}
+
+.customizable:hover {
+    border: 2px dashed var(--bs-primary);
+}
+
+/* Drag handle for containers */
+.customization-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--bs-primary);
+    color: white;
+    padding: 2px 5px;
+    font-size: 12px;
+    cursor: move;
+    z-index: 9000;
+    border-radius: 0 0 4px 0;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    pointer-events: all;
+}
+
+.customization-handle:hover {
+    opacity: 1;
+}
+
+/* Small drag handle for buttons and small elements */
+.mini-customization-handle {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: var(--bs-success);
+    color: white;
+    width: 12px;
+    height: 12px;
+    font-size: 7px;
+    cursor: move;
+    z-index: 9500;
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+}
+
+.mini-customization-handle:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Resize handle */
+.resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background-color: var(--bs-warning);
+    cursor: se-resize;
+    z-index: 9000;
+    border-radius: 0 0 0 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    pointer-events: all;
+}
+
+.resize-handle:hover {
+    opacity: 1;
+}
+
+/* Make buttons have higher z-index when customizing to appear above containers */
+button.customizable, .btn.customizable {
+    z-index: 500 !important;
+    position: relative;
+}
+
+/* Special styles for dragged buttons */
+.ui-draggable-dragging.btn, 
+.ui-draggable-dragging button {
+    transition: none !important;
+    box-shadow: 0 0 15px rgba(25, 135, 84, 0.5) !important;
+    transform: scale(1.05) !important;
+    z-index: 9999 !important;
+}
+
+/* Grid overlay for alignment */
+body.show-grid {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Temporary message */
+.customizer-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 90%;
+    display: none;
+}
+
+/* jQuery UI Overrides */
+.ui-resizable-handle {
+    background: transparent !important;
+}
+
+/* Resize handles */
+.ui-resizable-n {
+    cursor: n-resize;
+    height: 7px;
+    top: -5px;
+    left: 0;
+}
+
+.ui-resizable-s {
+    cursor: s-resize;
+    height: 7px;
+    bottom: -5px;
+    left: 0;
+}
+
+.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -5px;
+    top: 0;
+}
+
+.ui-resizable-w {
+    cursor: w-resize;
+    width: 7px;
+    left: -5px;
+    top: 0;
+}
+
+.ui-resizable-se {
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 1px;
+    bottom: 1px;
+}
+
+.ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    bottom: -5px;
+}
+
+.ui-resizable-nw {
+    cursor: nw-resize;
+    width: 9px;
+    height: 9px;
+    left: -5px;
+    top: -5px;
+}
+
+.ui-resizable-ne {
+    cursor: ne-resize;
+    width: 9px;
+    height: 9px;
+    right: -5px;
+    top: -5px;
+}
+
+/* Make handles more visible when in use */
+.ui-resizable-resizing .ui-resizable-handle {
+    background-color: rgba(255, 193, 7, 0.5) !important;
+    border: 1px solid var(--bs-warning);
+}
+
+/* Highlight active draggable */
+.ui-draggable-dragging {
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.4);
+    z-index: 1000 !important;
+    opacity: 0.9;
+}

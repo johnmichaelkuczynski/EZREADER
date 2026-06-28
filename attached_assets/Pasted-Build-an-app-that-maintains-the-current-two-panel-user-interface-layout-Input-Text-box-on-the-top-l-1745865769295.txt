@@ -1,0 +1,43 @@
+Build an app that maintains the current two-panel user interface layout (Input Text box on the top left, Processed Text box on the top right) without any disruption.
+
+Underneath the Input Text box on the left side, add two new, permanent, stacked boxes:
+
+A Content Source Upload Box — this allows the user to upload a secondary document for enrichment.
+
+A How Would You Like the Content Source to Be Used? Instruction Box — this allows the user to manually type optional instructions for how the app should pull from the Content Source.
+
+Both boxes must be permanently visible.
+Both boxes must fit within the existing left panel, stacked vertically beneath the Input Text Box and "How would you like the text rewritten?" box, without disturbing the current layout.
+They should use available space as fully as possible while maintaining clean aesthetic balance.
+
+The app must rewrite the Input Text (the "Target Document") using the normal rewriting process, but must intelligently pull additional information, ideas, examples, and arguments from the Content Source document behind the scenes, based on the optional user instructions.
+
+If no special instructions are provided, the app should default to intelligently enriching the Target Document by pulling helpful material from the Content Source without overriding the Target Document's structure or identity.
+
+Additionally, add full translation capability.
+Allow the user to select a target language from a dropdown menu (e.g., English, Spanish, French, German, etc.).
+If a target language is selected, the rewritten output must be automatically translated into that language after rewriting is complete.
+Use the OpenAI GPT API for translation, unless a higher-quality translation API such as DeepL is preferred or available.
+
+Reactivate and integrate all API keys into the app:
+
+Anthropic
+
+OpenAI
+
+Perplexity
+
+AssemblyAI
+
+11Labs
+
+GPTZero
+
+SendGrid
+
+Ensure the load is distributed intelligently across these APIs as needed.
+
+The rewritten (and possibly translated) output must continue to stream live into the output box chunk-by-chunk, just as it currently does.
+
+Timeouts, retries, macrochunking, and multi-API load balancing must all continue working exactly as previously configured.
+

@@ -1,0 +1,61 @@
+nstruction for Replit: Integrate Existing Humanizer Module into Rewrite App
+Objective:
+Integrate the functionality of a working standalone humanizer app into an existing rewrite app. The rewrite app currently supports rewriting text in various styles, levels, and lengths, and includes an AI-detection feature—but it does not allow training on user-uploaded writing. This must be added.
+
+🔧 What Replit Must Do
+1. Add “Upload Writing Sample” Functionality
+Let the user upload .txt, .pdf, or .docx files containing their own writing.
+
+Extract the plain text using existing backend tools (e.g. pdfplumber, python-docx, etc.).
+
+Save the extracted text in a Neon database, under the user’s profile (or session/email if no auth).
+
+2. Build/Update Cumulative Style Profile
+Each upload must append to the user’s existing writing corpus.
+
+Store the cumulative corpus in a Neon profiles table as merged_text.
+
+Do not overwrite unless the user explicitly clicks a “Clear Profile” button.
+
+3. Use Style Profile in Rewrite Logic
+When the user requests a rewrite, check whether a style profile exists.
+
+If yes, prepend the profile (merged_text) to the prompt used in rewriting.
+
+Prompt structure example:
+
+plaintext
+Copy
+Edit
+Here is the user’s writing style:
+[merged_text]
+
+Now rewrite the following passage to match this style:
+[input_text]
+If no profile exists, default to current style-selection functionality.
+
+4. Add UI Section for Humanizer
+Add a “Train My Style” or “Use My Style” option in the existing UI.
+
+This can be a toggle or a dropdown mode alongside other rewrite options (e.g. Formal, Casual, etc.).
+
+Add a section that allows users to:
+
+Upload documents
+
+View current word count of style profile
+
+Clear their style profile if needed
+
+5. Use Same AI-Detector on Humanized Output
+After generating rewritten output using the user’s style, pass the result through the existing AI-detection tool and display the score.
+
+This closes the loop: the user uploads their own writing, the app rewrites in their voice, and the detector verifies “human-ness.”
+
+🗂️ Storage
+Use Neon as the database (already integrated with Replit).
+
+Suggested tables: users, uploads, profiles
+
+Each user has one merged_text field that gets updated with every upload.
+

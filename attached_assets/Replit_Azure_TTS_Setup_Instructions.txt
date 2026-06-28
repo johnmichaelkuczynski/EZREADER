@@ -1,0 +1,97 @@
+
+📢 INSTRUCTIONS FOR REPLIT: ADD MICROSOFT AZURE TEXT-TO-SPEECH FUNCTIONALITY
+
+This function uses the existing environment variables:
+- AZURE_SPEECH_KEY
+- AZURE_SPEECH_ENDPOINT
+
+---
+
+✅ STEP 1: INSTALL REQUIRED DEPENDENCIES
+
+In the Replit Shell, run:
+
+```bash
+pip install requests langdetect
+```
+
+---
+
+✅ STEP 2: ADD THIS FUNCTION TO YOUR TTS MODULE (e.g., audiobook_generator.py)
+
+```python
+import os
+import requests
+from langdetect import detect
+
+def synthesize_azure_tts(text, output_path="output.mp3"):
+    speech_key = os.getenv("AZURE_SPEECH_KEY")
+    endpoint = os.getenv("AZURE_SPEECH_ENDPOINT")
+    
+    if not speech_key or not endpoint:
+        raise Exception("Azure speech credentials are not set in environment variables.")
+
+    language = detect(text)
+
+    # Map detected language to voice names
+    voice_map = {
+        "en": "en-US-AriaNeural",
+        "es": "es-ES-ElviraNeural",
+        "fr": "fr-FR-DeniseNeural",
+        "de": "de-DE-KatjaNeural",
+        "it": "it-IT-ElsaNeural",
+        "pt": "pt-BR-FranciscaNeural",
+        "pl": "pl-PL-AgnieszkaNeural",
+        "ru": "ru-RU-DariyaNeural",
+        "ja": "ja-JP-NanamiNeural",
+        "ko": "ko-KR-SunHiNeural",
+    }
+
+    voice = voice_map.get(language, "en-US-AriaNeural")
+    region = endpoint.split("//")[1].split(".")[0]
+
+    url = f"{endpoint}/cognitiveservices/v1"
+
+    headers = {
+        "Ocp-Apim-Subscription-Key": speech_key,
+        "Content-Type": "application/ssml+xml",
+        "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+        "User-Agent": "YourApp"
+    }
+
+    ssml = f"""
+<speak version='1.0' xml:lang='{language}'>
+    <voice name='{voice}'>{text}</voice>
+</speak>
+"""
+
+    response = requests.post(url, headers=headers, data=ssml.encode("utf-8"))
+
+    if response.status_code != 200:
+        raise Exception(f"Azure TTS failed: {response.status_code} - {response.text}")
+
+    with open(output_path, "wb") as f:
+        f.write(response.content)
+        print(f"✅ Audio saved to {output_path}")
+```
+
+---
+
+✅ STEP 3: HOW TO USE IT
+
+Just call it like this:
+
+```python
+synthesize_azure_tts("Bonjour, je suis très heureux de vous parler.", "french_sample.mp3")
+```
+
+This will:
+- Detect the language (`fr`)
+- Select the right Azure voice (`fr-FR-DeniseNeural`)
+- Save the audio as `french_sample.mp3`
+
+---
+
+🔥 BONUS: Supports long-form narration. You can add chunking later if needed.
+
+Let me know if you want the chunked version next.

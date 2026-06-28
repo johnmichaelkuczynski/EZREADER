@@ -1,0 +1,1 @@
+Testing GPTZero API key and Sender Email functionality
