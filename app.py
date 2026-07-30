@@ -5254,6 +5254,29 @@ def update_author_style(slug):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/author_styles/<slug>', methods=['DELETE'])
+def delete_author_style(slug):
+    """Admin: delete an author style."""
+    try:
+        from models import AuthorStyle
+        style = AuthorStyle.query.filter_by(slug=slug).first()
+        if not style:
+            return jsonify({'error': 'Author style not found'}), 404
+        db.session.delete(style)
+        db.session.commit()
+        return jsonify({'deleted': slug})
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error deleting author style {slug}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/author_styles')
+def author_styles_page():
+    """Author styles management page."""
+    return render_template('author_styles.html')
+
+
 # ===== HUMANIZER ROUTES =====
 
 # PRESET_TEXT mapping for instruction presets
