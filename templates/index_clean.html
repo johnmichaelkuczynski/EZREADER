@@ -1569,7 +1569,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const content = line.slice(6);
+                            let content = line.slice(6);
+                            try { content = JSON.parse(content); } catch(e) {}
                             if (content && !content.includes('Error:')) {
                                 outputText.value += content;
                                 outputText.scrollTop = outputText.scrollHeight;
@@ -1645,7 +1646,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
+                            let data = line.slice(6);
+                            try { data = JSON.parse(data); } catch(e) {}
                             if (data === '[DONE]') {
                                 break;
                             }
@@ -1706,7 +1708,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
+                            let data = line.slice(6);
+                            try { data = JSON.parse(data); } catch(e) {}
                             if (data === '[DONE]') {
                                 break;
                             }
@@ -1767,7 +1770,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
+                            let data = line.slice(6);
+                            try { data = JSON.parse(data); } catch(e) {}
                             if (data === '[DONE]') {
                                 break;
                             }
@@ -1848,7 +1852,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const content = line.substring(6);
+                            let content = line.substring(6);
+                            try { content = JSON.parse(content); } catch(e) {}
                             outputText.value += content;
                             outputText.scrollTop = outputText.scrollHeight;
                         }
@@ -2998,7 +3003,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
-                            const content = line.substring(6);
+                            let content = line.substring(6);
+                            try { content = JSON.parse(content); } catch(e) {}
                             outputText.value += content;
                             outputText.scrollTop = outputText.scrollHeight;
                         }

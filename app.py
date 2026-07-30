@@ -5157,7 +5157,7 @@ NOW PROVIDE THE REWRITTEN TEXT WITH MANDATORY PARAGRAPH BREAKS EVERY 3-4 SENTENC
                     
                     for i in range(0, len(formatted_response), chunk_size):
                         chunk = formatted_response[i:i+chunk_size]
-                        yield f"data: {chunk}\n\n"
+                        yield f"data: {json.dumps(chunk)}\n\n"
                     
                     # Separator between chunks
                     if i < total_chunks:
