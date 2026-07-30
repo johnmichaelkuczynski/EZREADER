@@ -5019,6 +5019,7 @@ def customized_rewrite_stream():
         text = data.get('text', '')
         custom_instructions = data.get('custom_instructions', '').strip()
         author_style_slug = data.get('author_style_slug', '').strip()
+        preferred_provider = data.get('preferred_provider', 'auto').strip()
 
         if not text:
             return jsonify({'error': 'No text provided'}), 400
@@ -5139,12 +5140,19 @@ NOW PROVIDE THE REWRITTEN TEXT WITH MANDATORY PARAGRAPH BREAKS EVERY 3-4 SENTENC
                     prompt = create_customized_rewrite_prompt(chunk, custom_instructions, i if total_chunks > 1 else None, total_chunks if total_chunks > 1 else None)
                     
                     # Generate with automatic key + provider failover (Anthropic first for rewrites).
+                    # Build provider order: put user's choice first, fallback to rest
+                    _all = ['anthropic', 'openai', 'deepseek', 'azure', 'venice', 'perplexity']
+                    if preferred_provider and preferred_provider != 'auto' and preferred_provider in _all:
+                        _order = [preferred_provider] + [p for p in _all if p != preferred_provider]
+                    else:
+                        _order = _all
+
                     result = generate_with_failover(
                         prompt,
                         system="You are an expert writing editor and rewriter. You transform text precisely according to user instructions while maintaining quality, clarity, and coherence. You never add preambles or meta-commentary - you provide the rewritten text directly.",
                         max_tokens=6000,
                         temperature=0.7,
-                        preferred_order=['anthropic', 'openai', 'deepseek', 'azure', 'venice'],
+                        preferred_order=_order,
                     )
                     full_response = result['text']
                     

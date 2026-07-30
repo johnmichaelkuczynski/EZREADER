@@ -461,6 +461,32 @@
         </div>
     </div>
 
+    <!-- LLM Selector Strip -->
+    <div id="llmSelectorStrip" style="background:#1a1d23;border-top:1px solid #2e3138;border-bottom:1px solid #2e3138;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="color:#9aa0a6;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;">AI MODEL:</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="llmBtnGroup">
+            <button class="llm-btn llm-active" data-provider="auto"      onclick="selectLLM(this)">⚡ Auto</button>
+            <button class="llm-btn"            data-provider="openai"    onclick="selectLLM(this)">🟢 GPT-4o</button>
+            <button class="llm-btn"            data-provider="anthropic" onclick="selectLLM(this)">🟣 Claude</button>
+            <button class="llm-btn"            data-provider="deepseek"  onclick="selectLLM(this)">🔵 DeepSeek</button>
+            <button class="llm-btn"            data-provider="venice"    onclick="selectLLM(this)">🦙 Llama 3.3</button>
+            <button class="llm-btn"            data-provider="perplexity" onclick="selectLLM(this)">🔍 Perplexity</button>
+        </div>
+        <span id="llmActiveLabel" style="color:#1abc9c;font-size:12px;margin-left:4px;">Auto-select (best available)</span>
+    </div>
+    <style>
+    .llm-btn {
+        background:#2a2d35; border:1px solid #3a3f4a; color:#c5c8ce;
+        padding:5px 13px; border-radius:20px; font-size:12px; font-weight:600;
+        cursor:pointer; transition:all .15s; white-space:nowrap;
+    }
+    .llm-btn:hover { background:#353840; border-color:#5a6070; color:#e8eaed; }
+    .llm-btn.llm-active {
+        background:#16a085; border-color:#1abc9c; color:#fff;
+        box-shadow:0 0 10px rgba(26,188,156,.35);
+    }
+    </style>
+
     <!-- Text Boxes Section -->
     <div class="text-boxes-section">
         <div class="text-box-column" style="position: relative;">
@@ -1555,7 +1581,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     },
                     body: JSON.stringify({
                         text: text,
-                        custom_instructions: instructions
+                        custom_instructions: instructions,
+                        preferred_provider: selectedProvider
                     })
                 });
 
@@ -1629,6 +1656,7 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     },
                     body: JSON.stringify({
                         text: fullText,
+                        preferred_provider: selectedProvider,
                         custom_instructions: 'You are playing Devil\'s Advocate. Write a well-reasoned essay that argues the OPPOSITE position from the text provided. Identify the main argument or viewpoint in the input text, then construct a compelling counter-argument that defends the opposing perspective. Your essay should: 1) Clearly state the opposing viewpoint, 2) Present strong evidence and reasoning to support this contrary position, 3) Address potential weaknesses in the original argument, 4) Be persuasive, intellectually rigorous, and well-structured. Maintain an academic, thoughtful tone.'
                     })
                 });
@@ -1691,6 +1719,7 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     },
                     body: JSON.stringify({
                         text: text,
+                        preferred_provider: selectedProvider,
                         custom_instructions: 'Transform this non-fiction text into a compelling work of fiction. Convert factual information, arguments, or explanatory content into a narrative story with characters, plot, dialogue, and vivid scenes. Maintain the core ideas and themes from the original text, but present them through fictional storytelling. Create engaging characters whose experiences and conflicts embody the concepts from the non-fiction source. Use literary techniques like dialogue, description, scene-setting, and character development. The result should read like a short story or novel excerpt, not an essay.'
                     })
                 });
@@ -1753,6 +1782,7 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     },
                     body: JSON.stringify({
                         text: text,
+                        preferred_provider: selectedProvider,
                         custom_instructions: 'CRITICAL: Read this fiction text and identify the implicit themes, ideas, concepts, and insights it explores. Then write a formal academic/analytical paper that discusses those themes DIRECTLY as abstract concepts - NOT as an analysis of the story itself. Do NOT write "This story explores..." or "The narrative demonstrates..." or "The character shows...". Instead, write a serious scholarly paper that discusses the underlying ideas themselves. For example: if the fiction explores jealousy, write "Jealousy is a destructive emotion that undermines relationships..." NOT "This story shows how jealousy affects the character...". Extract the philosophical, psychological, social, or conceptual themes from the narrative and present them as direct academic arguments with formal language, structured reasoning, evidence-based analysis, and scholarly tone. Write as if you are Writer Y (an analytical thinker) expressing the same insights that Writer X (a fiction writer) expressed narratively. The output must be pure non-fiction that discusses concepts directly, with no reference to the original story.'
                     })
                 });
@@ -1832,7 +1862,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         text: customRewriteSourceText,
-                        custom_instructions: customInstructions
+                        custom_instructions: customInstructions,
+                        preferred_provider: selectedProvider
                     })
                 });
 
@@ -2983,7 +3014,8 @@ Write a COMPLETE, SELF-CONTAINED piece in this sophisticated analytical style.`;
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         text: text,
-                        custom_instructions: customInstructions
+                        custom_instructions: customInstructions,
+                        preferred_provider: selectedProvider
                     })
                 });
 
@@ -4887,6 +4919,23 @@ All tools require some form of use.`,
             }
         });
         }); // End of DOMContentLoaded
+
+        // ── LLM selector ──────────────────────────────────────────────
+        let selectedProvider = 'auto';
+        const LLM_LABELS = {
+            auto:       'Auto-select (best available)',
+            openai:     'GPT-4o (OpenAI)',
+            anthropic:  'Claude Sonnet (Anthropic)',
+            deepseek:   'DeepSeek Chat',
+            venice:     'Llama 3.3 70B (Venice)',
+            perplexity: 'Perplexity Sonar',
+        };
+        function selectLLM(btn) {
+            document.querySelectorAll('.llm-btn').forEach(b => b.classList.remove('llm-active'));
+            btn.classList.add('llm-active');
+            selectedProvider = btn.dataset.provider;
+            document.getElementById('llmActiveLabel').textContent = LLM_LABELS[selectedProvider] || selectedProvider;
+        }
 
         // Copy button helper
         async function copyBox(textareaId, btnId) {
