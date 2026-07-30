@@ -5018,10 +5018,27 @@ def customized_rewrite_stream():
         data = request.get_json()
         text = data.get('text', '')
         custom_instructions = data.get('custom_instructions', '').strip()
-        
+        author_style_slug = data.get('author_style_slug', '').strip()
+
         if not text:
             return jsonify({'error': 'No text provided'}), 400
-        
+
+        # If caller passed an author style slug, look up its rich style_prompt from the DB
+        # and prepend it to any custom instructions the user also wrote.
+        if author_style_slug:
+            try:
+                from models import AuthorStyle
+                style_obj = AuthorStyle.query.filter_by(slug=author_style_slug, is_active=True).first()
+                if style_obj:
+                    db_prompt = style_obj.style_prompt
+                    if custom_instructions:
+                        custom_instructions = db_prompt + "\n\nADDITIONAL INSTRUCTIONS:\n" + custom_instructions
+                    else:
+                        custom_instructions = db_prompt
+                    logger.info(f"Applied author style '{style_obj.name}' from DB")
+            except Exception as _ae:
+                logger.warning(f"Could not load author style '{author_style_slug}': {_ae}")
+
         # Default instructions if none provided
         if not custom_instructions:
             custom_instructions = """If the text is fiction (narrative with characters, dialogue, scenes, plot):
@@ -5157,6 +5174,83 @@ NOW PROVIDE THE REWRITTEN TEXT WITH MANDATORY PARAGRAPH BREAKS EVERY 3-4 SENTENC
         
     except Exception as e:
         logger.error(f"Error in customized rewrite: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+# ===== AUTHOR STYLES API =====
+
+@app.route('/api/author_styles', methods=['GET'])
+def list_author_styles():
+    """Return all active author styles for the style picker UI."""
+    try:
+        from models import AuthorStyle
+        styles = AuthorStyle.query.filter_by(is_active=True).order_by(AuthorStyle.name).all()
+        return jsonify([s.to_dict() for s in styles])
+    except Exception as e:
+        logger.error(f"Error listing author styles: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/author_styles/<slug>', methods=['GET'])
+def get_author_style(slug):
+    """Return a single author style by slug."""
+    try:
+        from models import AuthorStyle
+        style = AuthorStyle.query.filter_by(slug=slug, is_active=True).first()
+        if not style:
+            return jsonify({'error': 'Author style not found'}), 404
+        return jsonify(style.to_dict())
+    except Exception as e:
+        logger.error(f"Error fetching author style {slug}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/author_styles', methods=['POST'])
+def create_author_style():
+    """Admin: add a new author style."""
+    try:
+        from models import AuthorStyle
+        data = request.get_json()
+        required = ['name', 'slug', 'style_prompt']
+        for f in required:
+            if not data.get(f):
+                return jsonify({'error': f'Missing required field: {f}'}), 400
+        style = AuthorStyle(
+            name=data['name'],
+            slug=data['slug'],
+            genre=data.get('genre'),
+            era=data.get('era'),
+            description=data.get('description'),
+            style_prompt=data['style_prompt'],
+            sample_text=data.get('sample_text'),
+            is_active=data.get('is_active', True),
+        )
+        db.session.add(style)
+        db.session.commit()
+        return jsonify(style.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error creating author style: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/author_styles/<slug>', methods=['PUT'])
+def update_author_style(slug):
+    """Admin: update an existing author style."""
+    try:
+        from models import AuthorStyle
+        style = AuthorStyle.query.filter_by(slug=slug).first()
+        if not style:
+            return jsonify({'error': 'Author style not found'}), 404
+        data = request.get_json()
+        for field in ['name', 'genre', 'era', 'description', 'style_prompt', 'sample_text', 'is_active']:
+            if field in data:
+                setattr(style, field, data[field])
+        db.session.commit()
+        return jsonify(style.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error updating author style {slug}: {e}")
         return jsonify({'error': str(e)}), 500
 
 

@@ -127,6 +127,37 @@ class DocumentChunk(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
+class AuthorStyle(db.Model):
+    """Famous author style samples that users can apply when rewriting."""
+    __tablename__ = 'author_styles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=True, nullable=False)       # e.g. "Ernest Hemingway"
+    slug = db.Column(db.String(120), unique=True, nullable=False)       # e.g. "hemingway"
+    genre = db.Column(db.String(100), nullable=True)                    # e.g. "Literary Fiction"
+    era = db.Column(db.String(100), nullable=True)                      # e.g. "20th Century"
+    description = db.Column(db.Text, nullable=True)                     # short blurb shown in UI
+    style_prompt = db.Column(db.Text, nullable=False)                   # instruction injected into rewrite prompts
+    sample_text = db.Column(db.Text, nullable=True)                     # example passage in this style
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'slug': self.slug,
+            'genre': self.genre,
+            'era': self.era,
+            'description': self.description,
+            'style_prompt': self.style_prompt,
+            'sample_text': self.sample_text,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat(),
+        }
+
+
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.Text, nullable=False)
