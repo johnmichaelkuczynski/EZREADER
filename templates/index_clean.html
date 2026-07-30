@@ -480,6 +480,9 @@
             <div style="position: relative; width: 100%; height: 100%; min-height: 1000px;">
                 <textarea id="inputText" class="text-area" placeholder="Input text here..." style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></textarea>
                 <div id="inputMathDisplay" class="text-area math-rendered-output" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto;"></div>
+                <button id="copyInputBtn" onclick="copyBox('inputText','copyInputBtn')" title="Copy input text" style="position:absolute;top:10px;right:10px;z-index:30;background:rgba(30,30,40,0.82);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.18);color:#e8eaed;padding:6px 13px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s,transform .1s;">
+                    <i class="bi bi-clipboard"></i> Copy
+                </button>
             </div>
             <button id="inputActionBtn" style="position: absolute; bottom: 20px; right: 20px; z-index: 20; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4); transition: all 0.3s ease;">
                 <i class="bi bi-lightning-fill"></i> ACTION
@@ -499,6 +502,9 @@
             <div style="position: relative; width: 100%; height: 100%; min-height: 1000px;">
                 <textarea id="outputText" class="text-area" placeholder="Output text will appear here..." readonly style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></textarea>
                 <div id="outputMathDisplay" class="text-area math-rendered-output" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto;"></div>
+                <button id="copyOutputBtn" onclick="copyBox('outputText','copyOutputBtn')" title="Copy output text" style="position:absolute;top:10px;right:10px;z-index:30;background:rgba(30,30,40,0.82);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.18);color:#e8eaed;padding:6px 13px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s,transform .1s;">
+                    <i class="bi bi-clipboard"></i> Copy
+                </button>
             </div>
             <button id="outputActionBtn" style="position: absolute; bottom: 20px; right: 20px; z-index: 20; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; font-weight: bold; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px; box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4); transition: all 0.3s ease;">
                 <i class="bi bi-lightning-fill"></i> ACTION
@@ -4881,6 +4887,31 @@ All tools require some form of use.`,
             }
         });
         }); // End of DOMContentLoaded
+
+        // Copy button helper
+        async function copyBox(textareaId, btnId) {
+            const ta = document.getElementById(textareaId);
+            const btn = document.getElementById(btnId);
+            const text = ta.value;
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied!';
+                btn.style.background = 'rgba(22,160,133,0.9)';
+                btn.style.borderColor = '#1abc9c';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';
+                    btn.style.background = 'rgba(30,30,40,0.82)';
+                    btn.style.borderColor = 'rgba(255,255,255,0.18)';
+                }, 2000);
+            } catch(e) {
+                // Fallback for older browsers
+                ta.select();
+                document.execCommand('copy');
+                btn.innerHTML = '<i class="bi bi-clipboard-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy'; }, 2000);
+            }
+        }
     </script>
 </body>
 </html>
