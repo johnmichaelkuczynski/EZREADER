@@ -5141,22 +5141,10 @@ NOW PROVIDE THE REWRITTEN TEXT WITH MANDATORY PARAGRAPH BREAKS EVERY 3-4 SENTENC
                     for i in range(0, len(formatted_response), chunk_size):
                         chunk = formatted_response[i:i+chunk_size]
                         yield f"data: {chunk}\n\n"
-                        
-                        # Count words for pause timing
-                        total_words += len(chunk.split())
-                        
-                        # Pause every 500 words
-                        if total_words >= 500:
-                            yield f"data: [Pausing 10 seconds...]\n\n"
-                            time.sleep(10)
-                            total_words = 0
                     
-                    # Add delay between chunks to avoid rate limits
+                    # Separator between chunks
                     if i < total_chunks:
                         yield f"data: \n\n\n\n"
-                        yield f"data: [Pausing 3 seconds to avoid rate limits...]\n\n"
-                        time.sleep(3)  # 3 second delay between chunks
-                        yield f"data: \n\n"
             except Exception as e:
                 logger.error(f"Streaming error: {str(e)}")
                 yield f"data: \n\nError: {str(e)}\n\n"
