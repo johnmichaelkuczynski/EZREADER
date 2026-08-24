@@ -10,7 +10,6 @@ from urllib.parse import quote_plus
 from flask import Flask, render_template, request, jsonify, session, send_file, send_from_directory, url_for, make_response, Response
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-from flask_login import LoginManager, login_user, current_user, login_required
 from werkzeug.utils import secure_filename
 import requests
 import PyPDF2
@@ -121,11 +120,6 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 app.config['PERMANENT_SESSION_LIFETIME'] = 86400  # 24 hours
 app.config['SESSION_TYPE'] = 'filesystem'
 
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
 db.init_app(app)
 
 with app.app_context():
@@ -150,15 +144,6 @@ try:
     init_reconstruction_schema()
 except Exception as e:
     logger.error(f"Reconstruction schema init failed: {e}")
-
-@login_manager.user_loader
-def load_user(user_id):
-    return models.User.query.get(int(user_id))
-
-@app.before_request
-def before_request():
-    if current_user.is_authenticated:
-        session.permanent = True  # Make session permanent for logged in users
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -3295,7 +3280,7 @@ def reconstruction_start_stream():
         if len(original_text.split()) < 100:
             return jsonify({'error': 'Long-document reconstruction requires at least 100 words. Use regular Rewrite for shorter texts.'}), 400
 
-        user_id = str(session.get('user_id') or session.get('_user_id') or 'anonymous')
+        user_id = 'anonymous'
 
         from flask import stream_with_context
         gen = run_reconstruction_stream(original_text, custom_instructions, user_id, document_title)
@@ -3310,26 +3295,18 @@ def reconstruction_start_stream():
         return jsonify({'error': f'Reconstruction failed: {str(e)}'}), 500
 
 
-def _current_user_id_for_reconstruction():
-    """Return the same user_id string used when starting a job."""
-    return str(session.get('user_id') or session.get('_user_id') or 'anonymous')
-
-
 @app.route('/reconstruction/status/<job_id>', methods=['GET'])
 def reconstruction_status(job_id):
-    """Inspect a reconstruction job's current state in Neon (owner-only)."""
+    """Inspect a reconstruction job's current state in Neon."""
     try:
         from reconstruction_engine import _exec
         job = _exec(
-            "SELECT id, user_id, status, current_chunk, num_chunks, total_input_words, "
+            "SELECT id, status, current_chunk, num_chunks, total_input_words, "
             "target_min_words, target_max_words, length_mode, final_word_count, "
             "error_message, created_at, updated_at FROM reconstruction_jobs WHERE id=%s",
             (job_id,), fetch="one")
         if not job:
             return jsonify({'error': 'Job not found'}), 404
-        if job.get('user_id') != _current_user_id_for_reconstruction():
-            return jsonify({'error': 'Job not found'}), 404
-        job.pop('user_id', None)
         return jsonify({k: (str(v) if hasattr(v, 'isoformat') or k == 'id' else v) for k, v in job.items()})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -3337,14 +3314,12 @@ def reconstruction_status(job_id):
 
 @app.route('/reconstruction/result/<job_id>', methods=['GET'])
 def reconstruction_result(job_id):
-    """Fetch final assembled output for a completed reconstruction job (owner-only)."""
+    """Fetch final assembled output for a completed reconstruction job."""
     try:
         from reconstruction_engine import _exec
-        job = _exec("SELECT user_id, status, final_output, final_word_count FROM reconstruction_jobs WHERE id=%s",
+        job = _exec("SELECT status, final_output, final_word_count FROM reconstruction_jobs WHERE id=%s",
                     (job_id,), fetch="one")
         if not job:
-            return jsonify({'error': 'Job not found'}), 404
-        if job.get('user_id') != _current_user_id_for_reconstruction():
             return jsonify({'error': 'Job not found'}), 404
         return jsonify({
             'status': job['status'],
